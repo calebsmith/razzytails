@@ -12,8 +12,14 @@ from pygame.constants import *
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 
-MAP_WIDTH = 15
-MAP_HEIGHT = 10
+MAP_DISPLAY_WIDTH = 15
+MAP_DISPLAY_HEIGHT = 9
+
+MAP_WIDTH = 20
+MAP_HEIGHT = 12
+
+MAP_X_DELTA = MAP_WIDTH - MAP_DISPLAY_WIDTH
+MAP_Y_DELTA = MAP_HEIGHT - MAP_DISPLAY_HEIGHT
 
 TILE_WIDTH = 32
 TILE_HEIGHT = 32
@@ -26,16 +32,18 @@ FONTS_DIR = os.path.join(ASSETS_DIR, 'fonts')
 SOUNDS_DIR = os.path.join(ASSETS_DIR, 'sounds')
 
 TILES = [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+    0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+    0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1,
+    0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+    0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+    0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+    0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+    0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+    0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1,
+    0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0
 ]
 
 TILE_IMAGES = {
@@ -115,21 +123,62 @@ def draw_text(surface, assets, font, label, coordinates, color=None):
     surface.blit(text, textpos)
 
 
-def display_map(assets):
-    for index, tile in enumerate(TILES):
-        x = (index % MAP_WIDTH)
-        y = index / MAP_WIDTH
-        image_filename = TILE_IMAGES.get(tile, '')
-        draw_image(
-            assets['screen'], assets, image_filename,
-            (x * TILE_WIDTH, y * TILE_HEIGHT)
-        )
+def display_map(assets, player):
+    player_x = player[0]
+    player_y = player[1]
+    for map_y in range(0, MAP_DISPLAY_HEIGHT):
+        for map_x in range(0, MAP_DISPLAY_WIDTH):
+            map_display_mid_x = MAP_DISPLAY_WIDTH / 2
+            map_display_mid_y = MAP_DISPLAY_HEIGHT / 2
+
+            if player_y < map_display_mid_y:
+                player_y_thing = 0
+            elif player_y < MAP_Y_DELTA + MAP_HEIGHT / 2 - 1:
+                player_y_thing = player_y - map_display_mid_y
+            else:
+                player_y_thing = MAP_Y_DELTA
+
+            if player_x < map_display_mid_x:
+                player_x_thing = 0
+            elif player_x < MAP_X_DELTA + MAP_WIDTH / 2 - 3:
+                player_x_thing = player_x - map_display_mid_x
+            else:
+                player_x_thing = MAP_X_DELTA
+
+            current_index = get_map_index(
+                map_x + player_x_thing, map_y + player_y_thing
+            )
+            image_filename = TILE_IMAGES.get(TILES[current_index], '')
+            draw_image(
+                assets['screen'], assets, image_filename,
+                (map_x * TILE_WIDTH, map_y * TILE_HEIGHT)
+            )
 
 
 def display_player(assets, player):
-    x = player[0] * TILE_WIDTH
-    y = player[1] * TILE_HEIGHT
-    draw_image(assets['screen'], assets, 'razzy-small.png', (x, y))
+    player_x = player[0]
+    player_y = player[1]
+    map_display_mid_x = MAP_DISPLAY_WIDTH / 2
+    map_display_mid_y = MAP_DISPLAY_HEIGHT / 2
+
+    if player_x < map_display_mid_x:
+        display_x = player_x
+    elif player_x < MAP_X_DELTA + MAP_WIDTH / 2 - 2:
+        display_x = map_display_mid_x
+    else:
+        display_x = player_x - MAP_X_DELTA
+
+    if player_y < map_display_mid_y:
+        display_y = player_y
+    elif player_y < MAP_Y_DELTA + MAP_HEIGHT / 2 - 1:
+        display_y = map_display_mid_y
+    else:
+        display_y = player_y - MAP_Y_DELTA
+
+    draw_image(
+        assets['screen'], assets, 'razzy-small.png',
+        (display_x * TILE_WIDTH, display_y * TILE_HEIGHT)
+    )
 
 
 def flip(assets):
@@ -139,7 +188,7 @@ def flip(assets):
 
 
 def render(assets, player):
-    display_map(assets)
+    display_map(assets, player)
     display_player(assets, player)
     draw_text(assets['screen'], assets, 'PressStart2P.ttf', 'OH HAI', (400, 400))
     flip(assets)
@@ -148,19 +197,19 @@ def render(assets, player):
 def handle_key(event_key, player):
     current_x = player[0]
     current_y = player[1]
-    if event_key == K_UP:
+    if event_key == K_UP and current_y > 0:
         tile_up_index = get_map_index(current_x, current_y - 1)
         if not TILE_SOLIDS[tile_up_index]:
             player[1] -= 1
-    if event_key == K_DOWN:
+    if event_key == K_DOWN and current_y < MAP_HEIGHT - 1:
         tile_down_index = get_map_index(current_x, current_y + 1)
         if not TILE_SOLIDS[tile_down_index]:
             player[1] += 1
-    if event_key == K_LEFT:
+    if event_key == K_LEFT and current_x > 0:
         tile_left_index = get_map_index(current_x - 1, current_y)
         if not TILE_SOLIDS[tile_left_index]:
             player[0] -= 1
-    if event_key == K_RIGHT:
+    if event_key == K_RIGHT and current_x < MAP_WIDTH - 1:
         tile_right_index = get_map_index(current_x + 1, current_y)
         if not TILE_SOLIDS[tile_right_index]:
             player[0] += 1
