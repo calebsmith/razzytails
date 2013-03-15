@@ -13,7 +13,7 @@ SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 
 MAP_DISPLAY_WIDTH = 15
-MAP_DISPLAY_HEIGHT = 9
+MAP_DISPLAY_HEIGHT = 10
 
 MAP_WIDTH = 20
 MAP_HEIGHT = 12
@@ -133,14 +133,14 @@ def display_map(assets, player):
 
             if player_y < map_display_mid_y:
                 player_y_thing = 0
-            elif player_y < MAP_Y_DELTA + MAP_HEIGHT / 2 - 1:
+            elif player_y < MAP_HEIGHT - map_display_mid_y:
                 player_y_thing = player_y - map_display_mid_y
             else:
                 player_y_thing = MAP_Y_DELTA
 
             if player_x < map_display_mid_x:
                 player_x_thing = 0
-            elif player_x < MAP_X_DELTA + MAP_WIDTH / 2 - 3:
+            elif player_x < MAP_WIDTH - map_display_mid_x:
                 player_x_thing = player_x - map_display_mid_x
             else:
                 player_x_thing = MAP_X_DELTA
@@ -163,14 +163,14 @@ def display_player(assets, player):
 
     if player_x < map_display_mid_x:
         display_x = player_x
-    elif player_x < MAP_X_DELTA + MAP_WIDTH / 2 - 2:
+    elif player_x < MAP_WIDTH - map_display_mid_x:
         display_x = map_display_mid_x
     else:
         display_x = player_x - MAP_X_DELTA
 
     if player_y < map_display_mid_y:
         display_y = player_y
-    elif player_y < MAP_Y_DELTA + MAP_HEIGHT / 2 - 1:
+    elif player_y < MAP_HEIGHT - map_display_mid_y:
         display_y = map_display_mid_y
     else:
         display_y = player_y - MAP_Y_DELTA
