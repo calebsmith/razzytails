@@ -27,38 +27,10 @@ ASSETS_DIR = os.path.join(PROJECT_DIR, 'assets')
 IMAGES_DIR = os.path.join(ASSETS_DIR, 'images')
 FONTS_DIR = os.path.join(ASSETS_DIR, 'fonts')
 SOUNDS_DIR = os.path.join(ASSETS_DIR, 'sounds')
+MAPS_DIR = os.path.join(ASSETS_DIR, 'maps')
 
 PLAYER_IMAGES = ('razzy-small.png',)
-FONTS = ['PressStart2P.ttf']
-
-
-MAP_DATA = dumps({
-    'map': {
-        'dimensions': {
-            'width': 20,
-            'height': 12,
-        },
-        'tiles': [
-            0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-            1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-            0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1,
-            0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-            0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-            0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-            0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-            0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-            0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1,
-            0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0
-        ],
-        'solids': [1],
-        'legend': {
-            0: 'grass.jpg',
-            1: 'tree.jpg',
-        },
-    },
-})
+FONTS = ('PressStart2P.ttf',)
 
 
 def initialize():
@@ -66,7 +38,8 @@ def initialize():
     screen = load_screen()
     background = pygame.Surface(screen.get_size()).convert()
     background.fill(get_color('black'))
-    map_data = loads(MAP_DATA)
+    # Load map data
+    map_data = load_map('map1.json')
     # Derive tile_solids from map data
     tiles = map_data['map']['tiles']
     solids = map_data['map']['solids']
@@ -99,6 +72,12 @@ def load_font(filename, font_size=16):
 def load_image(filename):
     image_file = os.path.join(IMAGES_DIR, filename)
     return (filename, pygame.image.load(image_file))
+
+
+def load_map(filename):
+    map_file = os.path.join(MAPS_DIR, filename)
+    f = open(map_file)
+    return loads(f.read())
 
 
 def get_color(color):
