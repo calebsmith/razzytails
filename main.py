@@ -3,6 +3,7 @@
 import os
 import sys
 import time
+from json import dumps, loads
 from functools import partial
 
 import pygame
@@ -14,6 +15,8 @@ SCREEN_HEIGHT = 480
 
 MAP_DISPLAY_WIDTH = 15
 MAP_DISPLAY_HEIGHT = 10
+MAP_DISPLAY_MID_X = MAP_DISPLAY_WIDTH / 2
+MAP_DISPLAY_MID_Y = MAP_DISPLAY_HEIGHT / 2
 
 MAP_WIDTH = 20
 MAP_HEIGHT = 12
@@ -30,6 +33,7 @@ ASSETS_DIR = os.path.join(PROJECT_DIR, 'assets')
 IMAGES_DIR = os.path.join(ASSETS_DIR, 'images')
 FONTS_DIR = os.path.join(ASSETS_DIR, 'fonts')
 SOUNDS_DIR = os.path.join(ASSETS_DIR, 'sounds')
+
 
 TILES = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -51,12 +55,12 @@ TILE_IMAGES = {
     0: 'grass.jpg',
 }
 
-PLAYER_IMAGES = ('razzy-small.png',)
-
 SOLIDS = [1]
 
 TILE_SOLIDS = [tile in SOLIDS for tile in TILES]
 
+
+PLAYER_IMAGES = ('razzy-small.png',)
 IMAGES = TILE_IMAGES.values()
 IMAGES.extend(PLAYER_IMAGES)
 FONTS = ['PressStart2P.ttf']
@@ -110,17 +114,35 @@ def get_map_index(x, y):
     return y * MAP_WIDTH + x
 
 
+def get_display_value(value, max_value, dimension):
+    """
+    Determine the display offset of the player or map tile given the current
+    """
+    if dimension == 'x':
+        med_display_mid = MAP_DISPLAY_MID_X
+        max_display_value = MAP_DISPLAY_WIDTH
+    else:
+        med_display_mid = MAP_DISPLAY_MID_Y
+        max_display_value = MAP_DISPLAY_HEIGHT
+    if value < med_display_mid:
+        return value
+    elif value < max_value - med_display_mid:
+        return med_display_mid
+    return value - (max_value - max_display_value)
+
+
 def draw_image(surface, assets, image, coordinates):
     if image:
         surface.blit(get_image(assets, image), coordinates)
 
 
 def draw_text(surface, assets, font, label, coordinates, color=None):
-    font = get_font(assets, font)
-    text = font.render(label, True, color or get_color('white'))
-    textpos = text.get_rect()
-    textpos.move_ip(*coordinates)
-    surface.blit(text, textpos)
+    if font and label:
+        font = get_font(assets, font)
+        text = font.render(label, True, color or get_color('white'))
+        textpos = text.get_rect()
+        textpos.move_ip(*coordinates)
+        surface.blit(text, textpos)
 
 
 def display_map(assets, player):
@@ -128,26 +150,9 @@ def display_map(assets, player):
     player_y = player[1]
     for map_y in range(0, MAP_DISPLAY_HEIGHT):
         for map_x in range(0, MAP_DISPLAY_WIDTH):
-            map_display_mid_x = MAP_DISPLAY_WIDTH / 2
-            map_display_mid_y = MAP_DISPLAY_HEIGHT / 2
-
-            if player_y < map_display_mid_y:
-                player_y_thing = 0
-            elif player_y < MAP_HEIGHT - map_display_mid_y:
-                player_y_thing = player_y - map_display_mid_y
-            else:
-                player_y_thing = MAP_Y_DELTA
-
-            if player_x < map_display_mid_x:
-                player_x_thing = 0
-            elif player_x < MAP_WIDTH - map_display_mid_x:
-                player_x_thing = player_x - map_display_mid_x
-            else:
-                player_x_thing = MAP_X_DELTA
-
-            current_index = get_map_index(
-                map_x + player_x_thing, map_y + player_y_thing
-            )
+            x_offset = player_x - get_display_value(player[0], MAP_WIDTH, 'x')
+            y_offset = player_y - get_display_value(player[1], MAP_HEIGHT, 'y')
+            current_index = get_map_index(map_x + x_offset, map_y + y_offset)
             image_filename = TILE_IMAGES.get(TILES[current_index], '')
             draw_image(
                 assets['screen'], assets, image_filename,
@@ -156,25 +161,8 @@ def display_map(assets, player):
 
 
 def display_player(assets, player):
-    player_x = player[0]
-    player_y = player[1]
-    map_display_mid_x = MAP_DISPLAY_WIDTH / 2
-    map_display_mid_y = MAP_DISPLAY_HEIGHT / 2
-
-    if player_x < map_display_mid_x:
-        display_x = player_x
-    elif player_x < MAP_WIDTH - map_display_mid_x:
-        display_x = map_display_mid_x
-    else:
-        display_x = player_x - MAP_X_DELTA
-
-    if player_y < map_display_mid_y:
-        display_y = player_y
-    elif player_y < MAP_HEIGHT - map_display_mid_y:
-        display_y = map_display_mid_y
-    else:
-        display_y = player_y - MAP_Y_DELTA
-
+    display_x = get_display_value(player[0], MAP_WIDTH, 'x')
+    display_y = get_display_value(player[1], MAP_HEIGHT, 'y')
     draw_image(
         assets['screen'], assets, 'razzy-small.png',
         (display_x * TILE_WIDTH, display_y * TILE_HEIGHT)
