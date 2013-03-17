@@ -3,31 +3,18 @@
 import os
 import sys
 import time
-from json import dumps, loads
+from json import loads
 from functools import partial
 
 import pygame
 from pygame.constants import *
 
+from const import (SCREEN_WIDTH, SCREEN_HEIGHT, MAP_DISPLAY_WIDTH,
+    MAP_DISPLAY_HEIGHT, MAP_DISPLAY_MID_X, MAP_DISPLAY_MID_Y, TILE_WIDTH,
+    TILE_HEIGHT)
 
-SCREEN_WIDTH = 640
-SCREEN_HEIGHT = 480
+from const import IMAGES_DIR, FONTS_DIR, SOUNDS_DIR, MAPS_DIR
 
-MAP_DISPLAY_WIDTH = 15
-MAP_DISPLAY_HEIGHT = 10
-MAP_DISPLAY_MID_X = MAP_DISPLAY_WIDTH / 2
-MAP_DISPLAY_MID_Y = MAP_DISPLAY_HEIGHT / 2
-
-TILE_WIDTH = 32
-TILE_HEIGHT = 32
-
-PROJECT_DIR = os.path.dirname(__file__)
-ASSETS_DIR = os.path.join(PROJECT_DIR, 'assets')
-
-IMAGES_DIR = os.path.join(ASSETS_DIR, 'images')
-FONTS_DIR = os.path.join(ASSETS_DIR, 'fonts')
-SOUNDS_DIR = os.path.join(ASSETS_DIR, 'sounds')
-MAPS_DIR = os.path.join(ASSETS_DIR, 'maps')
 
 PLAYER_IMAGES = ('razzy-small.png',)
 FONTS = ('PressStart2P.ttf',)
