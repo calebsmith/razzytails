@@ -38,22 +38,28 @@ def initialize():
     screen = load_screen()
     background = pygame.Surface(screen.get_size()).convert()
     background.fill(get_color('black'))
+    player_images = dict(map(load_image, PLAYER_IMAGES))
+    fonts = dict(map(load_font, FONTS))
+    return {
+        'screen': screen,
+        'background': background,
+        'images': player_images,
+        'fonts': fonts,
+    }
+
+
+def load_map(map_filename):
     # Load map data
-    map_data = load_map('map1.json')
+    map_data = load_map_file(map_filename)
     # Derive tile_solids from map data
     tiles = map_data['map']['tiles']
     solids = map_data['map']['solids']
     tile_solids = [tile in solids for tile in tiles]
     # Derive image files to load from map data and also load player images
     image_files = map_data['map']['legend'].values()
-    image_files.extend(PLAYER_IMAGES)
     images = dict(map(load_image, image_files))
-    fonts = dict(map(load_font, FONTS))
     return {
-        'screen': screen,
-        'background': background,
         'images': images,
-        'fonts': fonts,
         'map_data': map_data,
         'tile_solids': tile_solids,
     }
@@ -74,7 +80,7 @@ def load_image(filename):
     return (filename, pygame.image.load(image_file))
 
 
-def load_map(filename):
+def load_map_file(filename):
     map_file = os.path.join(MAPS_DIR, filename)
     f = open(map_file)
     return loads(f.read())
@@ -116,12 +122,12 @@ def get_display_value(value, max_value, dimension):
 
 
 def draw_image(surface, assets, image, coordinates):
-    if image:
+    if image and surface:
         surface.blit(get_image(assets, image), coordinates)
 
 
 def draw_text(surface, assets, font, label, coordinates, color=None):
-    if font and label:
+    if all((surface, font, label)):
         font = get_font(assets, font)
         text = font.render(label, True, color or get_color('white'))
         textpos = text.get_rect()
@@ -129,34 +135,34 @@ def draw_text(surface, assets, font, label, coordinates, color=None):
         surface.blit(text, textpos)
 
 
-def display_map(assets, player):
-    player_x = player[0]
-    player_y = player[1]
-    tiles = assets['map_data']['map']['tiles']
-    dimensions = assets['map_data']['map']['dimensions']
+def display_map(assets, map_data, player):
+    player_x = player['x']
+    player_y = player['y']
+    tiles = map_data['map_data']['map']['tiles']
+    dimensions = map_data['map_data']['map']['dimensions']
     map_width = dimensions['width']
     map_height = dimensions['height']
-    tile_legend = assets['map_data']['map']['legend']
+    tile_legend = map_data['map_data']['map']['legend']
     for map_y in range(0, MAP_DISPLAY_HEIGHT):
         for map_x in range(0, MAP_DISPLAY_WIDTH):
-            x_offset = player_x - get_display_value(player[0], map_width, 'x')
-            y_offset = player_y - get_display_value(player[1], map_height, 'y')
+            x_offset = player_x - get_display_value(player['x'], map_width, 'x')
+            y_offset = player_y - get_display_value(player['y'], map_height, 'y')
             current_index = get_map_index(
                 map_width, map_x + x_offset, map_y + y_offset
             )
             image_filename = tile_legend.get(unicode(tiles[current_index]), '')
             draw_image(
-                assets['screen'], assets, image_filename,
+                assets['screen'], map_data, image_filename,
                 (map_x * TILE_WIDTH, map_y * TILE_HEIGHT)
             )
 
 
-def display_player(assets, player):
-    dimensions = assets['map_data']['map']['dimensions']
+def display_player(assets, map_data, player):
+    dimensions = map_data['map_data']['map']['dimensions']
     map_width = dimensions['width']
     map_height = dimensions['height']
-    display_x = get_display_value(player[0], map_width, 'x')
-    display_y = get_display_value(player[1], map_height, 'y')
+    display_x = get_display_value(player['x'], map_width, 'x')
+    display_y = get_display_value(player['y'], map_height, 'y')
     draw_image(
         assets['screen'], assets, 'razzy-small.png',
         (display_x * TILE_WIDTH, display_y * TILE_HEIGHT)
@@ -169,42 +175,43 @@ def flip(assets):
     screen.blit(assets['background'], (0, 0))
 
 
-def render(assets, player):
-    display_map(assets, player)
-    display_player(assets, player)
+def render(assets, map_data, player):
+    display_map(assets, map_data, player)
+    display_player(assets, map_data, player)
     draw_text(assets['screen'], assets, 'PressStart2P.ttf', 'OH HAI', (400, 400))
     flip(assets)
 
 
-def handle_key(event_key, assets, player):
-    current_x = player[0]
-    current_y = player[1]
-    dimensions = assets['map_data']['map']['dimensions']
+def handle_key(event_key, map_data, player):
+    current_x = player['x']
+    current_y = player['y']
+    dimensions = map_data['map_data']['map']['dimensions']
     map_width = dimensions['width']
     map_height = dimensions['height']
-    tile_solids = assets['tile_solids']
+    tile_solids = map_data['tile_solids']
     if event_key == K_UP and current_y > 0:
         tile_up_index = get_map_index(map_width, current_x, current_y - 1)
         if not tile_solids[tile_up_index]:
-            player[1] -= 1
+            player['y'] -= 1
     if event_key == K_DOWN and current_y < map_height - 1:
         tile_down_index = get_map_index(map_width, current_x, current_y + 1)
         if not tile_solids[tile_down_index]:
-            player[1] += 1
+            player['y'] += 1
     if event_key == K_LEFT and current_x > 0:
         tile_left_index = get_map_index(map_width, current_x - 1, current_y)
         if not tile_solids[tile_left_index]:
-            player[0] -= 1
+            player['x'] -= 1
     if event_key == K_RIGHT and current_x < map_width - 1:
         tile_right_index = get_map_index(map_width, current_x + 1, current_y)
         if not tile_solids[tile_right_index]:
-            player[0] += 1
+            player['x'] += 1
 
 
 def main(*args):
     # Initialize display screen and load assets
     assets = initialize()
-    player = [0, 0]
+    map_data = load_map('map1.json')
+    player = map_data['map_data']['player_start']
     while True:
         # Exit on escape key or X
         for event in pygame.event.get():
@@ -212,9 +219,9 @@ def main(*args):
             if pressed_escape or event.type == QUIT:
                 return
             if event.type == KEYDOWN:
-                handle_key(event.key, assets, player)
+                handle_key(event.key, map_data, player)
         time.sleep(0.05)
-        render(assets, player)
+        render(assets, map_data, player)
 
 
 if __name__ == "__main__":
