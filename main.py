@@ -18,12 +18,6 @@ MAP_DISPLAY_HEIGHT = 10
 MAP_DISPLAY_MID_X = MAP_DISPLAY_WIDTH / 2
 MAP_DISPLAY_MID_Y = MAP_DISPLAY_HEIGHT / 2
 
-MAP_WIDTH = 20
-MAP_HEIGHT = 12
-
-MAP_X_DELTA = MAP_WIDTH - MAP_DISPLAY_WIDTH
-MAP_Y_DELTA = MAP_HEIGHT - MAP_DISPLAY_HEIGHT
-
 TILE_WIDTH = 32
 TILE_HEIGHT = 32
 
@@ -34,36 +28,37 @@ IMAGES_DIR = os.path.join(ASSETS_DIR, 'images')
 FONTS_DIR = os.path.join(ASSETS_DIR, 'fonts')
 SOUNDS_DIR = os.path.join(ASSETS_DIR, 'sounds')
 
-
-TILES = [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-    0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-    0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1,
-    0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-    0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-    0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-    0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-    0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
-    0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1,
-    0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0
-]
-
-TILE_IMAGES = {
-    1: 'tree.jpg',
-    0: 'grass.jpg',
-}
-
-SOLIDS = [1]
-
-TILE_SOLIDS = [tile in SOLIDS for tile in TILES]
-
-
 PLAYER_IMAGES = ('razzy-small.png',)
-IMAGES = TILE_IMAGES.values()
-IMAGES.extend(PLAYER_IMAGES)
 FONTS = ['PressStart2P.ttf']
+
+
+MAP_DATA = dumps({
+    'map': {
+        'dimensions': {
+            'width': 20,
+            'height': 12,
+        },
+        'tiles': [
+            0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+            1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+            0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1,
+            0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+            0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+            0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+            0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+            0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1,
+            0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1,
+            0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0
+        ],
+        'solids': [1],
+        'legend': {
+            0: 'grass.jpg',
+            1: 'tree.jpg',
+        },
+    },
+})
 
 
 def initialize():
@@ -71,13 +66,23 @@ def initialize():
     screen = load_screen()
     background = pygame.Surface(screen.get_size()).convert()
     background.fill(get_color('black'))
-    images = dict(map(load_image, IMAGES))
+    map_data = loads(MAP_DATA)
+    # Derive tile_solids from map data
+    tiles = map_data['map']['tiles']
+    solids = map_data['map']['solids']
+    tile_solids = [tile in solids for tile in tiles]
+    # Derive image files to load from map data and also load player images
+    image_files = map_data['map']['legend'].values()
+    image_files.extend(PLAYER_IMAGES)
+    images = dict(map(load_image, image_files))
     fonts = dict(map(load_font, FONTS))
     return {
         'screen': screen,
         'background': background,
         'images': images,
         'fonts': fonts,
+        'map_data': map_data,
+        'tile_solids': tile_solids,
     }
 
 
@@ -110,8 +115,8 @@ get_font = partial(get_asset, 'fonts')
 get_sounds = partial(get_asset, 'sounds')
 
 
-def get_map_index(x, y):
-    return y * MAP_WIDTH + x
+def get_map_index(map_width, x, y):
+    return y * map_width + x
 
 
 def get_display_value(value, max_value, dimension):
@@ -148,12 +153,19 @@ def draw_text(surface, assets, font, label, coordinates, color=None):
 def display_map(assets, player):
     player_x = player[0]
     player_y = player[1]
+    tiles = assets['map_data']['map']['tiles']
+    dimensions = assets['map_data']['map']['dimensions']
+    map_width = dimensions['width']
+    map_height = dimensions['height']
+    tile_legend = assets['map_data']['map']['legend']
     for map_y in range(0, MAP_DISPLAY_HEIGHT):
         for map_x in range(0, MAP_DISPLAY_WIDTH):
-            x_offset = player_x - get_display_value(player[0], MAP_WIDTH, 'x')
-            y_offset = player_y - get_display_value(player[1], MAP_HEIGHT, 'y')
-            current_index = get_map_index(map_x + x_offset, map_y + y_offset)
-            image_filename = TILE_IMAGES.get(TILES[current_index], '')
+            x_offset = player_x - get_display_value(player[0], map_width, 'x')
+            y_offset = player_y - get_display_value(player[1], map_height, 'y')
+            current_index = get_map_index(
+                map_width, map_x + x_offset, map_y + y_offset
+            )
+            image_filename = tile_legend.get(unicode(tiles[current_index]), '')
             draw_image(
                 assets['screen'], assets, image_filename,
                 (map_x * TILE_WIDTH, map_y * TILE_HEIGHT)
@@ -161,8 +173,11 @@ def display_map(assets, player):
 
 
 def display_player(assets, player):
-    display_x = get_display_value(player[0], MAP_WIDTH, 'x')
-    display_y = get_display_value(player[1], MAP_HEIGHT, 'y')
+    dimensions = assets['map_data']['map']['dimensions']
+    map_width = dimensions['width']
+    map_height = dimensions['height']
+    display_x = get_display_value(player[0], map_width, 'x')
+    display_y = get_display_value(player[1], map_height, 'y')
     draw_image(
         assets['screen'], assets, 'razzy-small.png',
         (display_x * TILE_WIDTH, display_y * TILE_HEIGHT)
@@ -182,24 +197,28 @@ def render(assets, player):
     flip(assets)
 
 
-def handle_key(event_key, player):
+def handle_key(event_key, assets, player):
     current_x = player[0]
     current_y = player[1]
+    dimensions = assets['map_data']['map']['dimensions']
+    map_width = dimensions['width']
+    map_height = dimensions['height']
+    tile_solids = assets['tile_solids']
     if event_key == K_UP and current_y > 0:
-        tile_up_index = get_map_index(current_x, current_y - 1)
-        if not TILE_SOLIDS[tile_up_index]:
+        tile_up_index = get_map_index(map_width, current_x, current_y - 1)
+        if not tile_solids[tile_up_index]:
             player[1] -= 1
-    if event_key == K_DOWN and current_y < MAP_HEIGHT - 1:
-        tile_down_index = get_map_index(current_x, current_y + 1)
-        if not TILE_SOLIDS[tile_down_index]:
+    if event_key == K_DOWN and current_y < map_height - 1:
+        tile_down_index = get_map_index(map_width, current_x, current_y + 1)
+        if not tile_solids[tile_down_index]:
             player[1] += 1
     if event_key == K_LEFT and current_x > 0:
-        tile_left_index = get_map_index(current_x - 1, current_y)
-        if not TILE_SOLIDS[tile_left_index]:
+        tile_left_index = get_map_index(map_width, current_x - 1, current_y)
+        if not tile_solids[tile_left_index]:
             player[0] -= 1
-    if event_key == K_RIGHT and current_x < MAP_WIDTH - 1:
-        tile_right_index = get_map_index(current_x + 1, current_y)
-        if not TILE_SOLIDS[tile_right_index]:
+    if event_key == K_RIGHT and current_x < map_width - 1:
+        tile_right_index = get_map_index(map_width, current_x + 1, current_y)
+        if not tile_solids[tile_right_index]:
             player[0] += 1
 
 
@@ -214,7 +233,7 @@ def main(*args):
             if pressed_escape or event.type == QUIT:
                 return
             if event.type == KEYDOWN:
-                handle_key(event.key, player)
+                handle_key(event.key, assets, player)
         time.sleep(0.05)
         render(assets, player)
 
