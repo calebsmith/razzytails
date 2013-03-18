@@ -37,7 +37,11 @@ def initialize():
 
 def load_map(map_filename):
     # Load map data
-    map_data = load_map_file(map_filename)
+    try:
+        map_data = load_map_file(map_filename)
+    except IOError:
+        print 'Map file {0} not found'.format(map_filename)
+        return {}
     # Derive tile_solids from map data
     tiles = map_data['map']['tiles']
     solids = map_data['map']['solids']
@@ -59,12 +63,22 @@ def load_screen():
 
 def load_font(filename, font_size=16):
     font_file = os.path.join(FONTS_DIR, filename)
-    return (filename, pygame.font.Font(font_file, font_size))
+    try:
+        font = pygame.font.Font(font_file, font_size)
+    except (IOError, pygame.error):
+        print 'Font file {0} not found'.format(font_file)
+        font = None
+    return (filename, font)
 
 
 def load_image(filename):
     image_file = os.path.join(IMAGES_DIR, filename)
-    return (filename, pygame.image.load(image_file))
+    try:
+        image = pygame.image.load(image_file)
+    except (IOError, pygame.error):
+        print 'Image file {0} not found'.format(image_file)
+        image = None
+    return (filename, image)
 
 
 def load_map_file(filename):
@@ -108,14 +122,15 @@ def get_display_value(value, max_value, dimension):
     return value - (max_value - max_display_value)
 
 
-def draw_image(surface, assets, image, coordinates):
+def draw_image(surface, assets, image_name, coordinates):
+    image = get_image(assets, image_name)
     if image and surface:
-        surface.blit(get_image(assets, image), coordinates)
+        surface.blit(image, coordinates)
 
 
-def draw_text(surface, assets, font, label, coordinates, color=None):
+def draw_text(surface, assets, font_name, label, coordinates, color=None):
+    font = get_font(assets, font_name)
     if all((surface, font, label)):
-        font = get_font(assets, font)
         text = font.render(label, True, color or get_color('white'))
         textpos = text.get_rect()
         textpos.move_ip(*coordinates)
