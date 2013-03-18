@@ -7,17 +7,12 @@ from json import loads
 from functools import partial
 
 import pygame
-from pygame.constants import *
+from pygame.constants import (KEYUP, KEYDOWN, K_ESCAPE, QUIT, K_UP, K_DOWN,
+    K_LEFT, K_RIGHT)
 
 from const import (SCREEN_WIDTH, SCREEN_HEIGHT, MAP_DISPLAY_WIDTH,
     MAP_DISPLAY_HEIGHT, MAP_DISPLAY_MID_X, MAP_DISPLAY_MID_Y, TILE_WIDTH,
-    TILE_HEIGHT)
-
-from const import IMAGES_DIR, FONTS_DIR, SOUNDS_DIR, MAPS_DIR
-
-
-PLAYER_IMAGES = ('razzy-small.png',)
-FONTS = ('PressStart2P.ttf',)
+    TILE_HEIGHT, ASSETS_DIR, IMAGES_DIR, FONTS_DIR, SOUNDS_DIR, MAPS_DIR)
 
 
 def initialize():
@@ -25,8 +20,13 @@ def initialize():
     screen = load_screen()
     background = pygame.Surface(screen.get_size()).convert()
     background.fill(get_color('black'))
-    player_images = dict(map(load_image, PLAYER_IMAGES))
-    fonts = dict(map(load_font, FONTS))
+    try:
+        conf_file = open(os.path.join(ASSETS_DIR, 'conf.json'))
+    except IOError:
+        print "No conf file found at {0}".format(ASSETS_DIR)
+    conf_data = loads(conf_file.read())
+    player_images = dict(map(load_image, conf_data['images']))
+    fonts = dict(map(load_font, conf_data['fonts']))
     return {
         'screen': screen,
         'background': background,
