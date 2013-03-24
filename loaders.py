@@ -1,12 +1,13 @@
-#!/usr/bin/env python
+#!usr/bin/env python
 import os
+from random import shuffle
 from json import loads
 
 import pygame
 
 from const import (SCREEN_WIDTH, SCREEN_HEIGHT, ASSETS_DIR, IMAGES_DIR,
     FONTS_DIR, SOUNDS_DIR, MAPS_DIR)
-from utils import get_color
+from utils import get_color, get_map_index
 
 
 def initialize():
@@ -38,15 +39,28 @@ def load_map(map_filename):
         return {}
     # Derive tile_solids from map data
     tiles = map_data['map']['tiles']
+    dimensions = map_data['map']['dimensions']
     solids = map_data['map']['solids']
     tile_solids = [tile in solids for tile in tiles]
-    # Derive image files to load from map data and also load player images
+    # Determine coordinates with space for raspberries
+    width, height = dimensions['width'], dimensions['height']
+    empty_coordinates = []
+    for y in xrange(height):
+        for x in xrange(width):
+            if not tile_solids[get_map_index(width, x, y)]:
+                empty_coordinates.append((x, y))
+    raspberry_coordinates = empty_coordinates
+    shuffle(raspberry_coordinates)
+    raspberry_coordinates = raspberry_coordinates[:10]
+    # Derive image files to load from map data
     image_files = map_data['map']['legend'].values()
     images = dict(map(load_image, image_files))
     return {
         'images': images,
         'map_data': map_data,
         'tile_solids': tile_solids,
+        'empty_coordinates': empty_coordinates,
+        'raspberry_coordinates': raspberry_coordinates,
     }
 
 

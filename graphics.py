@@ -32,12 +32,8 @@ def display_map(assets, map_data, player):
     tile_legend = map_data['map_data']['map']['legend']
     for map_y in range(0, MAP_DISPLAY_HEIGHT):
         for map_x in range(0, MAP_DISPLAY_WIDTH):
-            x_offset = player_x - get_display_value(
-                player['x'], map_width, 'x'
-            )
-            y_offset = player_y - get_display_value(
-                player['y'], map_height, 'y'
-            )
+            x_offset = player_x - get_display_value(player_x, map_width, 'x')
+            y_offset = player_y - get_display_value(player_y, map_height, 'y')
             current_index = get_map_index(
                 map_width, map_x + x_offset, map_y + y_offset
             )
@@ -60,16 +56,38 @@ def display_player(assets, map_data, player):
     )
 
 
-def flip(assets):
-    screen = assets['screen']
-    pygame.display.flip()
-    screen.blit(assets['background'], (0, 0))
+def display_raspberries(assets, map_data, player):
+    player_x = player['x']
+    player_y = player['y']
+    dimensions = map_data['map_data']['map']['dimensions']
+    map_width = dimensions['width']
+    map_height = dimensions['height']
+    raspberry_coordinates = map_data['raspberry_coordinates']
+    x_offset = player_x - get_display_value(player_x, map_width, 'x')
+    y_offset = player_y - get_display_value(player_y, map_height, 'y')
+    for rasp_x, rasp_y in raspberry_coordinates:
+        display_x = rasp_x - x_offset
+        display_y = rasp_y - y_offset
+        if (display_x >= 0 and display_x <= MAP_DISPLAY_WIDTH and
+            display_y >= 0 and display_y <= MAP_DISPLAY_HEIGHT):
+            draw_image(
+                assets['screen'], assets, 'raspberry.png',
+                (display_x * TILE_WIDTH, display_y * TILE_HEIGHT)
+            )
 
 
 def render(assets, map_data, player):
+    screen = assets['screen']
+    screen.blit(assets['background'], (0, 0))
     display_map(assets, map_data, player)
+    display_raspberries(assets, map_data, player)
     display_player(assets, map_data, player)
     draw_text(
-        assets['screen'], assets, 'PressStart2P.ttf', 'Hello', (400, 400)
+        assets['screen'], assets, 'PressStart2P.ttf', 'Score:', (300, 420)
     )
-    flip(assets)
+    raspberries_label = 'Raspberries: {0}'.format(player['raspberries'])
+    draw_text(
+        assets['screen'], assets, 'PressStart2P.ttf', raspberries_label,
+        (10, 420)
+    )
+    pygame.display.flip()
