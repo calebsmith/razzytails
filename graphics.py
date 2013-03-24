@@ -68,8 +68,8 @@ def display_raspberries(assets, map_data, player):
     for rasp_x, rasp_y in raspberry_coordinates:
         display_x = rasp_x - x_offset
         display_y = rasp_y - y_offset
-        if (display_x >= 0 and display_x <= MAP_DISPLAY_WIDTH and
-            display_y >= 0 and display_y <= MAP_DISPLAY_HEIGHT):
+        if (display_x >= 0 and display_x < MAP_DISPLAY_WIDTH and
+            display_y >= 0 and display_y < MAP_DISPLAY_HEIGHT):
             draw_image(
                 assets['screen'], assets, 'raspberry.png',
                 (display_x * TILE_WIDTH, display_y * TILE_HEIGHT)
