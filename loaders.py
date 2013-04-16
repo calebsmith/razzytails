@@ -16,12 +16,12 @@ def initialize():
     background = pygame.Surface(screen.get_size()).convert()
     background.fill(get_color('black'))
     try:
-        conf_file = open(os.path.join(ASSETS_DIR, 'conf.json'))
+        config_file = open(os.path.join(ASSETS_DIR, 'config.json'))
     except IOError:
         print "No conf file found at {0}".format(ASSETS_DIR)
-    conf_data = loads(conf_file.read())
-    player_images = dict(map(load_image, conf_data['images']))
-    fonts = dict(map(load_font, conf_data['fonts']))
+    config_data = loads(config_file.read())
+    player_images = dict(map(load_image, config_data['images']))
+    fonts = dict(map(load_font, config_data['fonts']))
     return {
         'screen': screen,
         'background': background,

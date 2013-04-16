@@ -1,10 +1,34 @@
 #!/usr/bin/env python
 from functools import partial
+from collections import Iterable
 
 import pygame
 
 from const import (MAP_DISPLAY_WIDTH, MAP_DISPLAY_HEIGHT, MAP_DISPLAY_MID_X,
     MAP_DISPLAY_MID_Y)
+
+
+def is_non_string_iterable(item):
+    is_iterable = isinstance(item, Iterable)
+    is_string_type = isinstance(item, (str, unicode, bytes, bytearray))
+    return is_iterable and not is_string_type
+
+
+def validate_data_against_schema(data, schema):
+    if hasattr(schema, 'keys'):
+        for key in schema:
+            if not key in data:
+                return False
+            if not validate_data_against_schema(data[key], schema[key]):
+                return False
+    elif is_non_string_iterable(schema):
+        for key in schema:
+            if not validate_data_against_schema(data, key):
+                return False
+    else:
+        if not schema in data:
+            return False
+    return True
 
 
 def get_color(color):
