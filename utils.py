@@ -9,12 +9,20 @@ from const import (MAP_DISPLAY_WIDTH, MAP_DISPLAY_HEIGHT, MAP_DISPLAY_MID_X,
 
 
 def is_non_string_iterable(item):
+    """
+    Returns True if the given item is an Iterable and is not a str, unicode,
+    bytes, or bytearray; otherwise returns False.
+    """
     is_iterable = isinstance(item, Iterable)
     is_string_type = isinstance(item, (str, unicode, bytes, bytearray))
     return is_iterable and not is_string_type
 
 
 def validate_data_against_schema(data, schema):
+    """
+    Given `data`, and a `schema`, returns True if the data conforms to the
+    schema provided; otherwise returns False
+    """
     if hasattr(schema, 'keys'):
         for key in schema:
             if not key in data:

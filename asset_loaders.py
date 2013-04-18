@@ -1,7 +1,6 @@
 import os
 import json
 
-from const import MAPS_DIR
 from utils import validate_data_against_schema
 
 
@@ -132,7 +131,10 @@ class LoadableAsset(BaseAsset):
     def is_valid(self, raw_data):
         """
         Determines if the given data is valid and returns True or False
-        accordingly. Validation is performed in the following steps:
+        accordingly. If invalid, sets self.error to an error message as a
+        side-effect if not set in clean_<field> and clean methods. Validation
+        is performed in the following steps:
+
         1. Assure the data conforms to the given schema if provided
         2. Assure each field is valid using each 'clean_' method
         3. Assure all fields are valid with each other, by calling clean()
@@ -160,56 +162,3 @@ class LoadableAsset(BaseAsset):
                     self.error = '{0} did not validate'.format(raw_data)
                 return False
         return True
-
-
-class Map(Asset):
-    pass
-
-
-class Items(Asset):
-    pass
-
-
-class Mobs(Asset):
-    pass
-
-
-class Level(LoadableAsset):
-    path = MAPS_DIR
-
-    schema = {
-        'map': [
-            'solids',
-            'legend',
-            'tiles',
-            {
-                'dimensions': [
-                    'width', 'height'
-                ],
-            },
-        ],
-        'player_start': [
-            'x', 'y'
-        ],
-    }
-
-    def clean_map(self, map_data):
-        dimensions = map_data['dimensions']
-        num_tiles = dimensions['width'] * dimensions['height']
-        if len(map_data['tiles']) != num_tiles:
-            self.error = u'Number of tiles must equal width * height'
-            return False
-        return True
-
-    def clean(self, raw_data):
-        player_start = raw_data['player_start']
-        dimensions = raw_data['map']['dimensions']
-        x, y = player_start['x'], player_start['y']
-        if x < 0 or y < 0 or x >= dimensions['width'] or y >= dimensions['height']:
-            self.error = u'The player_start x or y is out of bounds'
-            return False
-        return True
-
-    def handle(self, data):
-        self.map = Map(data['map'])
-        self.player_start = data['player_start']
