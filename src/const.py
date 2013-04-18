@@ -1,7 +1,7 @@
 import os
 
 # Path directories
-PROJECT_DIR = os.path.dirname(__file__)
+PROJECT_DIR = os.path.join(os.path.dirname(__file__), '..')
 ASSETS_DIR = os.path.join(PROJECT_DIR, 'assets')
 
 CONFIG_DIR = os.path.join(ASSETS_DIR, 'config')

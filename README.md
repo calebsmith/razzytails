@@ -35,6 +35,10 @@ Installing pygame is *not* easy. Follow
 3. Run the game
 
         cd razzytails
+        ./main.sh
+
+    or
+        cd razzytails/src
         python main.py
 
 4. Go help Razzy build your Raspberry Pi!!
