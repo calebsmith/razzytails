@@ -16,7 +16,7 @@ def initialize():
     screen = Screen(config.screen)
     screen.set_background('black')
     player = Player()
-    return config, screen, player
+    return screen, config, player
 
 
 def load_map(map_filename, player):
@@ -31,6 +31,7 @@ def load_map(map_filename, player):
                 raspberry_coordinates.append((x, y))
     shuffle(raspberry_coordinates)
     level.map.raspberry_coordinates = raspberry_coordinates[:10]
+    # Place player at the start location
     player.x = level.map.player_start['x']
     player.y = level.map.player_start['y']
     return level

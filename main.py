@@ -1,29 +1,21 @@
 #!/usr/bin/env python
-
-import sys
-import time
-
-import pygame
-from pygame.constants import KEYUP, KEYDOWN, K_ESCAPE, QUIT
-
 from loaders import initialize, load_map
-from input_handlers import handle_key
+from input_handlers import handle_events
 from graphics import render
 
 
-def main(*args):
+def main():
     # Initialize display screen and load assets
-    config, screen, player = initialize()
+    screen, config, player = initialize()
     level = load_map(config.start, player)
-    while True:
-        # Exit on escape key or X
-        for event in pygame.event.get():
-            pressed_escape = event.type == KEYUP and event.key == K_ESCAPE
-            if pressed_escape or event.type == QUIT:
-                return
-            if event.type == KEYDOWN:
-                handle_key(event.key, level, player)
-        time.sleep(0.05)
+    # Run game loop
+    game_loop(screen, config, level, player)
+
+
+def game_loop(screen, config, level, player):
+    exit = False
+    while not exit:
+        exit = handle_events(config, level, player)
         player_coordinate = player.x, player.y
         if player_coordinate in level.map.raspberry_coordinates:
             player.raspberries += 1
@@ -32,4 +24,4 @@ def main(*args):
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    main()
