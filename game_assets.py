@@ -1,5 +1,32 @@
-from const import MAPS_DIR
+import os
+
+import pygame
+from pygame import display, Surface
+
+from const import MAPS_DIR, CONFIG_DIR, FONTS_DIR, IMAGES_DIR
 from asset_loaders import Asset, LoadableAsset
+from utils import get_color
+
+
+class Screen(Asset):
+
+    def __init__(self, *args, **kwargs):
+        super(Screen, self).__init__(*args, **kwargs)
+        self._create_context()
+
+    def _create_context(self):
+        display.set_caption(self.title)
+        self.context = display.set_mode((self.width, self.height))
+
+    def handle(self, data):
+        super(Screen, self).handle(data)
+        self.map_display_mid_x = self.map_display_width / 2
+        self.map_display_mid_y = self.map_display_height / 2
+
+    def set_background(self, color):
+        background = Surface(self.context.get_size()).convert()
+        background.fill(get_color(color))
+        self.background = background
 
 
 class Map(Asset):
@@ -15,8 +42,8 @@ class Mobs(Asset):
 
 
 class Level(LoadableAsset):
-    path = MAPS_DIR
 
+    path = MAPS_DIR
     schema = {
         'map': [
             'solids',
@@ -53,3 +80,45 @@ class Level(LoadableAsset):
     def handle(self, data):
         self.map = Map(data['map'])
         self.player_start = data['player_start']
+
+
+class Config(LoadableAsset):
+
+    path = CONFIG_DIR
+    location = 'config.json'
+    schema = [{
+        'screen': [
+            'title',
+            'width',
+            'height',
+            'tile_width',
+            'tile_height',
+            'map_display_width',
+            'map_display_height',
+        ]},
+        'images',
+        'fonts'
+    ]
+
+    def handle(self, data):
+        super(Config, self).handle(data)
+        self.images = dict(map(self.load_image, self.images))
+        self.fonts = dict(map(self.load_font, self.fonts))
+
+    def load_font(self, filename, font_size=16):
+        font_file = os.path.join(FONTS_DIR, filename)
+        try:
+            font = pygame.font.Font(font_file, font_size)
+        except (IOError, pygame.error):
+            print 'Font file {0} not found'.format(font_file)
+            font = None
+        return (filename, font)
+
+    def load_image(self, filename):
+        image_file = os.path.join(IMAGES_DIR, filename)
+        try:
+            image = pygame.image.load(image_file)
+        except (IOError, pygame.error):
+            print 'Image file {0} not found'.format(image_file)
+            image = None
+        return (filename, image)

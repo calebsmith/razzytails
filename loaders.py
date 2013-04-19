@@ -7,26 +7,21 @@ import pygame
 
 from const import (SCREEN_WIDTH, SCREEN_HEIGHT, ASSETS_DIR, IMAGES_DIR,
     FONTS_DIR, SOUNDS_DIR, MAPS_DIR)
-from utils import get_color, get_map_index
+from utils import get_map_index
+
+from game_assets import Config, Level, Screen
 
 
 def initialize():
     pygame.init()
-    screen = load_screen()
-    background = pygame.Surface(screen.get_size()).convert()
-    background.fill(get_color('black'))
-    try:
-        config_file = open(os.path.join(ASSETS_DIR, 'config.json'))
-    except IOError:
-        print "No conf file found at {0}".format(ASSETS_DIR)
-    config_data = loads(config_file.read())
-    player_images = dict(map(load_image, config_data['images']))
-    fonts = dict(map(load_font, config_data['fonts']))
+    config = Config()
+    screen = Screen(config.screen)
+    screen.set_background('black')
     return {
-        'screen': screen,
-        'background': background,
-        'images': player_images,
-        'fonts': fonts,
+        'screen': screen.context,
+        'background': screen.background,
+        'images': config.images,
+        'fonts': config.fonts,
     }
 
 
@@ -64,19 +59,10 @@ def load_map(map_filename):
     }
 
 
-def load_screen():
-    pygame.display.set_caption("Adventure")
-    return pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
-
-def load_font(filename, font_size=16):
-    font_file = os.path.join(FONTS_DIR, filename)
-    try:
-        font = pygame.font.Font(font_file, font_size)
-    except (IOError, pygame.error):
-        print 'Font file {0} not found'.format(font_file)
-        font = None
-    return (filename, font)
+def load_map_file(filename):
+    map_file = os.path.join(MAPS_DIR, filename)
+    f = open(map_file)
+    return loads(f.read())
 
 
 def load_image(filename):
@@ -87,9 +73,3 @@ def load_image(filename):
         print 'Image file {0} not found'.format(image_file)
         image = None
     return (filename, image)
-
-
-def load_map_file(filename):
-    map_file = os.path.join(MAPS_DIR, filename)
-    f = open(map_file)
-    return loads(f.read())

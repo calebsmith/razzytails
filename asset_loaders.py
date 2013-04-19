@@ -110,6 +110,7 @@ class LoadableAsset(BaseAsset):
         ]
         # Set the loader type. If given, load data from the given location.
         self.loader = Loader()
+        location = location or getattr(self, 'location', None)
         if location:
             self.load(location)
         self.error = ''
