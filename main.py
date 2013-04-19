@@ -14,7 +14,7 @@ from graphics import render
 def main(*args):
     # Initialize display screen and load assets
     config, screen, player = initialize()
-    level = load_map('map1.json', player)
+    level = load_map(config.start, player)
     while True:
         # Exit on escape key or X
         for event in pygame.event.get():

@@ -8,6 +8,7 @@
         "map_display_width": 20,
         "map_display_height": 13
     },
+    "start": "map1.json",
     "fonts": [
         "PressStart2P.ttf"
     ],
