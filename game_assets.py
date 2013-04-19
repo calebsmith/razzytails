@@ -5,6 +5,30 @@ from asset_loaders import Asset, LoadableAsset, load_image, load_font
 from utils import get_color
 
 
+class Config(LoadableAsset):
+
+    path = CONFIG_DIR
+    location = 'config.json'
+    schema = [{
+        'screen': [
+            'title',
+            'width',
+            'height',
+            'tile_width',
+            'tile_height',
+            'map_display_width',
+            'map_display_height',
+        ]},
+        'images',
+        'fonts'
+    ]
+
+    def handle(self, data):
+        super(Config, self).handle(data)
+        self.images = dict(map(load_image, self.images))
+        self.fonts = dict(map(load_font, self.fonts))
+
+
 class Screen(Asset):
 
     def __init__(self, *args, **kwargs):
@@ -41,6 +65,12 @@ class Items(Asset):
 
 class Mobs(Asset):
     pass
+
+
+class Player(Asset):
+    x = 0
+    y = 0
+    raspberries = 0
 
 
 class Level(LoadableAsset):
@@ -83,26 +113,3 @@ class Level(LoadableAsset):
         self.map = Map(data['map'])
         self.player_start = data['player_start']
 
-
-class Config(LoadableAsset):
-
-    path = CONFIG_DIR
-    location = 'config.json'
-    schema = [{
-        'screen': [
-            'title',
-            'width',
-            'height',
-            'tile_width',
-            'tile_height',
-            'map_display_width',
-            'map_display_height',
-        ]},
-        'images',
-        'fonts'
-    ]
-
-    def handle(self, data):
-        super(Config, self).handle(data)
-        self.images = dict(map(load_image, self.images))
-        self.fonts = dict(map(load_font, self.fonts))

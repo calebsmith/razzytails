@@ -13,10 +13,8 @@ from graphics import render
 
 def main(*args):
     # Initialize display screen and load assets
-    config, screen = initialize()
-    level = load_map('map1.json')
-    player = level.player_start
-    player['raspberries'] = 0
+    config, screen, player = initialize()
+    level = load_map('map1.json', player)
     while True:
         # Exit on escape key or X
         for event in pygame.event.get():
@@ -26,9 +24,9 @@ def main(*args):
             if event.type == KEYDOWN:
                 handle_key(event.key, level, player)
         time.sleep(0.05)
-        player_coordinate = player['x'], player['y']
+        player_coordinate = player.x, player.y
         if player_coordinate in level.map.raspberry_coordinates:
-            player['raspberries'] += 1
+            player.raspberries += 1
             level.map.raspberry_coordinates.remove(player_coordinate)
         render(screen, config, level, player)
 

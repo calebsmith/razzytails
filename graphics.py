@@ -23,8 +23,8 @@ def draw_text(surface, obj, font_name, label, coordinates, color=None):
 
 
 def display_map(screen, config, level, player):
-    player_x = player['x']
-    player_y = player['y']
+    player_x = player.x
+    player_y = player.y
     tiles = level.map.tiles
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
     tile_legend = level.map.legend
@@ -44,8 +44,8 @@ def display_map(screen, config, level, player):
 
 def display_player(screen, config, level, player):
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
-    display_x = get_display_value(player['x'], map_width, 'x')
-    display_y = get_display_value(player['y'], map_height, 'y')
+    display_x = get_display_value(player.x, map_width, 'x')
+    display_y = get_display_value(player.y, map_height, 'y')
     draw_image(
         screen.context, config, 'razzy-small.png',
         (display_x * TILE_WIDTH, display_y * TILE_HEIGHT)
@@ -53,8 +53,8 @@ def display_player(screen, config, level, player):
 
 
 def display_raspberries(screen, config, level, player):
-    player_x = player['x']
-    player_y = player['y']
+    player_x = player.x
+    player_y = player.y
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
     x_offset = player_x - get_display_value(player_x, map_width, 'x')
     y_offset = player_y - get_display_value(player_y, map_height, 'y')
@@ -77,7 +77,7 @@ def render(screen, config, level, player):
     draw_text(
         screen.context, config, 'PressStart2P.ttf', 'Score:', (300, 420)
     )
-    raspberries_label = 'Raspberries: {0}'.format(player['raspberries'])
+    raspberries_label = 'Raspberries: {0}'.format(player.raspberries)
     draw_text(
         screen.context, config, 'PressStart2P.ttf', raspberries_label,
         (10, 420)

@@ -9,7 +9,7 @@ from const import (SCREEN_WIDTH, SCREEN_HEIGHT, ASSETS_DIR, IMAGES_DIR,
     FONTS_DIR, SOUNDS_DIR, MAPS_DIR)
 from utils import get_map_index
 
-from game_assets import Config, Level, Screen
+from game_assets import Config, Level, Screen, Player
 
 
 def initialize():
@@ -21,10 +21,11 @@ def initialize():
     config = Config()
     screen = Screen(config.screen)
     screen.set_background('black')
-    return config, screen
+    player = Player()
+    return config, screen, player
 
 
-def load_map(map_filename):
+def load_map(map_filename, player):
     level = Level(map_filename)
     # TODO: Remove once items are added
     # Create and attach raspberry coordinates.
@@ -36,4 +37,6 @@ def load_map(map_filename):
                 raspberry_coordinates.append((x, y))
     shuffle(raspberry_coordinates)
     level.map.raspberry_coordinates = raspberry_coordinates[:10]
+    player.x = level.player_start['x']
+    player.y = level.player_start['y']
     return level
