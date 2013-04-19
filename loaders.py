@@ -1,13 +1,7 @@
 #!usr/bin/env python
-import os
 from random import shuffle
-from json import loads
 
 import pygame
-
-from const import (SCREEN_WIDTH, SCREEN_HEIGHT, ASSETS_DIR, IMAGES_DIR,
-    FONTS_DIR, SOUNDS_DIR, MAPS_DIR)
-
 
 from game_assets import Config, Level, Screen, Player
 

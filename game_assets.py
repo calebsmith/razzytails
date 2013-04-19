@@ -27,6 +27,8 @@ class Config(LoadableAsset):
         super(Config, self).handle(data)
         self.images = dict(map(load_image, self.images))
         self.fonts = dict(map(load_font, self.fonts))
+        self.screen['map_display_mid_x'] = self.screen['map_display_width'] / 2
+        self.screen['map_display_mid_y'] = self.screen['map_display_height'] / 2
 
 
 class Screen(Asset):
@@ -38,11 +40,6 @@ class Screen(Asset):
     def _create_context(self):
         display.set_caption(self.title)
         self.context = display.set_mode((self.width, self.height))
-
-    def handle(self, data):
-        super(Screen, self).handle(data)
-        self.map_display_mid_x = self.map_display_width / 2
-        self.map_display_mid_y = self.map_display_height / 2
 
     def set_background(self, color=''):
         color = color or 'black'

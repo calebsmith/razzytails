@@ -4,9 +4,6 @@ from collections import Iterable
 
 import pygame
 
-from const import (MAP_DISPLAY_WIDTH, MAP_DISPLAY_HEIGHT, MAP_DISPLAY_MID_X,
-    MAP_DISPLAY_MID_Y)
-
 
 def is_non_string_iterable(item):
     """
@@ -54,16 +51,16 @@ get_font = partial(_get_asset, 'fonts')
 get_sounds = partial(_get_asset, 'sounds')
 
 
-def _get_display_value(dimension, value, max_value):
+def _get_display_value(dimension, config, value, max_value):
     """
     Determine the display offset of the player or map tile given the current
     """
     if dimension == 'x':
-        med_display_mid = MAP_DISPLAY_MID_X
-        max_display_value = MAP_DISPLAY_WIDTH
+        med_display_mid = config.screen['map_display_mid_x']
+        max_display_value = config.screen['map_display_width']
     else:
-        med_display_mid = MAP_DISPLAY_MID_Y
-        max_display_value = MAP_DISPLAY_HEIGHT
+        med_display_mid = config.screen['map_display_mid_y']
+        max_display_value = config.screen['map_display_height']
     if value < med_display_mid:
         return value
     elif value < max_value - med_display_mid:
@@ -74,7 +71,7 @@ _get_display_x = partial(_get_display_value, 'x')
 _get_display_y = partial(_get_display_value, 'y')
 
 
-def get_display_coordinates(coordinates, max_coordinates):
+def get_display_coordinates(config, coordinates, max_coordinates):
     x, y = coordinates
     width, height = max_coordinates
-    return _get_display_x(x, width), _get_display_y(y, height)
+    return _get_display_x(config, x, width), _get_display_y(config, y, height)
