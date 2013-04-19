@@ -58,6 +58,9 @@ class Map(Asset):
         self.tile_solids = [tile in self.solids for tile in self.tiles]
         self.images = dict(map(load_image, self.legend.values()))
 
+    def get_index(self, x, y):
+        return y * self.dimensions['width'] + x
+
 
 class Items(Asset):
     pass
@@ -112,4 +115,3 @@ class Level(LoadableAsset):
     def handle(self, data):
         self.map = Map(data['map'])
         self.player_start = data['player_start']
-

@@ -44,21 +44,17 @@ def get_color(color):
         or pygame.color.THECOLORS['black']
 
 
-def get_asset(type_name, assets, filename):
+def _get_asset(type_name, assets, filename):
     attribute = getattr(assets, type_name, None)
     return attribute.get(filename, None) if attribute else None
 
 
-get_image = partial(get_asset, 'images')
-get_font = partial(get_asset, 'fonts')
-get_sounds = partial(get_asset, 'sounds')
+get_image = partial(_get_asset, 'images')
+get_font = partial(_get_asset, 'fonts')
+get_sounds = partial(_get_asset, 'sounds')
 
 
-def get_map_index(map_width, x, y):
-    return y * map_width + x
-
-
-def get_display_value(value, max_value, dimension):
+def _get_display_value(dimension, value, max_value):
     """
     Determine the display offset of the player or map tile given the current
     """
@@ -73,3 +69,12 @@ def get_display_value(value, max_value, dimension):
     elif value < max_value - med_display_mid:
         return med_display_mid
     return value - (max_value - max_display_value)
+
+_get_display_x = partial(_get_display_value, 'x')
+_get_display_y = partial(_get_display_value, 'y')
+
+
+def get_display_coordinates(coordinates, max_coordinates):
+    x, y = coordinates
+    width, height = max_coordinates
+    return _get_display_x(x, width), _get_display_y(y, height)

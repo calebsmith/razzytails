@@ -3,8 +3,7 @@ import pygame
 
 from const import (SCREEN_WIDTH, SCREEN_HEIGHT, MAP_DISPLAY_WIDTH,
     MAP_DISPLAY_HEIGHT, TILE_WIDTH, TILE_HEIGHT)
-from utils import (get_color, get_image, get_font, get_display_value,
-    get_map_index)
+from utils import get_color, get_image, get_font, get_display_coordinates
 
 
 def draw_image(surface, obj, image_name, coordinates):
@@ -23,17 +22,16 @@ def draw_text(surface, obj, font_name, label, coordinates, color=None):
 
 
 def display_map(screen, config, level, player):
-    player_x = player.x
-    player_y = player.y
     tiles = level.map.tiles
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
     tile_legend = level.map.legend
     for map_y in range(0, MAP_DISPLAY_HEIGHT):
         for map_x in range(0, MAP_DISPLAY_WIDTH):
-            x_offset = player_x - get_display_value(player_x, map_width, 'x')
-            y_offset = player_y - get_display_value(player_y, map_height, 'y')
-            current_index = get_map_index(
-                map_width, map_x + x_offset, map_y + y_offset
+            display_x, display_y = get_display_coordinates(
+                (player.x, player.y), (map_width, map_height)
+            )
+            current_index = level.map.get_index(
+                map_x + (player.x - display_x), map_y + (player.y - display_y)
             )
             image_filename = tile_legend.get(unicode(tiles[current_index]), '')
             screen.context.blit(
@@ -44,8 +42,9 @@ def display_map(screen, config, level, player):
 
 def display_player(screen, config, level, player):
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
-    display_x = get_display_value(player.x, map_width, 'x')
-    display_y = get_display_value(player.y, map_height, 'y')
+    display_x, display_y = get_display_coordinates(
+        (player.x, player.y), (map_width, map_height)
+    )
     draw_image(
         screen.context, config, 'razzy-small.png',
         (display_x * TILE_WIDTH, display_y * TILE_HEIGHT)
@@ -53,14 +52,13 @@ def display_player(screen, config, level, player):
 
 
 def display_raspberries(screen, config, level, player):
-    player_x = player.x
-    player_y = player.y
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
-    x_offset = player_x - get_display_value(player_x, map_width, 'x')
-    y_offset = player_y - get_display_value(player_y, map_height, 'y')
+    x_offset, y_offset = get_display_coordinates(
+        (player.x, player.y), (map_width, map_height)
+    )
     for rasp_x, rasp_y in level.map.raspberry_coordinates:
-        display_x = rasp_x - x_offset
-        display_y = rasp_y - y_offset
+        display_x = rasp_x - (player.x - x_offset)
+        display_y = rasp_y - (player.y - y_offset)
         if (display_x >= 0 and display_x < MAP_DISPLAY_WIDTH and
             display_y >= 0 and display_y < MAP_DISPLAY_HEIGHT):
             draw_image(

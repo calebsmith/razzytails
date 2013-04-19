@@ -7,7 +7,7 @@ import pygame
 
 from const import (SCREEN_WIDTH, SCREEN_HEIGHT, ASSETS_DIR, IMAGES_DIR,
     FONTS_DIR, SOUNDS_DIR, MAPS_DIR)
-from utils import get_map_index
+
 
 from game_assets import Config, Level, Screen, Player
 
@@ -33,7 +33,7 @@ def load_map(map_filename, player):
     raspberry_coordinates = []
     for y in xrange(height):
         for x in xrange(width):
-            if not level.map.tile_solids[get_map_index(width, x, y)]:
+            if not level.map.tile_solids[level.map.get_index(x, y)]:
                 raspberry_coordinates.append((x, y))
     shuffle(raspberry_coordinates)
     level.map.raspberry_coordinates = raspberry_coordinates[:10]
