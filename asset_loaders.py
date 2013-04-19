@@ -1,7 +1,30 @@
 import os
 import json
 
+import pygame
+
 from utils import validate_data_against_schema
+from const import IMAGES_DIR, FONTS_DIR
+
+
+def load_image(filename):
+    image_file = os.path.join(IMAGES_DIR, filename)
+    try:
+        image = pygame.image.load(image_file)
+    except (IOError, pygame.error):
+        print 'Image file {0} not found'.format(image_file)
+        image = None
+    return (filename, image)
+
+
+def load_font(filename, font_size=16):
+    font_file = os.path.join(FONTS_DIR, filename)
+    try:
+        font = pygame.font.Font(font_file, font_size)
+    except (IOError, pygame.error):
+        print 'Font file {0} not found'.format(font_file)
+        font = None
+    return (filename, font)
 
 
 class Loader(object):

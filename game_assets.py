@@ -1,10 +1,7 @@
-import os
-
-import pygame
 from pygame import display, Surface
 
-from const import MAPS_DIR, CONFIG_DIR, FONTS_DIR, IMAGES_DIR
-from asset_loaders import Asset, LoadableAsset
+from const import MAPS_DIR, CONFIG_DIR
+from asset_loaders import Asset, LoadableAsset, load_image, load_font
 from utils import get_color
 
 
@@ -23,14 +20,19 @@ class Screen(Asset):
         self.map_display_mid_x = self.map_display_width / 2
         self.map_display_mid_y = self.map_display_height / 2
 
-    def set_background(self, color):
+    def set_background(self, color=''):
+        color = color or 'black'
         background = Surface(self.context.get_size()).convert()
         background.fill(get_color(color))
         self.background = background
 
 
 class Map(Asset):
-    pass
+
+    def handle(self, data):
+        super(Map, self).handle(data)
+        self.tile_solids = [tile in self.solids for tile in self.tiles]
+        self.images = dict(map(load_image, self.legend.values()))
 
 
 class Items(Asset):
@@ -102,23 +104,5 @@ class Config(LoadableAsset):
 
     def handle(self, data):
         super(Config, self).handle(data)
-        self.images = dict(map(self.load_image, self.images))
-        self.fonts = dict(map(self.load_font, self.fonts))
-
-    def load_font(self, filename, font_size=16):
-        font_file = os.path.join(FONTS_DIR, filename)
-        try:
-            font = pygame.font.Font(font_file, font_size)
-        except (IOError, pygame.error):
-            print 'Font file {0} not found'.format(font_file)
-            font = None
-        return (filename, font)
-
-    def load_image(self, filename):
-        image_file = os.path.join(IMAGES_DIR, filename)
-        try:
-            image = pygame.image.load(image_file)
-        except (IOError, pygame.error):
-            print 'Image file {0} not found'.format(image_file)
-            image = None
-        return (filename, image)
+        self.images = dict(map(load_image, self.images))
+        self.fonts = dict(map(load_font, self.fonts))

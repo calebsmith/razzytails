@@ -13,9 +13,9 @@ from graphics import render
 
 def main(*args):
     # Initialize display screen and load assets
-    assets = initialize()
-    map_data = load_map('map1.json')
-    player = map_data['map_data']['player_start']
+    config, screen = initialize()
+    level = load_map('map1.json')
+    player = level.player_start
     player['raspberries'] = 0
     while True:
         # Exit on escape key or X
@@ -24,14 +24,13 @@ def main(*args):
             if pressed_escape or event.type == QUIT:
                 return
             if event.type == KEYDOWN:
-                handle_key(event.key, map_data, player)
+                handle_key(event.key, level, player)
         time.sleep(0.05)
-        raspberry_coordinates = map_data['raspberry_coordinates']
         player_coordinate = player['x'], player['y']
-        if player_coordinate in raspberry_coordinates:
+        if player_coordinate in level.map.raspberry_coordinates:
             player['raspberries'] += 1
-            raspberry_coordinates.remove(player_coordinate)
-        render(assets, map_data, player)
+            level.map.raspberry_coordinates.remove(player_coordinate)
+        render(screen, config, level, player)
 
 
 if __name__ == "__main__":

@@ -45,7 +45,8 @@ def get_color(color):
 
 
 def get_asset(type_name, assets, filename):
-    return assets[type_name].get(filename, None)
+    attribute = getattr(assets, type_name, None)
+    return attribute.get(filename, None) if attribute else None
 
 
 get_image = partial(get_asset, 'images')

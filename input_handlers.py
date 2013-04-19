@@ -4,13 +4,13 @@ from pygame.constants import K_UP, K_DOWN, K_LEFT, K_RIGHT
 from utils import get_map_index
 
 
-def handle_key(event_key, map_data, player):
+def handle_key(event_key, level, player):
     current_x = player['x']
     current_y = player['y']
-    dimensions = map_data['map_data']['map']['dimensions']
+    dimensions = level.map.dimensions
     map_width = dimensions['width']
     map_height = dimensions['height']
-    tile_solids = map_data['tile_solids']
+    tile_solids = level.map.tile_solids
     if event_key == K_UP and current_y > 0:
         tile_up_index = get_map_index(map_width, current_x, current_y - 1)
         if not tile_solids[tile_up_index]:
