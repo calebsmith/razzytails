@@ -46,7 +46,7 @@ def display_player(screen, config, level, player):
         config, (player.x, player.y), (map_width, map_height)
     )
     draw_image(
-        screen.context, config, 'razzy-small.png', (
+        screen.context, config, 'razzy.png', (
             display_x * config.screen['tile_width'],
             display_y * config.screen['tile_height']
         )

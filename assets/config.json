@@ -5,15 +5,15 @@
         "height": 480,
         "tile_width": 32,
         "tile_height": 32,
-        "map_display_width": 20,
-        "map_display_height": 13
+        "map_display_width": 15,
+        "map_display_height": 15
     },
     "start": "map1.json",
     "fonts": [
         "PressStart2P.ttf"
     ],
     "images": [
-        "razzy-small.png",
+        "razzy.png",
         "raspberry.png"
     ]
 }
