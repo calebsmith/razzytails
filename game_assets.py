@@ -1,6 +1,8 @@
+import os
+
 from pygame import display, Surface
 
-from const import MAPS_DIR, CONFIG_DIR
+from const import MAPS_DIR, CONFIG_DIR, MUSIC_DIR
 from asset_loaders import Asset, LoadableAsset, load_image, load_font
 from utils import get_color
 
@@ -21,13 +23,21 @@ class Config(LoadableAsset):
         ]},
         'start',
         'images',
-        'fonts'
+        'fonts',
+        'music',
+        'score_font',
+        'raspberries_font', {
+            'message_box': [
+                'x', 'y', 'char_width', 'char_height'
+            ]
+        },
     ]
 
     def handle(self, data):
         super(Config, self).handle(data)
         self.images = dict(map(load_image, self.images))
         self.fonts = dict(map(load_font, self.fonts))
+        self.music = os.path.join(MUSIC_DIR, self.music) if self.music else ''
         self.screen['map_display_mid_x'] = self.screen['map_display_width'] / 2
         self.screen['map_display_mid_y'] = self.screen['map_display_height'] / 2
 
@@ -72,6 +82,7 @@ class Mob(Asset):
 
 class Player(Mob):
     raspberries = 0
+    message_line_offset = 0
 
 
 class Level(LoadableAsset):

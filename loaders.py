@@ -12,6 +12,7 @@ def initialize():
     context. Returns a two tuple in the form of: (config, screen)
     """
     pygame.init()
+    pygame.mixer.init()
     config = Config()
     screen = Screen(config.screen)
     screen.set_background('black')

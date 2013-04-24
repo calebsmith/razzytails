@@ -1,19 +1,22 @@
 #!/usr/bin/env python
 import pygame
-
 from pygame.constants import K_UP, K_DOWN, K_LEFT, K_RIGHT
 from pygame.constants import KEYUP, KEYDOWN, K_ESCAPE, QUIT
 
+from const import GAME_STATES
 
-def handle_events(config, level, player):
+
+def handle_events(game_state, config, level, player):
     # Exit on escape key or X
     for event in pygame.event.get():
         pressed_escape = event.type == KEYUP and event.key == K_ESCAPE
-        if pressed_escape or event.type == QUIT:
-            return True
+        if pressed_escape and game_state == GAME_STATES['main'] or event.type == QUIT:
+            return GAME_STATES['exit']
         if event.type == KEYDOWN:
             handle_key(event.key, level, player)
-    return False
+        if event.type == KEYDOWN and game_state == GAME_STATES['dialog']:
+            game_state = GAME_STATES['main']
+    return game_state
 
 
 def handle_key(event_key, level, player):

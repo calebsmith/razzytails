@@ -75,3 +75,36 @@ def get_display_coordinates(config, coordinates, max_coordinates):
     x, y = coordinates
     width, height = max_coordinates
     return _get_display_x(config, x, width), _get_display_y(config, y, height)
+
+
+def word_wrap(sentance, limit):
+    """
+    A simple word wrap utility function.
+
+    Given a sentance and a limit, return a list of strings such that no string
+    is longer than the `limit`. If a single word is longer than the limit, it
+    is made into two or more strings in the list, with hyphens appended at the
+    end of all but the last of these strings.
+    """
+    results = []
+    current = ''
+    separator = ''
+    for word in sentance.split(' '):
+        if len(current) + len(word) + len(separator) <= limit:
+            current += separator + word
+            separator = ' '
+        elif (len(word) <= limit):
+            if current:
+                results.append(current)
+            current = word
+        else:
+            if current:
+                results.append(current)
+            for start in xrange(0, len(word), limit - 1):
+                # If this is not the last iteration
+                if start + limit - 1 < len(word):
+                    results.append(word[start:start + limit - 1] + '-')
+                else:
+                    current = word[start:start + limit - 1]
+    results.append(current)
+    return results
