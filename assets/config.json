@@ -17,5 +17,11 @@
     "images": [
         "razzy-small.png",
         "raspberry.png"
-    ]
+    ],
+    "message_box": {
+        "x": 50,
+        "y": 50,
+        "char_width": 40,
+        "char_height": 8
+    }
 }

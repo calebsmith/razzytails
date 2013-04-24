@@ -23,7 +23,11 @@ class Config(LoadableAsset):
         'images',
         'fonts',
         'score_font',
-        'raspberries_font'
+        'raspberries_font', {
+            'message_box': [
+                'x', 'y', 'char_width', 'char_height'
+            ]
+        },
     ]
 
     def handle(self, data):
@@ -74,6 +78,7 @@ class Mob(Asset):
 
 class Player(Mob):
     raspberries = 0
+    message_line_offset = 0
 
 
 class Level(LoadableAsset):

@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 import pygame
 
-from utils import get_color, get_image, get_font, get_display_coordinates
+from utils import (get_color, get_image, get_font, get_display_coordinates,
+    word_wrap)
+from const import GAME_STATES
 
 
 def draw_image(surface, obj, image_name, coordinates):
@@ -19,7 +21,7 @@ def draw_text(surface, obj, font_name, label, coordinates, color=None):
         surface.blit(text, textpos)
 
 
-def display_map(screen, config, level, player):
+def display_map(game_state, screen, config, level, player):
     tiles = level.map.tiles
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
     tile_legend = level.map.legend
@@ -40,7 +42,7 @@ def display_map(screen, config, level, player):
             )
 
 
-def display_player(screen, config, level, player):
+def display_player(game_state, screen, config, level, player):
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
     display_x, display_y = get_display_coordinates(
         config, (player.x, player.y), (map_width, map_height)
@@ -53,7 +55,7 @@ def display_player(screen, config, level, player):
     )
 
 
-def display_raspberries(screen, config, level, player):
+def display_raspberries(game_state, screen, config, level, player):
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
     x_offset, y_offset = get_display_coordinates(
         config, (player.x, player.y), (map_width, map_height)
@@ -71,11 +73,34 @@ def display_raspberries(screen, config, level, player):
             )
 
 
-def render(screen, config, level, player):
+def draw_dialog(game_state, screen, config, level, player):
+    # FIXME: Hard code the dialog message for now
+    message = """You got a scrawburry! Nice job finding a scrawburry. There are 10 in total so there are many many scarburries out there for you. Go get some more scrawburries. You get a scrawburry, you get a scrawberry everyone gets a lorem ipsum scrawburry"""
+    # Create the black surface for the dialog area to go onto
+    char_width = config.message_box['char_width']
+    char_height = config.message_box['char_height']
+    x_margin, y_margin = 10, 10
+    message_surface = pygame.Surface(
+        (10 * char_width + x_margin * 2, 25 * char_height + y_margin * 2)
+    )
+    box_x, box_y = config.message_box['x'], config.message_box['y']
+    line_offset = player.message_line_offset
+    strings = word_wrap(
+        message, char_width
+    )[line_offset:line_offset + char_height]
+    for index, string in enumerate(strings):
+        draw_text(
+            message_surface, config, config.score_font, string,
+            (x_margin, y_margin + index * 20)
+        )
+        screen.context.blit(message_surface, (box_x, box_y))
+
+
+def render(game_state, screen, config, level, player):
     screen.context.blit(screen.background, (0, 0))
-    display_map(screen, config, level, player)
-    display_raspberries(screen, config, level, player)
-    display_player(screen, config, level, player)
+    display_map(game_state, screen, config, level, player)
+    display_raspberries(game_state, screen, config, level, player)
+    display_player(game_state, screen, config, level, player)
     draw_text(
         screen.context, config, config.score_font, 'Score:', (300, 420)
     )
@@ -84,4 +109,6 @@ def render(screen, config, level, player):
         screen.context, config, config.raspberries_font, raspberries_label,
         (10, 420)
     )
+    if game_state == GAME_STATES['dialog']:
+        draw_dialog(game_state, screen, config, level, player)
     pygame.display.flip()

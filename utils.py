@@ -77,7 +77,7 @@ def get_display_coordinates(config, coordinates, max_coordinates):
     return _get_display_x(config, x, width), _get_display_y(config, y, height)
 
 
-def word_wrap_string(sentance, limit):
+def word_wrap(sentance, limit):
     """
     A simple word wrap utility function.
 
