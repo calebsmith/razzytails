@@ -37,7 +37,7 @@ class Config(LoadableAsset):
         super(Config, self).handle(data)
         self.images = dict(map(load_image, self.images))
         self.fonts = dict(map(load_font, self.fonts))
-        self.music = os.path.join(MUSIC_DIR, self.music)
+        self.music = os.path.join(MUSIC_DIR, self.music) if self.music else ''
         self.screen['map_display_mid_x'] = self.screen['map_display_width'] / 2
         self.screen['map_display_mid_y'] = self.screen['map_display_height'] / 2
 
