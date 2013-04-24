@@ -4,7 +4,7 @@ import json
 import pygame
 
 from utils import validate_data_against_schema
-from const import IMAGES_DIR, FONTS_DIR
+from const import IMAGES_DIR, FONTS_DIR, MUSIC_DIR
 
 
 def load_image(filename):

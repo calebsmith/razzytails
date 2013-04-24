@@ -18,6 +18,7 @@
         "razzy-small.png",
         "raspberry.png"
     ],
+    "music": "dark_blue.ogg",
     "message_box": {
         "x": 50,
         "y": 50,

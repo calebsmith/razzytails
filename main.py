@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import pygame
+
 from loaders import initialize, load_map
 from input_handlers import handle_events
 from graphics import render
@@ -10,6 +12,9 @@ def main():
     screen, config, player = initialize()
     level = load_map(config.start, player)
     game_state = GAME_STATES['main']
+    # Play background music
+    pygame.mixer.music.load(config.music)
+    pygame.mixer.music.play(-1)
     # Run game loop
     game_loop(game_state, screen, config, level, player)
 
