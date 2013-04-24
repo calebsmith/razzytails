@@ -10,8 +10,10 @@
     },
     "start": "map1.json",
     "fonts": [
-        "PressStart2P.ttf"
+        "VeraMono.ttf"
     ],
+    "score_font": "VeraMono.ttf",
+    "raspberries_font": "VeraMono.ttf",
     "images": [
         "razzy-small.png",
         "raspberry.png"

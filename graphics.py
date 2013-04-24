@@ -77,11 +77,11 @@ def render(screen, config, level, player):
     display_raspberries(screen, config, level, player)
     display_player(screen, config, level, player)
     draw_text(
-        screen.context, config, 'PressStart2P.ttf', 'Score:', (300, 420)
+        screen.context, config, config.score_font, 'Score:', (300, 420)
     )
     raspberries_label = 'Raspberries: {0}'.format(player.raspberries)
     draw_text(
-        screen.context, config, 'PressStart2P.ttf', raspberries_label,
+        screen.context, config, config.raspberries_font, raspberries_label,
         (10, 420)
     )
     pygame.display.flip()

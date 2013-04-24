@@ -21,7 +21,9 @@ class Config(LoadableAsset):
         ]},
         'start',
         'images',
-        'fonts'
+        'fonts',
+        'score_font',
+        'raspberries_font'
     ]
 
     def handle(self, data):
