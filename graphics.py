@@ -77,13 +77,13 @@ def draw_dialog(game_state, screen, config, level, player):
     # FIXME: Hard code the dialog message for now
     message = """You got a scrawburry! Nice job finding a scrawburry. There are 10 in total so there are many many scarburries out there for you. Go get some more scrawburries. You get a scrawburry, you get a scrawberry everyone gets a lorem ipsum scrawburry"""
     # Create the black surface for the dialog area to go onto
-    char_width = config.message_box['char_width']
-    char_height = config.message_box['char_height']
+    char_width = config.dialog_box['char_width']
+    char_height = config.dialog_box['char_height']
     x_margin, y_margin = 10, 10
     message_surface = pygame.Surface(
         (10 * char_width + x_margin * 2, 25 * char_height + y_margin * 2)
     )
-    box_x, box_y = config.message_box['x'], config.message_box['y']
+    box_x, box_y = config.dialog_box['x'], config.dialog_box['y']
     line_offset = player.message_line_offset
     strings = word_wrap(
         message, char_width

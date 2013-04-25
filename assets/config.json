@@ -19,7 +19,7 @@
         "raspberry.png"
     ],
     "music": "dark_blue.ogg",
-    "message_box": {
+    "dialog_box": {
         "x": 50,
         "y": 50,
         "char_width": 40,

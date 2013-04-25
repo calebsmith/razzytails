@@ -27,7 +27,7 @@ class Config(LoadableAsset):
         'music',
         'score_font',
         'raspberries_font', {
-            'message_box': [
+            'dialog_box': [
                 'x', 'y', 'char_width', 'char_height'
             ]
         },
