@@ -24,5 +24,9 @@
         "y": 50,
         "char_width": 40,
         "char_height": 8
+    },
+    "keypress_repeat": {
+        "delay": 200,
+        "interval": 200
     }
 }

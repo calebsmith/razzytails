@@ -31,6 +31,11 @@ class Config(LoadableAsset):
                 'x', 'y', 'char_width', 'char_height'
             ]
         },
+        {'keypress_repeat': [
+            'delay',
+            'interval'
+            ]
+        }
     ]
 
     def handle(self, data):
