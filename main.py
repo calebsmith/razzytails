@@ -17,6 +17,11 @@ def main():
         pygame.mixer.music.load(config.music)
         pygame.mixer.music.play(-1)
     # Run game loop
+    # by default the key repeat is disabled
+    # call set_repeat() to enable it
+    delay = config.keypress_repeat['delay']
+    interval = config.keypress_repeat['interval']
+    pygame.key.set_repeat(delay, interval)
     game_loop(game_state, screen, config, level, player)
 
 
