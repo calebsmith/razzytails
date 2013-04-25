@@ -101,14 +101,6 @@ def render(game_state, screen, config, level, player):
     display_map(game_state, screen, config, level, player)
     display_raspberries(game_state, screen, config, level, player)
     display_player(game_state, screen, config, level, player)
-    draw_text(
-        screen.context, config, config.score_font, 'Score:', (300, 420)
-    )
-    raspberries_label = 'Raspberries: {0}'.format(player.raspberries)
-    draw_text(
-        screen.context, config, config.raspberries_font, raspberries_label,
-        (10, 420)
-    )
     if game_state == GAME_STATES['dialog']:
         draw_dialog(game_state, screen, config, level, player)
     pygame.display.flip()
