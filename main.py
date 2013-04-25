@@ -20,6 +20,11 @@ def main():
         except pygame.error:
             pass
     # Run game loop
+    # by default the key repeat is disabled
+    # call set_repeat() to enable it
+    delay = config.keypress_repeat['delay']
+    interval = config.keypress_repeat['interval']
+    pygame.key.set_repeat(delay, interval)
     game_loop(game_state, screen, config, level, player)
 
 
