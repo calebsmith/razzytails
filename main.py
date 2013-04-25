@@ -14,8 +14,11 @@ def main():
     game_state = GAME_STATES['main']
     # Play background music
     if config.music:
-        pygame.mixer.music.load(config.music)
-        pygame.mixer.music.play(-1)
+        try:
+            pygame.mixer.music.load(config.music)
+            pygame.mixer.music.play(-1)
+        except pygame.error:
+            pass
     # Run game loop
     game_loop(game_state, screen, config, level, player)
 
