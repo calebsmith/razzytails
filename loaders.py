@@ -9,7 +9,7 @@ from game_assets import Config, Level, Screen, Player
 def initialize():
     """
     Initializes pygame, loads the configuration file and creates a display
-    context. Returns a two tuple in the form of: (config, screen)
+    context. Returns a 3-item tuple in the form of: (config, screen, player)
     """
     pygame.init()
     pygame.mixer.init()
