@@ -74,15 +74,21 @@ class Item(Asset):
     pass
 
 
-class Mob(Asset):
+class Monster(Asset):
     x = 0
     y = 0
-    items = []
+
+    def handle(self, data):
+        super(Asset, self).handle(data)
+        self.image = dict(map(load_image, self.legend.values()))
 
 
-class Player(Mob):
+class Player(Asset):
+    x = 0
+    y = 0
     raspberries = 0
     message_line_offset = 0
+    items = []
 
 
 class Level(LoadableAsset):
@@ -104,6 +110,10 @@ class Level(LoadableAsset):
                 ],
             }
         ],
+        'monsters': [
+            'image',
+            'number'
+        ]
     }
 
     def clean_map(self, map_data):
