@@ -53,19 +53,11 @@ def display_player(game_state, screen, config, level, player):
 
 
 def display_monsters(game_state, screen, config, level, player):
-    # don't let monsters move during dialog boxes
-    if game_state.state != 'main':
-        return
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
     x_offset, y_offset = get_display_coordinates(
         config, (player.x, player.y), (map_width, map_height)
     )
-    ticks = pygame.time.get_ticks()
-
     for monster in level.monsters:
-        if ticks > (monster.last_moved_at + config.monster_delay):
-            monster.last_moved_at = ticks
-            monster.move(level, player)
         display_x = monster.x - (player.x - x_offset)
         display_y = monster.y - (player.y - y_offset)
         if (display_x >= 0 and display_x < config.screen['map_display_width'] and
