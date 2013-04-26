@@ -71,7 +71,7 @@ def display_monsters(game_state, screen, config, level, player):
         if (display_x >= 0 and display_x < config.screen['map_display_width'] and
                 display_y >= 0 and display_y < config.screen['map_display_height']):
             draw_image(
-                screen.context, monster, 'honeybadger.png', (
+                screen.context, level, monster.image, (
                     display_x * config.screen['tile_width'],
                     display_y * config.screen['tile_height']
                 )
@@ -90,7 +90,7 @@ def display_items(game_state, screen, config, level, player):
                 display_y >= 0 and display_y < config.screen['map_display_height']):
             item = next((x for x in level.items if x.id == item_coords['id']), None)
             draw_image(
-                screen.context, config, item.image[0], (
+                screen.context, level, item.image, (
                     display_x * config.screen['tile_width'],
                     display_y * config.screen['tile_height']
                 )

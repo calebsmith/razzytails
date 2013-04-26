@@ -132,7 +132,6 @@ class Item(Asset):
 
     def handle(self, data):
         super(Item, self).handle(data)
-        self.image = load_image(self.image)
         self.message = word_wrap(self.message, self.width) + ['', '[X] Collect!']
 
 
@@ -140,10 +139,6 @@ class Monster(Asset):
     x = 0
     y = 0
     last_moved_at = 0
-
-    def handle(self, data):
-        super(Monster, self).handle(data)
-        self.images = dict(map(load_image, self.images))
 
     def place_on_map(self, map_data):
         found_spot = False
@@ -230,7 +225,7 @@ class Level(LoadableAsset):
             }
         ],
         'monsters': [
-            'images',
+            'image',
             'number'
         ],
         'items': [
@@ -278,7 +273,6 @@ class Level(LoadableAsset):
 
         self.map.item_coordinates = []
         self.items = []
-
         item_locations = self._generate_item_locations(self.map)
         for index, item_data in enumerate(data['items']):
             location = item_locations[index]
@@ -286,6 +280,17 @@ class Level(LoadableAsset):
             self.items.append(item)
             self.map.item_coordinates.append({'id': item.id,
                                               'coordinates': location})
+        # Load and store image files for monster and item objects
+        monster_images = dict([
+            load_image(monster.image)
+            for monster in self.monsters
+        ])
+        item_images = dict([
+            load_image(item.image)
+            for item in self.items
+        ])
+        self.images = monster_images
+        self.images.update(item_images)
 
     def _generate_item_locations(self, map_data):
         locations = []
