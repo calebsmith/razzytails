@@ -154,4 +154,9 @@ def render(game_state, screen, config, level, player):
             game_state, screen, config, level, player,
             player.current_item.message
         )
+    if game_state.is_state('info'):
+        draw_popup(game_state, screen, config, level, player, [
+            'Honey Badger got you! You lost all of your items', '',
+            'Press <Enter> to return'
+        ])
     pygame.display.flip()

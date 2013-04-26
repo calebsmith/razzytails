@@ -101,8 +101,11 @@ def select_answer_listener(event, game_state, config, level, player):
         questions.choice += 1
 
 
-@register_listener(['item'])
+@register_listener(['item', 'info'])
 def item_collected_listener(event, game_state, config, level, player):
     event_key = event.key
     if event_key == K_RETURN or event_key == K_SPACE:
-        game_state.item_collected(level, player)
+        if game_state.can('item_collected'):
+            game_state.item_collected(level, player)
+        else:
+            game_state.info_closed()

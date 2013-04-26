@@ -59,7 +59,17 @@ transitions = [
         'name': 'end',
         'source': 'main',
         'destination': 'endscreen'
-    }
+    },
+    {
+        'name': 'popup_info',
+        'source': 'main',
+        'destination': 'info'
+    },
+    {
+        'name': 'info_closed',
+        'source': 'info',
+        'destination': 'main'
+    },
 ]
 
 
@@ -78,6 +88,7 @@ def handle_answer(is_correct, level, player):
     else:
         level.reset_items(player)
         level.reset_monsters()
+        game_state.popup_info()
 
 
 def handle_item_collected(level, player):
