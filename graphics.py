@@ -1,9 +1,6 @@
-import random
-
 import pygame
 
 from utils import get_color, get_image, get_font, get_display_coordinates
-from const import GAME_STATES
 
 
 def draw_image(surface, obj, image_name, coordinates):
@@ -128,6 +125,6 @@ def render(game_state, screen, config, level, player):
         screen.context, config, config.raspberries_font, raspberries_label,
         (10, 420)
     )
-    if game_state == GAME_STATES['dialog']:
+    if game_state.is_state('dialog'):
         draw_dialog(game_state, screen, config, level, player)
     pygame.display.flip()

@@ -12,12 +12,27 @@ SOUNDS_DIR = os.path.join(ASSETS_DIR, 'sounds')
 MAPS_DIR = os.path.join(ASSETS_DIR, 'maps')
 
 
-# FSM nodes
-MAIN_STATE = 0
-EXIT_STATE = 1
-DIALOG_STATE = 2
-GAME_STATES = {
-    'main': MAIN_STATE,
-    'exit': EXIT_STATE,
-    'dialog': DIALOG_STATE,
-}
+# FSM nodes and transitions
+FSM_INITIAL = 'main'
+FSM_TRANSITIONS = [
+    {
+        'name': 'answer',
+        'source': 'dialog',
+        'destination': 'main',
+    },
+    {
+        'name': 'popup',
+        'source': 'main',
+        'destination': 'dialog'
+    },
+    {
+        'name': 'exit',
+        'source': 'main',
+        'destination': 'exit'
+    },
+    {
+        'name': 'exit',
+        'source': 'dialog',
+        'destination': 'exit'
+    },
+]
