@@ -15,14 +15,7 @@
     "score_font": "VeraMono.ttf",
     "raspberries_font": "VeraMono.ttf",
     "images": [
-        "razzy.png",
-        "raspberry.png",
-        "honeybadger.png",
-        "sdcard.png",
-        "powercord.png",
-        "raspberrypi.png",
-        "monitor.png",
-        "keyboard_mouse.png"
+        "razzy.png"
     ],
     "player_image": "razzy.png",
     "music": "choro_bavario_loop.ogg",
