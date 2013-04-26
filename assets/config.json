@@ -21,7 +21,8 @@
         "sdcard.png",
         "powercord.png",
         "raspberrypi.png",
-        "monitor.png"
+        "monitor.png",
+        "keyboard_mouse.png"
     ],
     "music": "choro_bavario_loop.ogg",
     "dialog_box": {
