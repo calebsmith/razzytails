@@ -17,11 +17,11 @@
     "images": [
         "razzy.png",
         "intro-screen.png",
-        "end-screen.png"
+        "win-screen.png"
     ],
     "player_image": "razzy.png",
     "splash_image": "intro-screen.png",
-    "endscreen_image": "end-screen.png",
+    "endscreen_image": "win-screen.png",
     "music": "choro_bavario_loop.ogg",
     "popup_box": {
         "x": 50,
