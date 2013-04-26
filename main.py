@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from loaders import initialize, load_level
-from input_handlers import handle_events
 from graphics import render
 
 
