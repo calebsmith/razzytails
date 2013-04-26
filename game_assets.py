@@ -129,16 +129,6 @@ class Item(Asset):
         super(Item, self).handle(data)
         self.image = load_image(self.image)
 
-    def set_coordinates(self, map_data):
-        tile_solids = map_data.tile_solids
-        width, height = map_data.dimensions['width'], map_data.dimensions['height']
-        for y in xrange(height):
-            for x in xrange(width):
-                if not tile_solids[map_data.get_index(x, y)]:
-                    coordinates = (x, y)
-        map_data.item_coordinates.append({'id': self.id,
-                                          'coordinates': coordinates})
-
 
 class Monster(Asset):
     x = 0
@@ -217,10 +207,14 @@ class Level(LoadableAsset):
 
         self.map.item_coordinates = []
         self.items = []
-        for item_data in data['items']:
+
+        item_locations = self._generate_item_locations(self.map)
+        for index, item_data in enumerate(data['items']):
+            location = item_locations[index]
             item = Item(item_data)
             self.items.append(item)
-            item.set_coordinates(self.map)
+            self.map.item_coordinates.append({'id': item.id,
+                                              'coordinates': location})
 
     def _place_monster(self, monster, map_data):
         found_spot = False
@@ -233,3 +227,14 @@ class Level(LoadableAsset):
             if (x, y) == (map_data.player_start['x'], map_data.player_start['y']):
                 found_spot = False  # don't start on top of player
         monster.x, monster.y = x, y
+
+    def _generate_item_locations(self, map_data):
+        locations = []
+        width, height = map_data.dimensions['width'], map_data.dimensions['height']
+        for y in xrange(height):
+            for x in xrange(width):
+                if not map_data.tile_solids[map_data.get_index(x, y)]:
+                    locations.append((x, y))
+        random.shuffle(locations)
+        return locations
+
