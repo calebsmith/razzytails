@@ -3,6 +3,7 @@ from pygame.constants import (K_UP, K_DOWN, K_LEFT, K_RIGHT, K_RETURN, K_SPACE,
 from pygame import JOYAXISMOTION
 
 from dispatch import dispatcher, register_listener
+from movement import move_left, move_right, move_up, move_down
 
 
 @register_listener(['splash'])
@@ -31,21 +32,13 @@ def move_player_listener(event, game_state, config, level, player):
 
     event_key = event.key
     if event_key == K_UP and player.y > 0:
-        tile_up_index = level.map.get_index(player.x, player.y - 1)
-        if not tile_solids[tile_up_index]:
-            player.y -= 1
+        move_up(level, player, tile_solids)
     if event_key == K_DOWN and player.y < map_height - 1:
-        tile_down_index = level.map.get_index(player.x, player.y + 1)
-        if not tile_solids[tile_down_index]:
-            player.y += 1
+        move_down(level, player, tile_solids)
     if event_key == K_LEFT and player.x > 0:
-        tile_left_index = level.map.get_index(player.x - 1, player.y)
-        if not tile_solids[tile_left_index]:
-            player.x -= 1
+        move_left(level, player, tile_solids)
     if event_key == K_RIGHT and player.x < map_width - 1:
-        tile_right_index = level.map.get_index(player.x + 1, player.y)
-        if not tile_solids[tile_right_index]:
-            player.x += 1
+        move_right(level, player, tile_solids)
 
 
 @register_listener(['main'], JOYAXISMOTION)
@@ -57,22 +50,14 @@ def move_player_joystick_listener(event, game_state, config, level, player):
     value = event.value
     if event.axis == 0:
         if value > 0.75 and player.x < map_width - 1:
-            tile_right_index = level.map.get_index(player.x + 1, player.y)
-            if not tile_solids[tile_right_index]:
-                player.x += 1
+            move_right(level, player, tile_solids)
         elif value < -0.75 and player.x > 0:
-            tile_left_index = level.map.get_index(player.x - 1, player.y)
-            if not tile_solids[tile_left_index]:
-                player.x -= 1
+            move_left(level, player, tile_solids)
     elif event.axis == 1:
         if value > 0 and player.y > 0:
-            tile_up_index = level.map.get_index(player.x, player.y - 1)
-            if not tile_solids[tile_up_index]:
-                player.y -= 1
+            move_up(level, player, tile_solids)
         elif player.y < map_height - 1:
-            tile_down_index = level.map.get_index(player.x, player.y + 1)
-            if not tile_solids[tile_down_index]:
-                player.y += 1
+            move_down(level, player, tile_solids)
 
 
 @register_listener(['question'])
