@@ -222,14 +222,14 @@ class Level(LoadableAsset):
             self.items.append(item)
             item.set_coordinates(self.map)
 
-    def _place_monster(self, monster, map):
+    def _place_monster(self, monster, map_data):
         found_spot = False
         while found_spot is False:
             # Pick a random spot on the map
-            x = random.randrange(map.dimensions['width'])
-            y = random.randrange(map.dimensions['height'])
+            x = random.randrange(map_data.dimensions['width'])
+            y = random.randrange(map_data.dimensions['height'])
             # map.tile_solids will be false if spot is not yet taken
-            found_spot = not map.tile_solids[map.get_index(x, y)]
-            if (x, y) == (map.player_start['x'], map.player_start['y']):
+            found_spot = not map_data.tile_solids[map_data.get_index(x, y)]
+            if (x, y) == (map_data.player_start['x'], map_data.player_start['y']):
                 found_spot = False  # don't start on top of player
         monster.x, monster.y = x, y
