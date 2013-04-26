@@ -1,0 +1,22 @@
+{
+    "questions": [
+    {
+        "question": "How are you",
+        "answers": [
+            "Yes",
+            "No",
+            "Maybe"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What do you think about my really long but thoughtful question? I really want your feedback",
+        "answers": [
+            "Yes",
+            "No",
+            "Maybe"
+        ],
+        "correct": 1
+    }
+    ]
+}

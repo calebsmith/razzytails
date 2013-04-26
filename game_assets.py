@@ -1,10 +1,12 @@
+from copy import copy
 import os
+import random
 
 from pygame import display, Surface
 
 from const import MAPS_DIR, CONFIG_DIR, MUSIC_DIR
 from asset_loaders import Asset, LoadableAsset, load_image, load_font
-from utils import get_color
+from utils import get_color, word_wrap
 
 
 class Config(LoadableAsset):
@@ -45,6 +47,52 @@ class Config(LoadableAsset):
         self.music = os.path.join(MUSIC_DIR, self.music) if self.music else ''
         self.screen['map_display_mid_x'] = self.screen['map_display_width'] / 2
         self.screen['map_display_mid_y'] = self.screen['map_display_height'] / 2
+        self.questions = Questions(
+            self.questions, width=self.dialog_box['char_width']
+        )
+
+
+class Questions(LoadableAsset):
+    path = CONFIG_DIR
+    schema = {
+        'questions': [
+            'question',
+            'answers',
+            'correct',
+        ]
+    }
+
+    def __init__(self, *args, **kwargs):
+        self.width = kwargs.pop('width', 20)
+        super(Questions, self).__init__(*args, **kwargs)
+        self.next()
+
+    def next(self):
+        self.current_index = random.choice(range(len(self.questions)))
+        self.current_question = self.questions[self.current_index]
+        self.choice = 0
+        self._question_display = None
+
+    def handle(self, data):
+        super(Questions, self).handle(data)
+        self.question_displays = [
+            word_wrap(question['question'], self.width)
+            for question in self.questions
+        ]
+
+    def get_choices_length(self):
+        return len(self.current_question['answers'])
+
+    def get_question_display(self):
+        question_display = copy(self.question_displays[self.current_index])
+        question_display.append('')
+        for index, answer in enumerate(self.current_question['answers']):
+            prefix = '[X]' if index == self.choice else '[ ]'
+            question_display.append(' '.join((prefix, answer)))
+        return question_display
+
+    def is_correct(self):
+        return self.choice == self.current_question['correct']
 
 
 class Screen(Asset):
@@ -79,15 +127,20 @@ class Item(Asset):
     pass
 
 
-class Mob(Asset):
+class Monster(Asset):
     x = 0
     y = 0
-    items = []
+
+    def handle(self, data):
+        super(Monster, self).handle(data)
+        self.image = load_image(self.image)
 
 
-class Player(Mob):
+class Player(Asset):
+    x = 0
+    y = 0
     raspberries = 0
-    message_line_offset = 0
+    items = []
 
 
 class Level(LoadableAsset):
@@ -109,6 +162,10 @@ class Level(LoadableAsset):
                 ],
             }
         ],
+        'monsters': [
+            'image',
+            'number'
+        ]
     }
 
     def clean_map(self, map_data):
@@ -124,5 +181,30 @@ class Level(LoadableAsset):
             return False
         return True
 
+    def clean_monsters(self, monster_data):
+        num_monsters = monster_data['number']
+        if num_monsters < 1:
+            self.error = u'You need at least 1 monster'
+            return False
+        return True
+
     def handle(self, data):
         self.map = Map(data['map'])
+        self.monsters = []
+
+        for i in range(data['monsters']['number']):
+            monster = Monster(data['monsters'])
+            self._place_monster(monster, self.map)
+            self.monsters.append(monster)
+
+    def _place_monster(self, monster, map):
+        found_spot = False
+        while found_spot is False:
+            # Pick a random spot on the map
+            x = random.randrange(map.dimensions['width'])
+            y = random.randrange(map.dimensions['height'])
+            # map.tile_solids will be false if spot is not yet taken
+            found_spot = not map.tile_solids[map.get_index(x, y)]
+            if (x, y) == (map.player_start['x'], map.player_start['y']):
+                found_spot = False # don't start on top of player
+        monster.x, monster.y = x, y
