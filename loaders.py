@@ -3,13 +3,14 @@ import pygame
 
 from game_assets import Config, Level, Screen, Player
 from game_state import game_state
+from listeners import dispatcher
 
 
 def initialize():
     """
     Initializes pygame, loads the configuration file and creates a display
-    context. Returns a 4-item tuple in the form of:
-        (game_state, screen, config, player)
+    context. Returns a 5-item tuple in the form of:
+        (game_state, dispatcher, screen, config, player)
     """
     # Initialize pygame and pygame mixer
     pygame.init()
@@ -31,7 +32,8 @@ def initialize():
             pygame.mixer.music.play(-1)
         except pygame.error:
             pass
-    return game_state, screen, config, player
+    dispatcher.attach_state_machine(game_state)
+    return game_state, dispatcher, screen, config, player
 
 
 def load_level(level_filename, player):
