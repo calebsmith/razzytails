@@ -133,6 +133,7 @@ class Item(Asset):
 class Monster(Asset):
     x = 0
     y = 0
+    last_moved_at = 0
 
     def handle(self, data):
         super(Monster, self).handle(data)
