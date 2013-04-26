@@ -127,14 +127,20 @@ class Item(Asset):
     pass
 
 
-class Mob(Asset):
+class Monster(Asset):
     x = 0
     y = 0
-    items = []
+
+    def handle(self, data):
+        super(Monster, self).handle(data)
+        self.image = load_image(self.image)
 
 
-class Player(Mob):
+class Player(Asset):
+    x = 0
+    y = 0
     raspberries = 0
+    items = []
 
 
 class Level(LoadableAsset):
@@ -156,6 +162,10 @@ class Level(LoadableAsset):
                 ],
             }
         ],
+        'monsters': [
+            'image',
+            'number'
+        ]
     }
 
     def clean_map(self, map_data):
@@ -171,5 +181,30 @@ class Level(LoadableAsset):
             return False
         return True
 
+    def clean_monsters(self, monster_data):
+        num_monsters = monster_data['number']
+        if num_monsters < 1:
+            self.error = u'You need at least 1 monster'
+            return False
+        return True
+
     def handle(self, data):
         self.map = Map(data['map'])
+        self.monsters = []
+
+        for i in range(data['monsters']['number']):
+            monster = Monster(data['monsters'])
+            self._place_monster(monster, self.map)
+            self.monsters.append(monster)
+
+    def _place_monster(self, monster, map):
+        found_spot = False
+        while found_spot is False:
+            # Pick a random spot on the map
+            x = random.randrange(map.dimensions['width'])
+            y = random.randrange(map.dimensions['height'])
+            # map.tile_solids will be false if spot is not yet taken
+            found_spot = not map.tile_solids[map.get_index(x, y)]
+            if (x, y) == (map.player_start['x'], map.player_start['y']):
+                found_spot = False # don't start on top of player
+        monster.x, monster.y = x, y

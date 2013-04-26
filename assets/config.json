@@ -16,7 +16,8 @@
     "raspberries_font": "VeraMono.ttf",
     "images": [
         "razzy.png",
-        "raspberry.png"
+        "raspberry.png",
+        "honeybadger.png"
     ],
     "music": "choro_bavario_loop.ogg",
     "dialog_box": {
