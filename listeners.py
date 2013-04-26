@@ -42,10 +42,10 @@ def select_answer_listener(event, game_state, config, level, player):
     if event.type != KEYDOWN:
         return
     event_key = event.key
-    if event_key == K_RETURN or event_key == K_SPACE:
-        game_state.answer()
-        config.questions.next()
     questions = config.questions
+    if event_key == K_RETURN or event_key == K_SPACE:
+        game_state.answer(questions.is_correct(), level, player)
+        questions.next()
     num_choices = questions.get_choices_length()
     if event_key == K_UP and questions.choice > 0:
         questions.choice -= 1

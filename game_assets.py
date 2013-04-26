@@ -262,14 +262,8 @@ class Level(LoadableAsset):
 
     def handle(self, data):
         self.map = Map(data['map'])
-        self.monsters = []
-
-        self.monster_coordinates = []
-        for i in range(data['monsters']['number']):
-            monster = Monster(data['monsters'])
-            monster.place_on_map(self.map)
-            self.monsters.append(monster)
-            self.monster_coordinates.append({'coordinates': (monster.x, monster.y)})
+        self.monster_data = data['monsters']
+        self.reset_monsters()
 
         self.item_coordinates = []
         self.items = []
@@ -293,6 +287,16 @@ class Level(LoadableAsset):
         self.images = monster_images
         self.images.update(item_images)
 
+    def reset_items(self, player):
+        self.item_coordinates = []
+        player.items = []
+        item_locations = self._generate_item_locations(self.map)
+        for index, item in enumerate(self.items):
+            location = item_locations[index]
+            self.item_coordinates.append({
+                'id': item.id, 'coordinates': location
+            })
+
     def _generate_item_locations(self, map_data):
         locations = []
         width, height = map_data.dimensions['width'], map_data.dimensions['height']
@@ -302,3 +306,12 @@ class Level(LoadableAsset):
                     locations.append((x, y))
         random.shuffle(locations)
         return locations
+
+    def reset_monsters(self):
+        self.monsters = []
+        self.monster_coordinates = []
+        for i in range(self.monster_data['number']):
+            monster = Monster(self.monster_data)
+            monster.place_on_map(self.map)
+            self.monsters.append(monster)
+            self.monster_coordinates.append({'coordinates': (monster.x, monster.y)})

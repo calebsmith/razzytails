@@ -29,6 +29,8 @@ def game_loop(game_state, dispatcher, screen, config, level, player):
                 if ticks > (monster.last_moved_at + config.monster_delay):
                     monster.last_moved_at = ticks
                     monster.move(level, player)
+                    if (monster.x, monster.y) == (player.x, player.y):
+                        game_state.popup_question()
 
         render(game_state, screen, config, level, player)
 

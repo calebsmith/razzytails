@@ -1,7 +1,7 @@
 """Defines transitions and callbacks for the game's fsm"""
 
 from fsm import FSM
-
+from game_assets import Level
 
 # FSM transitions and callbacks
 transitions = [
@@ -49,7 +49,21 @@ def add_item_to_inventory(player, item):
     return True
 
 
+def handle_answer(is_correct, level, player):
+    if is_correct:
+        # Remove all monsters on the player's current location
+        for monster in level.monsters:
+            if (monster.x, monster.y) == (player.x, player.y):
+                level.monsters.remove(monster)
+    else:
+        level.reset_items(player)
+        level.reset_monsters()
+
+
 # No callbacks for now. Refer to fsm.py when implementating
-callbacks = {'on_before_popup_item': add_item_to_inventory}
+callbacks = {
+    'on_before_popup_item': add_item_to_inventory,
+    'on_answer': handle_answer,
+}
 
 game_state = FSM('main', transitions, callbacks)
