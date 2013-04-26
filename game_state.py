@@ -1,6 +1,8 @@
 """Defines transitions and callbacks for the game's fsm"""
 
 from fsm import FSM
+from dispatch import Dispatch
+
 
 # FSM transitions and callbacks
 transitions = [

@@ -1,23 +1,21 @@
-#!/usr/bin/env python
-import pygame
 from pygame.constants import (K_UP, K_DOWN, K_LEFT, K_RIGHT, K_RETURN, K_SPACE,
     KEYDOWN, K_ESCAPE, QUIT)
 
-
-def handle_events(game_state, config, level, player):
-    for event in pygame.event.get():
-        # Exit on escape key or clicking X
-        pressed_escape = event.type == KEYDOWN and event.key == K_ESCAPE
-        if pressed_escape or event.type == QUIT:
-            game_state.exit()
-            return
-        if event.type == KEYDOWN and game_state.is_state('dialog'):
-            handle_dialog(game_state, config, event.key, level, player)
-        if event.type == KEYDOWN and game_state.is_state('main'):
-            handle_key(game_state, config, event.key, level, player)
+from dispatch import dispatcher, register_listener
 
 
-def handle_key(game_state, config, event_key, level, player):
+@register_listener(['main', 'dialog'])
+def quit_listener(event, game_state, *args, **kwargs):
+    pressed_escape = event.type == KEYDOWN and event.key == K_ESCAPE
+    if pressed_escape or event.type == QUIT:
+        game_state.exit()
+
+
+@register_listener(['main'])
+def move_player_listener(event, game_state, config, level, player):
+    if event.type != KEYDOWN:
+        return
+    event_key = event.key
     dimensions = level.map.dimensions
     map_width, map_height = dimensions['width'], dimensions['height']
     tile_solids = level.map.tile_solids
@@ -39,12 +37,17 @@ def handle_key(game_state, config, event_key, level, player):
             player.x += 1
 
 
-def handle_dialog(game_state, config, event_key, level, player):
+@register_listener(['dialog'])
+def select_answer_listener(event, game_state, config, level, player):
+    if event.type != KEYDOWN:
+        return
+    event_key = event.key
     if event_key == K_RETURN or event_key == K_SPACE:
         game_state.answer()
         config.questions.next()
     questions = config.questions
+    num_choices = questions.get_choices_length()
     if event_key == K_UP and questions.choice > 0:
         questions.choice -= 1
-    if event_key == K_DOWN and questions.choice < questions.get_choices_length() - 1:
+    if event_key == K_DOWN and questions.choice < num_choices - 1:
         questions.choice += 1
