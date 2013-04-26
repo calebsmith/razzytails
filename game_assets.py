@@ -2,7 +2,7 @@ from copy import copy
 import os
 import random
 
-from pygame import display, Surface
+from pygame import Surface, display, time
 
 from const import MAPS_DIR, CONFIG_DIR, MUSIC_DIR
 from asset_loaders import Asset, LoadableAsset, load_image, load_font
@@ -44,7 +44,13 @@ class Config(LoadableAsset):
         },
         'questions',
         'monster_delay',
-        'splash_lines'
+        'splash_lines',
+        {
+            'joystick': [
+                'delay',
+                'pressed'
+            ]
+        }
     ]
 
     def handle(self, data):
@@ -209,6 +215,8 @@ class Player(Asset):
     x = 0
     y = 0
     items = []
+    last_updated = None
+    neutral = True
 
 
 class Level(LoadableAsset):

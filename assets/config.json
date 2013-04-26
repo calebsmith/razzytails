@@ -37,5 +37,9 @@
         "Welcome to Razzytails!",
         "You are Razzy. The goal of this game is to collect all of the Rasbperry Pi assets. But beware! Honey badger is following you to challenge your Python + Raspberry Pi knowledge. Answer incorrectly and you lose all of your assets. Collect them all and win the game!",
         "Press <RETURN> to get started building your Raspberry Pi!"
-    ]
+    ],
+    "joystick": {
+        "delay": 200,
+        "pressed": 0
+    }
 }

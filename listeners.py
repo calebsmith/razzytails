@@ -1,6 +1,6 @@
 from pygame.constants import (K_UP, K_DOWN, K_LEFT, K_RIGHT, K_RETURN, K_SPACE,
     KEYDOWN, K_ESCAPE, QUIT)
-from pygame import JOYAXISMOTION
+from pygame import time, JOYAXISMOTION
 
 from dispatch import dispatcher, register_listener
 from movement import move_left, move_right, move_up, move_down
@@ -46,18 +46,38 @@ def move_player_joystick_listener(event, game_state, config, level, player):
     dimensions = level.map.dimensions
     map_width, map_height = dimensions['width'], dimensions['height']
     tile_solids = level.map.tile_solids
-
+    delay = config.joystick['delay']
+    last_updated = player.last_updated
     value = event.value
-    if event.axis == 0:
-        if value > 0.75 and player.x < map_width - 1:
-            move_right(level, player, tile_solids)
-        elif value < -0.75 and player.x > 0:
-            move_left(level, player, tile_solids)
-    elif event.axis == 1:
-        if value > 0 and player.y > 0:
-            move_up(level, player, tile_solids)
-        elif player.y < map_height - 1:
-            move_down(level, player, tile_solids)
+    move = False
+
+    if event.value == 0:
+        player.neutral = True
+        config.joystick['pressed'] = 0
+        return
+    if player.neutral:
+        move = True
+        player.neutral = False
+    else:
+        config.joystick['pressed'] += time.get_ticks()
+        if last_updated:
+            config.joystick['pressed'] -= last_updated
+
+    if config.joystick['pressed'] > delay:
+        move = True
+        config.joystick['pressed'] -= delay
+
+    if move:
+        if event.axis == 0:
+            if value > 0 and player.x < map_width - 1:
+                move_right(level, player, tile_solids)
+            elif player.x > 0:
+                move_left(level, player, tile_solids)
+        elif event.axis == 1:
+            if value > 0 and player.y > 0:
+                move_up(level, player, tile_solids)
+            elif player.y < map_height - 1:
+                move_down(level, player, tile_solids)
 
 
 @register_listener(['question'])
