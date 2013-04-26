@@ -1,4 +1,5 @@
 import os
+from random import randrange
 
 from pygame import display, Surface
 
@@ -84,8 +85,8 @@ class Monster(Asset):
     y = 0
 
     def handle(self, data):
-        super(Asset, self).handle(data)
-        self.image = dict(map(load_image, self.legend.values()))
+        super(Monster, self).handle(data)
+        self.image = load_image(self.image)
 
 
 class Player(Asset):
@@ -134,5 +135,30 @@ class Level(LoadableAsset):
             return False
         return True
 
+    def clean_monsters(self, monster_data):
+        num_monsters = monster_data['number']
+        if num_monsters < 1:
+            self.error = u'You need at least 1 monster'
+            return False
+        return True
+
     def handle(self, data):
         self.map = Map(data['map'])
+        self.monsters = []
+
+        for i in range(data['monsters']['number']):
+            monster = Monster(data['monsters'])
+            self._place_monster(monster, self.map)
+            self.monsters.append(monster)
+
+    def _place_monster(self, monster, map):
+        found_spot = False
+        while found_spot is False:
+            # Pick a random spot on the map
+            x = randrange(map.dimensions['width'])
+            y = randrange(map.dimensions['height'])
+            # map.tile_solids will be false if spot is not yet taken
+            found_spot = not map.tile_solids[map.get_index(x, y)]
+            if (x, y) == (map.player_start['x'], map.player_start['y']):
+                found_spot = False # don't start on top of player
+        monster.x, monster.y = x, y
