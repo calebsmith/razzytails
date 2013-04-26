@@ -105,6 +105,7 @@ def word_wrap(sentance, limit):
             if current:
                 results.append(current)
             current = word
+        # Word is longer than the limit, hyphenate
         else:
             if current:
                 results.append(current)

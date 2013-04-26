@@ -14,9 +14,21 @@ def initialize():
     pygame.init()
     pygame.mixer.init()
     config = Config()
+    # by default the key repeat is disabled
+    # call set_repeat() to enable it
+    delay = config.keypress_repeat['delay']
+    interval = config.keypress_repeat['interval']
+    pygame.key.set_repeat(delay, interval)
     screen = Screen(config.screen)
     screen.set_background('black')
     player = Player()
+    # Play background music if possible
+    if config.music:
+        try:
+            pygame.mixer.music.load(config.music)
+            pygame.mixer.music.play(-1)
+        except pygame.error:
+            pass
     return screen, config, player
 
 
