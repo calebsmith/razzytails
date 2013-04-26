@@ -45,7 +45,6 @@ class Config(LoadableAsset):
         },
         'questions',
         'monster_delay',
-        'splash_lines',
         {
             'joystick': [
                 'delay',
