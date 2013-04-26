@@ -46,9 +46,19 @@ transitions = [
         'destination': 'exit'
     },
     {
+        'name': 'exit',
+        'source': 'endscreen',
+        'destination': 'exit'
+    },
+    {
         'name': 'start',
         'source': 'splash',
         'destination': 'main'
+    },
+    {
+        'name': 'end',
+        'source': 'main',
+        'destination': 'endscreen'
     }
 ]
 
@@ -70,10 +80,16 @@ def handle_answer(is_correct, level, player):
         level.reset_monsters()
 
 
+def handle_item_collected(level, player):
+    if len(level.items) == len(player.items):
+        # no more items. you win!
+        game_state.end()
+
 # No callbacks for now. Refer to fsm.py when implementating
 callbacks = {
     'on_before_popup_item': add_item_to_inventory,
     'on_answer': handle_answer,
+    'on_item_collected': handle_item_collected,
 }
 
 game_state = FSM('splash', transitions, callbacks)

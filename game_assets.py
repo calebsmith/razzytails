@@ -28,6 +28,7 @@ class Config(LoadableAsset):
         'images',
         'player_image',
         'splash_image',
+        'endscreen_image',
         'fonts',
         'music',
         'score_font',

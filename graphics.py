@@ -124,6 +124,15 @@ def draw_splash(game_state, screen, config):
     screen.context.blit(message_surface, origin)
 
 
+def draw_endscreen(game_state, screen, config):
+    width = config.screen['width']
+    height = config.screen['height']
+    message_surface = pygame.Surface((width, height))
+    origin = (0, 0)
+    draw_image(message_surface, config, config.endscreen_image, origin)
+    screen.context.blit(message_surface, origin)
+
+
 def render(game_state, screen, config, level, player):
     screen.context.blit(screen.background, (0, 0))
     display_map(game_state, screen, config, level, player)
@@ -138,6 +147,8 @@ def render(game_state, screen, config, level, player):
         )
     if game_state.is_state('splash'):
         draw_splash(game_state, screen, config)
+    if game_state.is_state('endscreen'):
+        draw_endscreen(game_state, screen, config)
     if game_state.is_state('item'):
         draw_popup(
             game_state, screen, config, level, player,
