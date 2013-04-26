@@ -1,4 +1,5 @@
-## Razzytails
+# Razzytails
+---------
 
 Razzytails is a game meant to be playable on the Raspberry Pi. You are
 Razzy and you have to collect all of the items needed to get your
@@ -9,16 +10,21 @@ one more chance. Just answer a question about Python Programming and
 you can shake the Honey Badger off your trail and continue your quest.
 
 
-## Details
+# Details
+----------
 
 Razzytails is built on top of [pygame](http://www.pygame.org/news.html).
 
 ## Installation
 
-1. First, install pygame using your OS's tools (apt-get, yum, etc.).
-It's difficult to install inside of a virtualenv. Mac OS X users:
+### OSX Mountian Lion
+
 Installing pygame is *not* easy. Follow
 [Julia Elman's excellent guide](http://juliaelman.com/blog/2013/04/02/installing-pygame-on-osx-mountain-lion/).
+
+### Linux
+
+1. First, install pygame using your OS's tools (apt-get, yum, etc.).
 
         sudo apt-get install pygame
 

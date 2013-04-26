@@ -20,16 +20,24 @@ def validate_data_against_schema(data, schema):
     Given `data`, and a `schema`, returns True if the data conforms to the
     schema provided; otherwise returns False
     """
+    # Dictionaries
     if hasattr(schema, 'keys'):
         for key in schema:
             if not key in data:
                 return False
             if not validate_data_against_schema(data[key], schema[key]):
                 return False
+    # List
     elif is_non_string_iterable(schema):
-        for key in schema:
-            if not validate_data_against_schema(data, key):
-                return False
+        if is_non_string_iterable(data) and not hasattr(data, 'keys'):
+            for value in data:
+                if not validate_data_against_schema(value, schema):
+                    return False
+        else:
+            for key in schema:
+                if not validate_data_against_schema(data, key):
+                    return False
+    # Everything else, probably strings and numbers
     else:
         if not schema in data:
             return False
@@ -97,6 +105,7 @@ def word_wrap(sentance, limit):
             if current:
                 results.append(current)
             current = word
+        # Word is longer than the limit, hyphenate
         else:
             if current:
                 results.append(current)

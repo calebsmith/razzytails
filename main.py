@@ -12,19 +12,7 @@ def main():
     screen, config, player = initialize()
     level = load_map(config.start, player)
     game_state = GAME_STATES['main']
-    # Play background music
-    if config.music:
-        try:
-            pygame.mixer.music.load(config.music)
-            pygame.mixer.music.play(-1)
-        except pygame.error:
-            pass
     # Run game loop
-    # by default the key repeat is disabled
-    # call set_repeat() to enable it
-    delay = config.keypress_repeat['delay']
-    interval = config.keypress_repeat['interval']
-    pygame.key.set_repeat(delay, interval)
     game_loop(game_state, screen, config, level, player)
 
 

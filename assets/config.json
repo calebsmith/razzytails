@@ -5,8 +5,8 @@
         "height": 480,
         "tile_width": 32,
         "tile_height": 32,
-        "map_display_width": 15,
-        "map_display_height": 15
+        "map_display_width": 20,
+        "map_display_height": 13
     },
     "start": "map1.json",
     "fonts": [
@@ -19,15 +19,16 @@
         "raspberry.png",
         "honeybadger.png"
     ],
-    "music": "dark_blue.ogg",
+    "music": "choro_bavario_loop.ogg",
     "dialog_box": {
         "x": 50,
         "y": 50,
-        "char_width": 40,
-        "char_height": 8
+        "char_width": 50,
+        "char_height": 10
     },
     "keypress_repeat": {
         "delay": 200,
         "interval": 200
-    }
+    },
+    "questions": "questions.json"
 }
