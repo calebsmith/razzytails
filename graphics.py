@@ -45,7 +45,7 @@ def display_player(game_state, screen, config, level, player):
         config, (player.x, player.y), (map_width, map_height)
     )
     draw_image(
-        screen.context, config, 'razzy.png', (
+        screen.context, config, config.player_image, (
             display_x * config.screen['tile_width'],
             display_y * config.screen['tile_height']
         )
@@ -71,7 +71,7 @@ def display_monsters(game_state, screen, config, level, player):
         if (display_x >= 0 and display_x < config.screen['map_display_width'] and
                 display_y >= 0 and display_y < config.screen['map_display_height']):
             draw_image(
-                screen.context, config, monster.image[0], (
+                screen.context, monster, 'honeybadger.png', (
                     display_x * config.screen['tile_width'],
                     display_y * config.screen['tile_height']
                 )

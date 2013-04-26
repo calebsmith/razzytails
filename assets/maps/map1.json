@@ -32,7 +32,7 @@
         }
     },
     "monsters": {
-        "image": "honeybadger.png",
+        "images": ["honeybadger.png"],
         "number": 2
     },
     "items": [

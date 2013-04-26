@@ -25,6 +25,7 @@ class Config(LoadableAsset):
         ]},
         'start',
         'images',
+        'player_image',
         'fonts',
         'music',
         'score_font',
@@ -142,7 +143,7 @@ class Monster(Asset):
 
     def handle(self, data):
         super(Monster, self).handle(data)
-        self.image = load_image(self.image)
+        self.images = dict(map(load_image, self.images))
 
     def place_on_map(self, map_data):
         found_spot = False
@@ -229,7 +230,7 @@ class Level(LoadableAsset):
             }
         ],
         'monsters': [
-            'image',
+            'images',
             'number'
         ],
         'items': [
