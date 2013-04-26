@@ -1,7 +1,7 @@
 #!usr/bin/env python
 import pygame
 
-from game_assets import Config, Level, Item, Screen, Player
+from game_assets import Config, Level, Screen, Player
 from const import FSM_INITIAL, FSM_TRANSITIONS
 from fsm import FSM
 
