@@ -27,6 +27,7 @@ class Config(LoadableAsset):
         'start',
         'images',
         'player_image',
+        'splash_image',
         'fonts',
         'music',
         'score_font',
@@ -93,8 +94,8 @@ class Questions(LoadableAsset):
         question_display = copy(self.question_displays[self.current_index])
         question_display.append('')
         for index, answer in enumerate(self.current_question['answers']):
-            prefix = '[X]' if index == self.choice else '[ ]'
-            question_display.append(' '.join((prefix, answer)))
+            prefix = '[X] ' if index == self.choice else '[ ] '
+            question_display.extend(word_wrap(prefix + answer, self.width))
         return question_display
 
     def is_correct(self):
