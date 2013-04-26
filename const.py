@@ -10,29 +10,3 @@ FONTS_DIR = os.path.join(ASSETS_DIR, 'fonts')
 MUSIC_DIR = os.path.join(ASSETS_DIR, 'music')
 SOUNDS_DIR = os.path.join(ASSETS_DIR, 'sounds')
 MAPS_DIR = os.path.join(ASSETS_DIR, 'maps')
-
-
-# FSM nodes and transitions
-FSM_INITIAL = 'main'
-FSM_TRANSITIONS = [
-    {
-        'name': 'answer',
-        'source': 'dialog',
-        'destination': 'main',
-    },
-    {
-        'name': 'popup',
-        'source': 'main',
-        'destination': 'dialog'
-    },
-    {
-        'name': 'exit',
-        'source': 'main',
-        'destination': 'exit'
-    },
-    {
-        'name': 'exit',
-        'source': 'dialog',
-        'destination': 'exit'
-    },
-]

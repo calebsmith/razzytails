@@ -2,8 +2,7 @@
 import pygame
 
 from game_assets import Config, Level, Screen, Player
-from const import FSM_INITIAL, FSM_TRANSITIONS
-from fsm import FSM
+from game_state import game_state
 
 
 def initialize():
@@ -15,8 +14,6 @@ def initialize():
     # Initialize pygame and pygame mixer
     pygame.init()
     pygame.mixer.init()
-    # Create the game state machine
-    game_state = FSM(FSM_INITIAL, FSM_TRANSITIONS)
     config = Config()
     # by default the key repeat is disabled, call set_repeat() to enable it
     delay = config.keypress_repeat['delay']
