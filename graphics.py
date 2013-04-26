@@ -75,7 +75,7 @@ def display_items(game_state, screen, config, level, player):
     x_offset, y_offset = get_display_coordinates(
         config, (player.x, player.y), (map_width, map_height)
     )
-    for item_coords in level.map.item_coordinates:
+    for item_coords in level.item_coordinates:
         display_x = item_coords['coordinates'][0] - (player.x - x_offset)
         display_y = item_coords['coordinates'][1] - (player.y - y_offset)
         if (display_x >= 0 and display_x < config.screen['map_display_width'] and

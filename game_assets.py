@@ -161,10 +161,10 @@ class Monster(Asset):
         """
         map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
         tile_solids = level.map.tile_solids
-        mc = level.map.monster_coordinates
+        mc = level.monster_coordinates
         # Remove self from monster_coordinates
         del mc[mc.index({'coordinates': (self.x, self.y)})]
-        monster_coordinates = [c['coordinates'] for c in level.map.monster_coordinates]
+        monster_coordinates = [c['coordinates'] for c in level.monster_coordinates]
 
         all_possible_moves = [(self.x + 1, self.y),
                               (self.x - 1, self.y),
@@ -264,22 +264,23 @@ class Level(LoadableAsset):
         self.map = Map(data['map'])
         self.monsters = []
 
-        self.map.monster_coordinates = []
+        self.monster_coordinates = []
         for i in range(data['monsters']['number']):
             monster = Monster(data['monsters'])
             monster.place_on_map(self.map)
             self.monsters.append(monster)
-            self.map.monster_coordinates.append({'coordinates': (monster.x, monster.y)})
+            self.monster_coordinates.append({'coordinates': (monster.x, monster.y)})
 
-        self.map.item_coordinates = []
+        self.item_coordinates = []
         self.items = []
         item_locations = self._generate_item_locations(self.map)
         for index, item_data in enumerate(data['items']):
             location = item_locations[index]
             item = Item(item_data, width=self.config.popup_box['char_width'])
             self.items.append(item)
-            self.map.item_coordinates.append({'id': item.id,
-                                              'coordinates': location})
+            self.item_coordinates.append({
+                'id': item.id, 'coordinates': location
+            })
         # Load and store image files for monster and item objects
         monster_images = dict([
             load_image(monster.image)
