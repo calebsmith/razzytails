@@ -22,7 +22,7 @@ Razzytails is built on top of [pygame](http://www.pygame.org/news.html).
 Installing pygame is *not* easy. Follow
 [Julia Elman's excellent guide](http://juliaelman.com/blog/2013/04/02/installing-pygame-on-osx-mountain-lion/).
 
-### Linux
+### Linux and Raspberry Pi
 
 1. First, install pygame using your OS's tools (apt-get, yum, etc.).
 
