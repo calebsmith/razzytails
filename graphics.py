@@ -53,6 +53,9 @@ def display_player(game_state, screen, config, level, player):
 
 
 def display_monsters(game_state, screen, config, level, player):
+    # don't let monsters move during dialog boxes
+    if game_state.state != 'main':
+        return
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
     x_offset, y_offset = get_display_coordinates(
         config, (player.x, player.y), (map_width, map_height)
