@@ -97,6 +97,15 @@ def display_items(game_state, screen, config, level, player):
             )
 
 
+def display_player_items(game_state, screen, config, level, player):
+    draw_text(
+        screen.context, config, config.score_font, 'Inventory:', (0, 420),
+        color=get_color('black')
+    )
+    for index, item in enumerate(player.items):
+        draw_image(screen.context, level, item.image, (index * 32, 440))
+
+
 def draw_popup(game_state, screen, config, level, player, strings):
     # Create the black surface for the popup area to go onto
     char_width = config.popup_box['char_width']
@@ -120,6 +129,7 @@ def render(game_state, screen, config, level, player):
     display_items(game_state, screen, config, level, player)
     display_monsters(game_state, screen, config, level, player)
     display_player(game_state, screen, config, level, player)
+    display_player_items(game_state, screen, config, level, player)
     if game_state.is_state('question'):
         draw_popup(
             game_state, screen, config, level, player,
