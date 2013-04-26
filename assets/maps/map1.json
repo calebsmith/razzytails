@@ -39,6 +39,7 @@
         {"id": 1, "title": "Power Cord", "image": "powercord.png", "message": "Congratulations! You can now power your Raspberry Pi.  Without this, the Raspberry Pi will be nothing more than a fancy paper weight."},
         {"id": 2, "title": "SD Card", "image": "sdcard.png", "message": "This SD Card contains, among other things, the Operating System that your Raspberry Pi utilizes."},
         {"id": 3, "title": "Raspberry Pi", "image": "raspberrypi.png", "message": "You have acquired the Raspberry Pi, a small, but powerful, computer. Soon you will be creating your own games."},
-        {"id": 4, "title": "Monitor", "image": "monitor.png", "message": "You've stumbled onto a display. Now you will be able to see the video output of your Raspberry Pi programs!."}
+        {"id": 4, "title": "Monitor", "image": "monitor.png", "message": "You've stumbled onto a display. Now you will be able to see the video output of your Raspberry Pi programs!."},
+        {"id": 5, "title": "Keyboard & Mouse", "image": "raspberry.png", "message": "Want to be able to provide input to your Raspberry Pi? The keyboard and mouse are just the thing!."}
         ]
 }
