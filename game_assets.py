@@ -124,7 +124,10 @@ class Map(Asset):
 
 
 class Item(Asset):
-    pass
+
+    def handle(self, data):
+        super(Item, self).handle(data)
+        self.image = load_image(self.image)
 
 
 class Monster(Asset):
@@ -135,11 +138,61 @@ class Monster(Asset):
         super(Monster, self).handle(data)
         self.image = load_image(self.image)
 
+    def place_on_map(self, map_data):
+        found_spot = False
+        while found_spot is False:
+            # Pick a random spot on the map
+            x = random.randrange(map_data.dimensions['width'])
+            y = random.randrange(map_data.dimensions['height'])
+            # map.tile_solids will be false if spot is not yet taken
+            found_spot = not map_data.tile_solids[map_data.get_index(x, y)]
+            if (x, y) == (map_data.player_start['x'], map_data.player_start['y']):
+                # don't start on top of player
+                found_spot = False
+        self.x, self.y = x, y
+
+    def move(self, level, player):
+        """Move the monster.
+
+        Needs 'level' so we can make sure not to step on solids. Needs
+        'player' so we can aim for the player.
+        """
+        map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
+        tile_solids = level.map.tile_solids
+
+        all_possible_moves = [(self.x + 1, self.y),
+                              (self.x - 1, self.y),
+                              (self.x, self.y),
+                              (self.x, self.y - 1),
+                              (self.x, self.y + 1)]
+        free_moves = []
+        for x, y in all_possible_moves:
+            # is the move on the map?
+            if x >= 0 and y >= 0 and x < map_width and y < map_height:
+                # is the move on a solid?
+                if not tile_solids[level.map.get_index(x, y)]:
+                    free_moves.append((x, y))
+
+        min_distance = len(tile_solids) + 1  # start with big number
+        best_move = (-1, -1)
+        for move in free_moves:
+            distance = self._distance_from_player(move, player)
+            if distance < min_distance:
+                min_distance = distance
+                best_move = move
+        self.x, self.y = best_move
+
+    def _distance_from_player(self, position, player):
+        """Return a crude distance calculation between 2 positions.
+
+        This is simply the sum of the absolute value of x and y distances"""
+        move_x, move_y = position
+        return abs(move_x - player.x) + abs(move_y - player.y)
+
 
 class Player(Asset):
     x = 0
     y = 0
-    raspberries = 0
     items = []
 
 
@@ -165,6 +218,12 @@ class Level(LoadableAsset):
         'monsters': [
             'image',
             'number'
+        ],
+        'items': [
+            'id',
+            'title',
+            'image',
+            'message'
         ]
     }
 
@@ -194,17 +253,26 @@ class Level(LoadableAsset):
 
         for i in range(data['monsters']['number']):
             monster = Monster(data['monsters'])
-            self._place_monster(monster, self.map)
+            monster.place_on_map(self.map)
             self.monsters.append(monster)
 
-    def _place_monster(self, monster, map):
-        found_spot = False
-        while found_spot is False:
-            # Pick a random spot on the map
-            x = random.randrange(map.dimensions['width'])
-            y = random.randrange(map.dimensions['height'])
-            # map.tile_solids will be false if spot is not yet taken
-            found_spot = not map.tile_solids[map.get_index(x, y)]
-            if (x, y) == (map.player_start['x'], map.player_start['y']):
-                found_spot = False # don't start on top of player
-        monster.x, monster.y = x, y
+        self.map.item_coordinates = []
+        self.items = []
+
+        item_locations = self._generate_item_locations(self.map)
+        for index, item_data in enumerate(data['items']):
+            location = item_locations[index]
+            item = Item(item_data)
+            self.items.append(item)
+            self.map.item_coordinates.append({'id': item.id,
+                                              'coordinates': location})
+
+    def _generate_item_locations(self, map_data):
+        locations = []
+        width, height = map_data.dimensions['width'], map_data.dimensions['height']
+        for y in xrange(height):
+            for x in xrange(width):
+                if not map_data.tile_solids[map_data.get_index(x, y)]:
+                    locations.append((x, y))
+        random.shuffle(locations)
+        return locations
