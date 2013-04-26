@@ -132,7 +132,7 @@ class Item(Asset):
 
     def handle(self, data):
         super(Item, self).handle(data)
-        self.message = word_wrap(self.message, self.width) + ['', '[X] Collect!']
+        self.message = word_wrap(self.message, self.width) + ['', 'Press "Enter" to continue']
 
 
 class Monster(Asset):
