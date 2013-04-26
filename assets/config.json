@@ -16,10 +16,10 @@
     "raspberries_font": "VeraMono.ttf",
     "images": [
         "razzy.png",
-        "splash.png"
+        "intro-screen.png"
     ],
     "player_image": "razzy.png",
-    "splash_image": "splash.png",
+    "splash_image": "intro-screen.png",
     "music": "choro_bavario_loop.ogg",
     "popup_box": {
         "x": 50,
