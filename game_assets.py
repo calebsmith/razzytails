@@ -124,7 +124,10 @@ class Map(Asset):
 
 
 class Item(Asset):
-    pass
+
+    def handle(self, data):
+        super(Item, self).handle(data)
+        self.image = load_image(self.image)
 
 
 class Monster(Asset):
@@ -139,7 +142,6 @@ class Monster(Asset):
 class Player(Asset):
     x = 0
     y = 0
-    raspberries = 0
     items = []
 
 
@@ -165,6 +167,12 @@ class Level(LoadableAsset):
         'monsters': [
             'image',
             'number'
+        ],
+        'items': [
+            'id',
+            'title',
+            'image',
+            'message'
         ]
     }
 
@@ -197,14 +205,36 @@ class Level(LoadableAsset):
             self._place_monster(monster, self.map)
             self.monsters.append(monster)
 
-    def _place_monster(self, monster, map):
+        self.map.item_coordinates = []
+        self.items = []
+
+        item_locations = self._generate_item_locations(self.map)
+        for index, item_data in enumerate(data['items']):
+            location = item_locations[index]
+            item = Item(item_data)
+            self.items.append(item)
+            self.map.item_coordinates.append({'id': item.id,
+                                              'coordinates': location})
+
+    def _place_monster(self, monster, map_data):
         found_spot = False
         while found_spot is False:
             # Pick a random spot on the map
-            x = random.randrange(map.dimensions['width'])
-            y = random.randrange(map.dimensions['height'])
+            x = random.randrange(map_data.dimensions['width'])
+            y = random.randrange(map_data.dimensions['height'])
             # map.tile_solids will be false if spot is not yet taken
-            found_spot = not map.tile_solids[map.get_index(x, y)]
-            if (x, y) == (map.player_start['x'], map.player_start['y']):
-                found_spot = False # don't start on top of player
+            found_spot = not map_data.tile_solids[map_data.get_index(x, y)]
+            if (x, y) == (map_data.player_start['x'], map_data.player_start['y']):
+                found_spot = False  # don't start on top of player
         monster.x, monster.y = x, y
+
+    def _generate_item_locations(self, map_data):
+        locations = []
+        width, height = map_data.dimensions['width'], map_data.dimensions['height']
+        for y in xrange(height):
+            for x in xrange(width):
+                if not map_data.tile_solids[map_data.get_index(x, y)]:
+                    locations.append((x, y))
+        random.shuffle(locations)
+        return locations
+

@@ -1,26 +1,31 @@
 #!usr/bin/env python
-from random import shuffle
-
 import pygame
 
-from game_assets import Config, Level, Screen, Player
+from game_assets import Config, Level, Item, Screen, Player
+from const import FSM_INITIAL, FSM_TRANSITIONS
+from fsm import FSM
 
 
 def initialize():
     """
     Initializes pygame, loads the configuration file and creates a display
-    context. Returns a 3-item tuple in the form of: (config, screen, player)
+    context. Returns a 4-item tuple in the form of:
+        (game_state, screen, config, player)
     """
+    # Initialize pygame and pygame mixer
     pygame.init()
     pygame.mixer.init()
+    # Create the game state machine
+    game_state = FSM(FSM_INITIAL, FSM_TRANSITIONS)
     config = Config()
-    # by default the key repeat is disabled
-    # call set_repeat() to enable it
+    # by default the key repeat is disabled, call set_repeat() to enable it
     delay = config.keypress_repeat['delay']
     interval = config.keypress_repeat['interval']
     pygame.key.set_repeat(delay, interval)
+    # Create a screen to get a display context
     screen = Screen(config.screen)
     screen.set_background('black')
+    # Create the player
     player = Player()
     # Play background music if possible
     if config.music:
@@ -29,21 +34,15 @@ def initialize():
             pygame.mixer.music.play(-1)
         except pygame.error:
             pass
-    return screen, config, player
+    return game_state, screen, config, player
 
 
-def load_map(map_filename, player):
-    level = Level(map_filename)
-    # TODO: Remove once items are added
-    # Create and attach raspberry coordinates.
-    width, height = level.map.dimensions['width'], level.map.dimensions['height']
-    raspberry_coordinates = []
-    for y in xrange(height):
-        for x in xrange(width):
-            if not level.map.tile_solids[level.map.get_index(x, y)]:
-                raspberry_coordinates.append((x, y))
-    shuffle(raspberry_coordinates)
-    level.map.raspberry_coordinates = raspberry_coordinates[:10]
+def load_level(level_filename, player):
+    """
+    Load the level from the level_filename. Set the player's start location
+    according to the level's map.
+    """
+    level = Level(level_filename)
     # Place player at the start location
     player.x = level.map.player_start['x']
     player.y = level.map.player_start['y']
