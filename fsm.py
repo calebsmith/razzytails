@@ -2,6 +2,21 @@ from functools import partial
 
 
 class FSM(object):
+    """
+    A simple finite state machine that defines a set of states and the
+    transitions between those states. Constructor takes the name of the initial
+    state, a list of transitions, and a dictionary of callbacks. transitions
+    is a list of dictionaries with 'source', 'destination', and 'name' keys.
+    Transitions of the same name may have the same source.
+
+    Callbacks have keys that correspond to transition names and are prefixed
+    with 'on_' or 'on_before_'. For example, a transition named 'enter'
+    could have the callbacks 'on_enter' and 'on_before_enter'. The
+    'on_before' callbacks return True if the transition should occur or False
+    to short circuit the impending transition. Return values of the 'on'
+    callbacks are passed to the caller of the transition (e.g. result in the
+    expression `result = fms.enter()` would be set to the return of `on_enter`)
+    """
 
     class IllegalNameException(Exception):
         pass
@@ -10,9 +25,14 @@ class FSM(object):
         pass
 
     def is_state(self, check_state):
+        """Checks if the current state is `check_state`"""
         return self.state == check_state
 
     def can(self, name):
+        """
+        Checks if the given `name` is a possible transition from the current
+        state
+        """
         if name not in self.transition_names:
             return False
         for transition in self.transitions:
@@ -79,6 +99,7 @@ class FSM(object):
             )
 
     def _call_callback(self, transition_name, prefix, *args, **kwargs):
+        """Calls the callback on behalf of the transition function"""
         if prefix:
             name_parts = ('on', prefix, transition_name)
         else:

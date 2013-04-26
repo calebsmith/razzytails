@@ -17,7 +17,9 @@
     "images": [
         "razzy.png",
         "raspberry.png",
-        "honeybadger.png"
+        "honeybadger.png",
+        "sdcard.png",
+        "powercord.png"
     ],
     "music": "choro_bavario_loop.ogg",
     "dialog_box": {
