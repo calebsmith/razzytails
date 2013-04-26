@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+import random
+
 import pygame
 
-from utils import (get_color, get_image, get_font, get_display_coordinates,
-    word_wrap)
+from utils import get_color, get_image, get_font, get_display_coordinates
 from const import GAME_STATES
 
 
@@ -74,8 +74,6 @@ def display_raspberries(game_state, screen, config, level, player):
 
 
 def draw_dialog(game_state, screen, config, level, player):
-    # FIXME: Hard code the dialog message for now
-    message = """You got a scrawburry! Nice job finding a scrawburry. There are 10 in total so there are many many scarburries out there for you. Go get some more scrawburries. You get a scrawburry, you get a scrawberry everyone gets a lorem ipsum scrawburry"""
     # Create the black surface for the dialog area to go onto
     char_width = config.dialog_box['char_width']
     char_height = config.dialog_box['char_height']
@@ -84,11 +82,7 @@ def draw_dialog(game_state, screen, config, level, player):
         (10 * char_width + x_margin * 2, 25 * char_height + y_margin * 2)
     )
     box_x, box_y = config.dialog_box['x'], config.dialog_box['y']
-    line_offset = player.message_line_offset
-    strings = word_wrap(
-        message, char_width
-    )[line_offset:line_offset + char_height]
-    for index, string in enumerate(strings):
+    for index, string in enumerate(config.questions.get_question_display()):
         draw_text(
             message_surface, config, config.score_font, string,
             (x_margin, y_margin + index * 20)
