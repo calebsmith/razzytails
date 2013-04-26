@@ -15,9 +15,11 @@
     "score_font": "VeraMono.ttf",
     "raspberries_font": "VeraMono.ttf",
     "images": [
-        "razzy.png"
+        "razzy.png",
+        "splash.png"
     ],
     "player_image": "razzy.png",
+    "splash_image": "splash.png",
     "music": "choro_bavario_loop.ogg",
     "popup_box": {
         "x": 50,

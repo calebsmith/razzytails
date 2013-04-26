@@ -115,6 +115,15 @@ def draw_popup(game_state, screen, config, level, player, strings):
         screen.context.blit(message_surface, (box_x, box_y))
 
 
+def draw_splash(game_state, screen, config):
+    width = config.screen['width']
+    height = config.screen['height']
+    message_surface = pygame.Surface((width, height))
+    origin = (0, 0)
+    draw_image(message_surface, config, config.splash_image, origin)
+    screen.context.blit(message_surface, origin)
+
+
 def render(game_state, screen, config, level, player):
     screen.context.blit(screen.background, (0, 0))
     display_map(game_state, screen, config, level, player)
@@ -128,16 +137,7 @@ def render(game_state, screen, config, level, player):
             config.questions.get_question_display()
         )
     if game_state.is_state('splash'):
-        popup_width = config.popup_box['char_width']
-        splash_lines = config.splash_lines
-        splash_text = []
-        for line in splash_lines:
-            splash_text.extend(word_wrap(line, popup_width))
-            splash_text.append(' ')
-        draw_popup(
-            game_state, screen, config, level, player,
-            splash_text
-        )
+        draw_splash(game_state, screen, config)
     if game_state.is_state('item'):
         draw_popup(
             game_state, screen, config, level, player,
