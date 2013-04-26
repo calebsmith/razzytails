@@ -165,6 +165,10 @@ class Monster(Asset):
         """
         map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
         tile_solids = level.map.tile_solids
+        mc = level.map.monster_coordinates
+        # Remove self from monster_coordinates
+        del mc[mc.index({'coordinates': (self.x, self.y)})]
+        monster_coordinates = [c['coordinates'] for c in level.map.monster_coordinates]
 
         all_possible_moves = [(self.x + 1, self.y),
                               (self.x - 1, self.y),
@@ -173,11 +177,13 @@ class Monster(Asset):
                               (self.x, self.y + 1)]
         free_moves = []
         for x, y in all_possible_moves:
-            # is the move on the map?
+            # on the map?
             if x >= 0 and y >= 0 and x < map_width and y < map_height:
-                # is the move on a solid?
+                # not on a solid?
                 if not tile_solids[level.map.get_index(x, y)]:
-                    free_moves.append((x, y))
+                    # not on another monster?
+                    if (x, y) not in monster_coordinates:
+                        free_moves.append((x, y))
 
         min_distance = len(tile_solids) + 1  # start with big number
         best_move = (-1, -1)
@@ -187,6 +193,7 @@ class Monster(Asset):
                 min_distance = distance
                 best_move = move
         self.x, self.y = best_move
+        mc.append({'coordinates': best_move})
 
     def _distance_from_player(self, position, player):
         """Return a crude distance calculation between 2 positions.
@@ -261,10 +268,12 @@ class Level(LoadableAsset):
         self.map = Map(data['map'])
         self.monsters = []
 
+        self.map.monster_coordinates = []
         for i in range(data['monsters']['number']):
             monster = Monster(data['monsters'])
             monster.place_on_map(self.map)
             self.monsters.append(monster)
+            self.map.monster_coordinates.append({'coordinates': (monster.x, monster.y)})
 
         self.map.item_coordinates = []
         self.items = []
