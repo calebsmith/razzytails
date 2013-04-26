@@ -124,7 +124,20 @@ class Map(Asset):
 
 
 class Item(Asset):
-    pass
+
+    def handle(self, data):
+        super(Item, self).handle(data)
+        self.image = load_image(self.image)
+
+    def set_coordinates(self, map_data):
+        tile_solids = map_data.tile_solids
+        width, height = map_data.dimensions['width'], map_data.dimensions['height']
+        for y in xrange(height):
+            for x in xrange(width):
+                if not tile_solids[map_data.get_index(x, y)]:
+                    coordinates = (x, y)
+        map_data.item_coordinates.append({'id': self.id,
+                                          'coordinates': coordinates})
 
 
 class Monster(Asset):
@@ -139,7 +152,6 @@ class Monster(Asset):
 class Player(Asset):
     x = 0
     y = 0
-    raspberries = 0
     items = []
 
 
@@ -165,6 +177,12 @@ class Level(LoadableAsset):
         'monsters': [
             'image',
             'number'
+        ],
+        'items': [
+            'id',
+            'title',
+            'image',
+            'message'
         ]
     }
 
@@ -197,6 +215,13 @@ class Level(LoadableAsset):
             self._place_monster(monster, self.map)
             self.monsters.append(monster)
 
+        self.map.item_coordinates = []
+        self.items = []
+        for item_data in data['items']:
+            item = Item(item_data)
+            self.items.append(item)
+            item.set_coordinates(self.map)
+
     def _place_monster(self, monster, map):
         found_spot = False
         while found_spot is False:
@@ -206,5 +231,5 @@ class Level(LoadableAsset):
             # map.tile_solids will be false if spot is not yet taken
             found_spot = not map.tile_solids[map.get_index(x, y)]
             if (x, y) == (map.player_start['x'], map.player_start['y']):
-                found_spot = False # don't start on top of player
+                found_spot = False  # don't start on top of player
         monster.x, monster.y = x, y

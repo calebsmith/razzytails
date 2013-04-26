@@ -67,7 +67,7 @@ def display_monsters(game_state, screen, config, level, player):
         display_x = monster.x - (player.x - x_offset)
         display_y = monster.y - (player.y - y_offset)
         if (display_x >= 0 and display_x < config.screen['map_display_width'] and
-            display_y >= 0 and display_y < config.screen['map_display_height']):
+                display_y >= 0 and display_y < config.screen['map_display_height']):
             draw_image(
                 screen.context, config, monster.image[0], (
                     display_x * config.screen['tile_width'],
@@ -76,18 +76,19 @@ def display_monsters(game_state, screen, config, level, player):
             )
 
 
-def display_raspberries(game_state, screen, config, level, player):
+def display_items(game_state, screen, config, level, player):
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
     x_offset, y_offset = get_display_coordinates(
         config, (player.x, player.y), (map_width, map_height)
     )
-    for rasp_x, rasp_y in level.map.raspberry_coordinates:
-        display_x = rasp_x - (player.x - x_offset)
-        display_y = rasp_y - (player.y - y_offset)
+    for item_coords in level.map.item_coordinates:
+        display_x = item_coords['coordinates'][0] - (player.x - x_offset)
+        display_y = item_coords['coordinates'][1] - (player.y - y_offset)
         if (display_x >= 0 and display_x < config.screen['map_display_width'] and
-            display_y >= 0 and display_y < config.screen['map_display_height']):
+                display_y >= 0 and display_y < config.screen['map_display_height']):
+            item = next((x for x in level.items if x.id == item_coords['id']), None)
             draw_image(
-                screen.context, config, 'raspberry.png', (
+                screen.context, config, item.image[0], (
                     display_x * config.screen['tile_width'],
                     display_y * config.screen['tile_height']
                 )
@@ -114,7 +115,7 @@ def draw_dialog(game_state, screen, config, level, player):
 def render(game_state, screen, config, level, player):
     screen.context.blit(screen.background, (0, 0))
     display_map(game_state, screen, config, level, player)
-    display_raspberries(game_state, screen, config, level, player)
+    display_items(game_state, screen, config, level, player)
     display_monsters(game_state, screen, config, level, player)
     display_player(game_state, screen, config, level, player)
     if game_state.is_state('dialog'):

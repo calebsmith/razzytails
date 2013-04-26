@@ -15,13 +15,12 @@ def main():
 def game_loop(game_state, screen, config, level, player):
     while game_state.state != 'exit':
         handle_events(game_state, config, level, player)
-        # FIXME: Remove when raspberries are removed
         player_coordinate = player.x, player.y
-        if player_coordinate in level.map.raspberry_coordinates:
-            player.raspberries += 1
-            level.map.raspberry_coordinates.remove(player_coordinate)
-            game_state.popup()
-        #
+        for index, item in enumerate(level.map.item_coordinates):
+            if player_coordinate in item['coordinates']:
+                level.map.item_coordinates.remove(index)
+                # perform dialog for the item
+                game_state.popup()
         render(game_state, screen, config, level, player)
 
 if __name__ == "__main__":

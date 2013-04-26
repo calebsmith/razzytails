@@ -1,9 +1,7 @@
 #!usr/bin/env python
-from random import shuffle
-
 import pygame
 
-from game_assets import Config, Level, Screen, Player
+from game_assets import Config, Level, Item, Screen, Player
 from const import FSM_INITIAL, FSM_TRANSITIONS
 from fsm import FSM
 
@@ -45,16 +43,6 @@ def load_level(level_filename, player):
     according to the level's map.
     """
     level = Level(level_filename)
-    # TODO: Remove once items are added
-    # Create and attach raspberry coordinates.
-    width, height = level.map.dimensions['width'], level.map.dimensions['height']
-    raspberry_coordinates = []
-    for y in xrange(height):
-        for x in xrange(width):
-            if not level.map.tile_solids[level.map.get_index(x, y)]:
-                raspberry_coordinates.append((x, y))
-    shuffle(raspberry_coordinates)
-    level.map.raspberry_coordinates = raspberry_coordinates[:10]
     # Place player at the start location
     player.x = level.map.player_start['x']
     player.y = level.map.player_start['y']
