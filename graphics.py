@@ -1,6 +1,6 @@
 import pygame
 
-from utils import get_color, get_image, get_font, get_display_coordinates
+from utils import get_color, get_image, get_font, get_display_coordinates, word_wrap
 
 
 def draw_image(surface, obj, image_name, coordinates):
@@ -53,7 +53,7 @@ def display_player(game_state, screen, config, level, player):
 
 
 def display_monsters(game_state, screen, config, level, player):
-    # don't let monsters move during dialog boxes
+    # don't let monsters move during popup boxes
     if game_state.state != 'main':
         return
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
@@ -134,6 +134,17 @@ def render(game_state, screen, config, level, player):
         draw_popup(
             game_state, screen, config, level, player,
             config.questions.get_question_display()
+        )
+    if game_state.is_state('splash'):
+        popup_width = config.popup_box['char_width']
+        splash_lines = config.splash_lines
+        splash_text = []
+        for line in splash_lines:
+            splash_text.extend(word_wrap(line, popup_width))
+            splash_text.append(' ')
+        draw_popup(
+            game_state, screen, config, level, player,
+            splash_text
         )
     if game_state.is_state('item'):
         draw_popup(
