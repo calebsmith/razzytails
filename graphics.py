@@ -94,15 +94,15 @@ def display_items(game_state, screen, config, level, player):
             )
 
 
-def draw_dialog(game_state, screen, config, level, player, strings):
-    # Create the black surface for the dialog area to go onto
-    char_width = config.dialog_box['char_width']
-    char_height = config.dialog_box['char_height']
+def draw_popup(game_state, screen, config, level, player, strings):
+    # Create the black surface for the popup area to go onto
+    char_width = config.popup_box['char_width']
+    char_height = config.popup_box['char_height']
     x_margin, y_margin = 10, 10
     message_surface = pygame.Surface(
         (10 * char_width + x_margin * 2, 25 * char_height + y_margin * 2)
     )
-    box_x, box_y = config.dialog_box['x'], config.dialog_box['y']
+    box_x, box_y = config.popup_box['x'], config.popup_box['y']
     for index, string in enumerate(strings):
         draw_text(
             message_surface, config, config.score_font, string,
@@ -117,9 +117,14 @@ def render(game_state, screen, config, level, player):
     display_items(game_state, screen, config, level, player)
     display_monsters(game_state, screen, config, level, player)
     display_player(game_state, screen, config, level, player)
-    if game_state.is_state('dialog'):
-        draw_dialog(
+    if game_state.is_state('question'):
+        draw_popup(
             game_state, screen, config, level, player,
             config.questions.get_question_display()
+        )
+    if game_state.is_state('item'):
+        draw_popup(
+            game_state, screen, config, level, player,
+            player.current_item.message
         )
     pygame.display.flip()

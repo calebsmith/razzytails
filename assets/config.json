@@ -25,7 +25,7 @@
         "keyboard_mouse.png"
     ],
     "music": "choro_bavario_loop.ogg",
-    "dialog_box": {
+    "popup_box": {
         "x": 50,
         "y": 50,
         "char_width": 50,
