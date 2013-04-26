@@ -1,6 +1,6 @@
 import pygame
 
-from utils import get_color, get_image, get_font, get_display_coordinates
+from utils import get_color, get_image, get_font, get_display_coordinates, word_wrap
 
 
 def draw_image(surface, obj, image_name, coordinates):
@@ -124,5 +124,16 @@ def render(game_state, screen, config, level, player):
         draw_dialog(
             game_state, screen, config, level, player,
             config.questions.get_question_display()
+        )
+    if game_state.is_state('splash'):
+        dialog_width = config.dialog_box['char_width']
+        splash_lines = config.splash_lines
+        splash_text = []
+        for line in splash_lines:
+            splash_text.extend(word_wrap(line, dialog_width))
+            splash_text.append(' ')
+        draw_dialog(
+            game_state, screen, config, level, player,
+            splash_text
         )
     pygame.display.flip()

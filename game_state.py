@@ -26,9 +26,14 @@ transitions = [
         'source': 'dialog',
         'destination': 'exit'
     },
+    {
+        'name': 'start',
+        'source': 'splash',
+        'destination': 'main'
+    }
 ]
 
 # No callbacks for now. Refer to fsm.py when implementating
 callbacks = {}
 
-game_state = FSM('main', transitions, callbacks)
+game_state = FSM('splash', transitions, callbacks)
