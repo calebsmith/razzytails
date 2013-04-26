@@ -19,7 +19,8 @@
         "raspberry.png",
         "honeybadger.png",
         "sdcard.png",
-        "powercord.png"
+        "powercord.png",
+        "raspberrypi.png"
     ],
     "music": "choro_bavario_loop.ogg",
     "dialog_box": {
