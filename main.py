@@ -16,9 +16,9 @@ def game_loop(game_state, screen, config, level, player):
     while game_state.state != 'exit':
         handle_events(game_state, config, level, player)
         player_coordinate = player.x, player.y
-        for index, item in enumerate(level.map.item_coordinates):
-            if player_coordinate in item['coordinates']:
-                level.map.item_coordinates.remove(index)
+        for item in level.map.item_coordinates:
+            if player_coordinate == item['coordinates']:
+                level.map.item_coordinates.remove(item)
                 # perform dialog for the item
                 game_state.popup()
         render(game_state, screen, config, level, player)
