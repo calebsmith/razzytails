@@ -135,6 +135,19 @@ class Monster(Asset):
         super(Monster, self).handle(data)
         self.image = load_image(self.image)
 
+    def place_on_map(self, map):
+        found_spot = False
+        while found_spot is False:
+            # Pick a random spot on the map
+            x = random.randrange(map.dimensions['width'])
+            y = random.randrange(map.dimensions['height'])
+            # map.tile_solids will be false if spot is not yet taken
+            found_spot = not map.tile_solids[map.get_index(x, y)]
+            if (x, y) == (map.player_start['x'], map.player_start['y']):
+                # don't start on top of player
+                found_spot = False
+        self.x, self.y = x, y
+
 
 class Player(Asset):
     x = 0
@@ -194,17 +207,5 @@ class Level(LoadableAsset):
 
         for i in range(data['monsters']['number']):
             monster = Monster(data['monsters'])
-            self._place_monster(monster, self.map)
+            monster.place_on_map(self.map)
             self.monsters.append(monster)
-
-    def _place_monster(self, monster, map):
-        found_spot = False
-        while found_spot is False:
-            # Pick a random spot on the map
-            x = random.randrange(map.dimensions['width'])
-            y = random.randrange(map.dimensions['height'])
-            # map.tile_solids will be false if spot is not yet taken
-            found_spot = not map.tile_solids[map.get_index(x, y)]
-            if (x, y) == (map.player_start['x'], map.player_start['y']):
-                found_spot = False # don't start on top of player
-        monster.x, monster.y = x, y
