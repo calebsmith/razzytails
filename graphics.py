@@ -1,6 +1,6 @@
 import pygame
 
-from utils import get_color, get_image, get_font, get_display_coordinates
+from utils import get_color, get_image, get_font, get_display_coordinates, word_wrap
 
 
 def draw_image(surface, obj, image_name, coordinates):
@@ -89,6 +89,15 @@ def display_items(game_state, screen, config, level, player):
             )
 
 
+def display_player_items(game_state, screen, config, level, player):
+    draw_text(
+        screen.context, config, config.score_font, 'Inventory:', (0, 420),
+        color=get_color('black')
+    )
+    for index, item in enumerate(player.items):
+        draw_image(screen.context, level, item.image, (index * 32, 440))
+
+
 def draw_popup(game_state, screen, config, level, player, strings):
     # Create the black surface for the popup area to go onto
     char_width = config.popup_box['char_width']
@@ -112,10 +121,22 @@ def render(game_state, screen, config, level, player):
     display_items(game_state, screen, config, level, player)
     display_monsters(game_state, screen, config, level, player)
     display_player(game_state, screen, config, level, player)
+    display_player_items(game_state, screen, config, level, player)
     if game_state.is_state('question'):
         draw_popup(
             game_state, screen, config, level, player,
             config.questions.get_question_display()
+        )
+    if game_state.is_state('splash'):
+        popup_width = config.popup_box['char_width']
+        splash_lines = config.splash_lines
+        splash_text = []
+        for line in splash_lines:
+            splash_text.extend(word_wrap(line, popup_width))
+            splash_text.append(' ')
+        draw_popup(
+            game_state, screen, config, level, player,
+            splash_text
         )
     if game_state.is_state('item'):
         draw_popup(

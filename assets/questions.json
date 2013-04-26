@@ -1,22 +1,121 @@
 {
     "questions": [
     {
-        "question": "How are you",
+        "question": "Where does the name Raspberry Pi come from?",
         "answers": [
-            "Yes",
-            "No",
-            "Maybe"
+            "The board is the color of a raspberry.",
+            "From the fruit naming tradition of microcomputers + Python.",
+            "It is Eben Upton's favorite type of dessert."
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the name of the browser that comes installed on a Raspberry Pi?",
+        "answers": [
+            "Midori",
+            "Raspbrowser",
+            "Chromium"
         ],
         "correct": 0
     },
     {
-        "question": "What do you think about my really long but thoughtful question? I really want your feedback",
+        "question": "How many USB connections are on the Raspberry Pi?",
         "answers": [
-            "Yes",
-            "No",
-            "Maybe"
+            "1",
+            "2",
+            "None"
         ],
         "correct": 1
+    },
+    {
+        "question": "What directories are searched if a PYTHONPATH is set in an env?",
+        "answers": [
+            "PYTHONPATH directory",
+            "Current directory",
+            "home directory",
+            "All of the above"
+        ],
+        "correct": 3
+    },
+    {
+        "question": "Where did Python get it's name from?",
+        "answers": [
+            "It sounded cool",
+            "Guido Van Rossum's pet python",
+            "Monty Python's Flying Circus"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "In Python, what number is associated with the first item in a list of items?",
+        "answers": [
+            "1",
+            "0"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "Which one of these is NOT a Python web framework?",
+        "answers": [
+            "Django",
+            "Flask",
+            "Twisted",
+            "Pyramid"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "True or False? PEP8 calls for 4 spaces for code indentation.",
+        "answers": [
+            "True",
+            "False"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "According to the PEP8, what is the max number of characters allowed per line.",
+        "answers": [
+            "140",
+            "42",
+            "79"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "At PyCon 2013, all of the attendees received a:",
+        "answers": [
+            "Raspberry Pi + SD card + power cord",
+            "Python book",
+            "A pony"
+        ],
+        "correct": 0
+    },
+    {
+        "question": "What is the name of the person who invented Python?",
+        "answers": [
+            "Tim Berners-Lee",
+            "Guido van Rossum",
+            "Steve Jobs"
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What is the difference between a tuple and a list?",
+        "answers": [
+            "A tuple uses dots to concatenate items, while a list does not.",
+            "Tuples cannot be changed while lists can.",
+            "Tuples are a kind of flower and have nothing to do with each other."
+        ],
+        "correct": 1
+    },
+    {
+        "question": "What would the following statement print? b = 2  a = 1 + b print a",
+        "answers": [
+            "3",
+            "1b",
+            "a"
+        ],
+        "correct": 0
     }
     ]
 }
