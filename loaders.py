@@ -22,7 +22,7 @@ def initialize():
     pygame.key.set_repeat(delay, interval)
     # Create a screen to get a display context
     screen = Screen(config.screen)
-    screen.set_background('black')
+    screen.set_background('white')
     # Create the player
     player = Player()
     # Play background music if possible
