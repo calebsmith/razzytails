@@ -109,11 +109,20 @@
         "correct": 1
     },
     {
-        "question": "What would the following statement print? b = 2  a = 1 + b print a",
+        "question": "What symbol can you use to comment out code?",
         "answers": [
-            "3",
-            "1b",
-            "a"
+            "//",
+            "*",
+            "#"
+        ],
+        "correct": 2
+    },
+    {
+        "question": "What is a Python function that will output content in the console?",
+        "answers": [
+            "print",
+            "console.log",
+            "echo"
         ],
         "correct": 0
     }
