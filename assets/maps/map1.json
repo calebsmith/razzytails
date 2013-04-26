@@ -36,7 +36,7 @@
         "number": 2
     },
     "items": [
-        {"id": 1, "title": "Power Supply", "image": "raspberry.png", "message": "String"},
-        {"id": 2, "title": "SD Card", "image": "raspberry.png", "message": "String2"}
+        {"id": 1, "title": "Power Cord", "image": "powercord.png", "message": "Congratulations! You can now power your Raspberry Pi.  Without this, the Raspberry Pi will be nothing more than a fancy paper weight."},
+        {"id": 2, "title": "SD Card", "image": "sdcard.png", "message": "This SD Card contains, among other things, the Operating System that your Raspberry Pi utilizes."}
         ]
 }
