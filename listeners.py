@@ -13,18 +13,22 @@ def splash_listener(event, game_state, *args, **kwargs):
         game_state.start()
 
 
-@register_listener(['end'])
-def end_listener(event, game_state, *args, **kwargs):
+@register_listener(['endscreen'])
+def endscreen_listener(event, game_state, *args, **kwargs):
     event_key = event.key
     if event_key == K_RETURN or event_key == K_SPACE:
         game_state.exit()
 
 
-@register_listener(['main', 'question', 'item'])
-def quit_listener(event, game_state, *args, **kwargs):
-    pressed_escape = event.type == KEYDOWN and event.key == K_ESCAPE
-    if pressed_escape or event.type == QUIT:
+@register_listener(['main', 'question', 'item', 'splash'])
+def quit_esc_listener(event, game_state, *args, **kwargs):
+    if event.key == K_ESCAPE:
         game_state.exit()
+
+
+@register_listener(['main', 'question', 'item'], QUIT)
+def quit_x_listener(event, game_state, *args, **kwargs):
+    game_state.exit()
 
 
 @register_listener(['main'], KEYDOWN)
@@ -81,4 +85,4 @@ def select_answer_listener(event, game_state, config, level, player):
 def item_collected_listener(event, game_state, config, level, player):
     event_key = event.key
     if event_key == K_RETURN or event_key == K_SPACE:
-        game_state.item_collected(level)
+        game_state.item_collected(level, player)

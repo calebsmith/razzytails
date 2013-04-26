@@ -20,9 +20,9 @@ class Dispatch(object):
         Given a `state` name and a `listener` function, registers the listener
         for calling when the game is in that state.
         """
-        existing = self.listeners.get(state, [])
-        existing.append(listener)
         event_type = event_type or pygame.constants.KEYDOWN
+        existing = self.listeners.get((state, event_type), [])
+        existing.append(listener)
         self.listeners[(state, event_type)] = existing
 
     def attach_state_machine(self, game_state):
@@ -42,8 +42,7 @@ class Dispatch(object):
                 'Dispatcher has no state machine attached'
             )
         state = self.game_state.state
-        listeners = self.listeners.get((state, event.type), [])
-        for listener in listeners:
+        for listener in self.listeners.get((state, event.type), []):
             listener(event, *args, **kwargs)
 
 dispatcher = Dispatch()

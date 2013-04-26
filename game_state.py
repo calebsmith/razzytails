@@ -41,14 +41,24 @@ transitions = [
         'destination': 'exit'
     },
     {
+        'name': 'exit',
+        'source': 'splash',
+        'destination': 'exit'
+    },
+    {
+        'name': 'exit',
+        'source': 'endscreen',
+        'destination': 'exit'
+    },
+    {
         'name': 'start',
         'source': 'splash',
         'destination': 'main'
     },
     {
         'name': 'end',
-        'source': 'item',
-        'destination': 'exit'
+        'source': 'main',
+        'destination': 'endscreen'
     }
 ]
 
@@ -70,8 +80,8 @@ def handle_answer(is_correct, level, player):
         level.reset_monsters()
 
 
-def handle_item_collected(level):
-    if len(level.items) == 0:
+def handle_item_collected(level, player):
+    if len(level.items) == len(player.items):
         # no more items. you win!
         game_state.end()
 
