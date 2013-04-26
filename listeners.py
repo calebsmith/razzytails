@@ -4,6 +4,15 @@ from pygame.constants import (K_UP, K_DOWN, K_LEFT, K_RIGHT, K_RETURN, K_SPACE,
 from dispatch import dispatcher, register_listener
 
 
+@register_listener(['splash'])
+def splash_listener(event, game_state, *args, **kwargs):
+    if event.type != KEYDOWN:
+        return
+    event_key = event.key
+    if event_key == K_RETURN or event_key == K_SPACE:
+        game_state.start()
+
+
 @register_listener(['main', 'question', 'item'])
 def quit_listener(event, game_state, *args, **kwargs):
     pressed_escape = event.type == KEYDOWN and event.key == K_ESCAPE

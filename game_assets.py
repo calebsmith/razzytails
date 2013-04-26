@@ -13,16 +13,17 @@ class Config(LoadableAsset):
 
     path = CONFIG_DIR
     location = 'config.json'
-    schema = [{
-        'screen': [
-            'title',
-            'width',
-            'height',
-            'tile_width',
-            'tile_height',
-            'map_display_width',
-            'map_display_height',
-        ]},
+    schema = [
+        {
+            'screen': [
+                'title',
+                'width',
+                'height',
+                'tile_width',
+                'tile_height',
+                'map_display_width',
+                'map_display_height',
+            ]},
         'start',
         'images',
         'player_image',
@@ -34,11 +35,15 @@ class Config(LoadableAsset):
                 'x', 'y', 'char_width', 'char_height'
             ]
         },
-        {'keypress_repeat': [
-            'delay',
-            'interval'
+        {
+            'keypress_repeat': [
+                'delay',
+                'interval'
             ]
-        }
+        },
+        'questions',
+        'monster_delay',
+        'splash_lines'
     ]
 
     def handle(self, data):

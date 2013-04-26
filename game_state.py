@@ -40,6 +40,11 @@ transitions = [
         'source': 'item',
         'destination': 'exit'
     },
+    {
+        'name': 'start',
+        'source': 'splash',
+        'destination': 'main'
+    }
 ]
 
 
@@ -52,4 +57,4 @@ def add_item_to_inventory(player, item):
 # No callbacks for now. Refer to fsm.py when implementating
 callbacks = {'on_before_popup_item': add_item_to_inventory}
 
-game_state = FSM('main', transitions, callbacks)
+game_state = FSM('splash', transitions, callbacks)
