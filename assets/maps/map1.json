@@ -34,5 +34,9 @@
     "monsters": {
         "image": "honeybadger.png",
         "number": 2
-    }
+    },
+    "items": [
+        {"id": 1, "title": "Power Supply", "image": "raspberry.png", "message": "String"},
+        {"id": 2, "title": "SD Card", "image": "raspberry.png", "message": "String2"}
+        ]
 }
