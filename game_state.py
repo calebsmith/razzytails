@@ -41,6 +41,11 @@ transitions = [
         'destination': 'exit'
     },
     {
+        'name': 'exit',
+        'source': 'splash',
+        'destination': 'exit'
+    },
+    {
         'name': 'start',
         'source': 'splash',
         'destination': 'main'

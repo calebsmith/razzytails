@@ -12,11 +12,15 @@ def splash_listener(event, game_state, *args, **kwargs):
         game_state.start()
 
 
-@register_listener(['main', 'question', 'item'])
-def quit_listener(event, game_state, *args, **kwargs):
-    pressed_escape = event.type == KEYDOWN and event.key == K_ESCAPE
-    if pressed_escape or event.type == QUIT:
+@register_listener(['main', 'question', 'item', 'splash'])
+def quit_esc_listener(event, game_state, *args, **kwargs):
+    if event.key == K_ESCAPE:
         game_state.exit()
+
+
+@register_listener(['main', 'question', 'item'], QUIT)
+def quit_x_listener(event, game_state, *args, **kwargs):
+    game_state.exit()
 
 
 @register_listener(['main'], KEYDOWN)
