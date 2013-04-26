@@ -148,6 +148,44 @@ class Monster(Asset):
                 found_spot = False
         self.x, self.y = x, y
 
+    def move(self, level, player):
+        """Move the monster.
+
+        Needs 'level' so we can make sure not to step on solids. Needs
+        'player' so we can aim for the player.
+        """
+        map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
+        tile_solids = level.map.tile_solids
+
+        all_possible_moves = [(self.x + 1, self.y),
+                              (self.x - 1, self.y),
+                              (self.x, self.y),
+                              (self.x, self.y - 1),
+                              (self.x, self.y + 1)]
+        free_moves = []
+        for x, y in all_possible_moves:
+            # is the move on the map?
+            if x >= 0 and y >= 0 and x < map_width and y < map_height:
+                # is the move on a solid?
+                if not tile_solids[level.map.get_index(x, y)]:
+                    free_moves.append((x, y))
+
+        min_distance = len(tile_solids) + 1  # start with big number
+        best_move = (-1, -1)
+        for move in free_moves:
+            distance = self._distance_from_player(move, player)
+            if distance < min_distance:
+                min_distance = distance
+                best_move = move
+        self.x, self.y = best_move
+
+    def _distance_from_player(self, position, player):
+        """Return a crude distance calculation between 2 positions.
+
+        This is simply the sum of the absolute value of x and y distances"""
+        move_x, move_y = position
+        return abs(move_x - player.x) + abs(move_y - player.y)
+
 
 class Player(Asset):
     x = 0

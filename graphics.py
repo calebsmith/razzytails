@@ -59,11 +59,7 @@ def display_monsters(game_state, screen, config, level, player):
     )
 
     for monster in level.monsters:
-        # FIXME: move monster
-        x_diff = player.x - monster.x
-        y_diff = player.y - monster.y
-        if abs(x_diff) > abs(y_diff):
-            pass
+        monster.move(level, player)
         display_x = monster.x - (player.x - x_offset)
         display_y = monster.y - (player.y - y_offset)
         if (display_x >= 0 and display_x < config.screen['map_display_width'] and
