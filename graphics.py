@@ -57,9 +57,12 @@ def display_monsters(game_state, screen, config, level, player):
     x_offset, y_offset = get_display_coordinates(
         config, (player.x, player.y), (map_width, map_height)
     )
+    ticks = pygame.time.get_ticks()
 
     for monster in level.monsters:
-        monster.move(level, player)
+        if ticks > (monster.last_moved_at + config.monster_delay):
+            monster.last_moved_at = ticks
+            monster.move(level, player)
         display_x = monster.x - (player.x - x_offset)
         display_y = monster.y - (player.y - y_offset)
         if (display_x >= 0 and display_x < config.screen['map_display_width'] and

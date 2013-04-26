@@ -34,5 +34,6 @@
         "delay": 200,
         "interval": 200
     },
-    "questions": "questions.json"
+    "questions": "questions.json",
+    "monster_delay": 500
 }
