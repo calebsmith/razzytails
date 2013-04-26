@@ -15,6 +15,11 @@ def initialize():
     # Initialize pygame and pygame mixer
     pygame.init()
     pygame.mixer.init()
+    try:
+        pygame.joystick.Joystick(0).init()
+    except:
+        pass
+
     config = Config()
     # by default the key repeat is disabled, call set_repeat() to enable it
     delay = config.keypress_repeat['delay']
