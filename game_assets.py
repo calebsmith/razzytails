@@ -26,11 +26,12 @@ class Config(LoadableAsset):
             ]},
         'start',
         'images',
+        'player_image',
         'fonts',
         'music',
         'score_font',
         'raspberries_font', {
-            'dialog_box': [
+            'popup_box': [
                 'x', 'y', 'char_width', 'char_height'
             ]
         },
@@ -53,7 +54,7 @@ class Config(LoadableAsset):
         self.screen['map_display_mid_x'] = self.screen['map_display_width'] / 2
         self.screen['map_display_mid_y'] = self.screen['map_display_height'] / 2
         self.questions = Questions(
-            self.questions, width=self.dialog_box['char_width']
+            self.questions, width=self.popup_box['char_width']
         )
 
 
@@ -130,19 +131,19 @@ class Map(Asset):
 
 class Item(Asset):
 
+    def __init__(self, *args, **kwargs):
+        self.width = kwargs.pop('width', 20)
+        super(Item, self).__init__(*args, **kwargs)
+
     def handle(self, data):
         super(Item, self).handle(data)
-        self.image = load_image(self.image)
+        self.message = word_wrap(self.message, self.width) + ['', '[X] Collect!']
 
 
 class Monster(Asset):
     x = 0
     y = 0
     last_moved_at = 0
-
-    def handle(self, data):
-        super(Monster, self).handle(data)
-        self.image = load_image(self.image)
 
     def place_on_map(self, map_data):
         found_spot = False
@@ -240,6 +241,10 @@ class Level(LoadableAsset):
         ]
     }
 
+    def __init__(self, config):
+        self.config = config
+        super(Level, self).__init__(config.start)
+
     def clean_map(self, map_data):
         player_start = map_data['player_start']
         x, y = player_start['x'], player_start['y']
@@ -273,14 +278,24 @@ class Level(LoadableAsset):
 
         self.map.item_coordinates = []
         self.items = []
-
         item_locations = self._generate_item_locations(self.map)
         for index, item_data in enumerate(data['items']):
             location = item_locations[index]
-            item = Item(item_data)
+            item = Item(item_data, width=self.config.popup_box['char_width'])
             self.items.append(item)
             self.map.item_coordinates.append({'id': item.id,
                                               'coordinates': location})
+        # Load and store image files for monster and item objects
+        monster_images = dict([
+            load_image(monster.image)
+            for monster in self.monsters
+        ])
+        item_images = dict([
+            load_image(item.image)
+            for item in self.items
+        ])
+        self.images = monster_images
+        self.images.update(item_images)
 
     def _generate_item_locations(self, map_data):
         locations = []

@@ -45,7 +45,7 @@ def display_player(game_state, screen, config, level, player):
         config, (player.x, player.y), (map_width, map_height)
     )
     draw_image(
-        screen.context, config, 'razzy.png', (
+        screen.context, config, config.player_image, (
             display_x * config.screen['tile_width'],
             display_y * config.screen['tile_height']
         )
@@ -71,7 +71,7 @@ def display_monsters(game_state, screen, config, level, player):
         if (display_x >= 0 and display_x < config.screen['map_display_width'] and
                 display_y >= 0 and display_y < config.screen['map_display_height']):
             draw_image(
-                screen.context, config, monster.image[0], (
+                screen.context, level, monster.image, (
                     display_x * config.screen['tile_width'],
                     display_y * config.screen['tile_height']
                 )
@@ -90,22 +90,31 @@ def display_items(game_state, screen, config, level, player):
                 display_y >= 0 and display_y < config.screen['map_display_height']):
             item = next((x for x in level.items if x.id == item_coords['id']), None)
             draw_image(
-                screen.context, config, item.image[0], (
+                screen.context, level, item.image, (
                     display_x * config.screen['tile_width'],
                     display_y * config.screen['tile_height']
                 )
             )
 
 
-def draw_dialog(game_state, screen, config, level, player, strings):
-    # Create the black surface for the dialog area to go onto
-    char_width = config.dialog_box['char_width']
-    char_height = config.dialog_box['char_height']
+def display_player_items(game_state, screen, config, level, player):
+    draw_text(
+        screen.context, config, config.score_font, 'Inventory:', (0, 420),
+        color=get_color('black')
+    )
+    for index, item in enumerate(player.items):
+        draw_image(screen.context, level, item.image, (index * 32, 440))
+
+
+def draw_popup(game_state, screen, config, level, player, strings):
+    # Create the black surface for the popup area to go onto
+    char_width = config.popup_box['char_width']
+    char_height = config.popup_box['char_height']
     x_margin, y_margin = 10, 10
     message_surface = pygame.Surface(
         (10 * char_width + x_margin * 2, 25 * char_height + y_margin * 2)
     )
-    box_x, box_y = config.dialog_box['x'], config.dialog_box['y']
+    box_x, box_y = config.popup_box['x'], config.popup_box['y']
     for index, string in enumerate(strings):
         draw_text(
             message_surface, config, config.score_font, string,
@@ -120,20 +129,26 @@ def render(game_state, screen, config, level, player):
     display_items(game_state, screen, config, level, player)
     display_monsters(game_state, screen, config, level, player)
     display_player(game_state, screen, config, level, player)
-    if game_state.is_state('dialog'):
-        draw_dialog(
+    display_player_items(game_state, screen, config, level, player)
+    if game_state.is_state('question'):
+        draw_popup(
             game_state, screen, config, level, player,
             config.questions.get_question_display()
         )
     if game_state.is_state('splash'):
-        dialog_width = config.dialog_box['char_width']
+        dialog_width = config.popup_box['char_width']
         splash_lines = config.splash_lines
         splash_text = []
         for line in splash_lines:
             splash_text.extend(word_wrap(line, dialog_width))
             splash_text.append(' ')
-        draw_dialog(
+        draw_popup(
             game_state, screen, config, level, player,
             splash_text
+        )
+    if game_state.is_state('item'):
+        draw_popup(
+            game_state, screen, config, level, player,
+            player.current_item.message
         )
     pygame.display.flip()

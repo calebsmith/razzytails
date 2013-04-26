@@ -22,7 +22,7 @@ def initialize():
     pygame.key.set_repeat(delay, interval)
     # Create a screen to get a display context
     screen = Screen(config.screen)
-    screen.set_background('black')
+    screen.set_background('white')
     # Create the player
     player = Player()
     # Play background music if possible
@@ -36,12 +36,12 @@ def initialize():
     return game_state, dispatcher, screen, config, player
 
 
-def load_level(level_filename, player):
+def load_level(config, player):
     """
-    Load the level from the level_filename. Set the player's start location
+    Load the level from the config. Set the player's start location
     according to the level's map.
     """
-    level = Level(level_filename)
+    level = Level(config)
     # Place player at the start location
     player.x = level.map.player_start['x']
     player.y = level.map.player_start['y']
