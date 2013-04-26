@@ -94,7 +94,7 @@ def display_items(game_state, screen, config, level, player):
             )
 
 
-def draw_dialog(game_state, screen, config, level, player):
+def draw_dialog(game_state, screen, config, level, player, strings):
     # Create the black surface for the dialog area to go onto
     char_width = config.dialog_box['char_width']
     char_height = config.dialog_box['char_height']
@@ -103,7 +103,7 @@ def draw_dialog(game_state, screen, config, level, player):
         (10 * char_width + x_margin * 2, 25 * char_height + y_margin * 2)
     )
     box_x, box_y = config.dialog_box['x'], config.dialog_box['y']
-    for index, string in enumerate(config.questions.get_question_display()):
+    for index, string in enumerate(strings):
         draw_text(
             message_surface, config, config.score_font, string,
             (x_margin, y_margin + index * 20)
@@ -118,5 +118,8 @@ def render(game_state, screen, config, level, player):
     display_monsters(game_state, screen, config, level, player)
     display_player(game_state, screen, config, level, player)
     if game_state.is_state('dialog'):
-        draw_dialog(game_state, screen, config, level, player)
+        draw_dialog(
+            game_state, screen, config, level, player,
+            config.questions.get_question_display()
+        )
     pygame.display.flip()
