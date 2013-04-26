@@ -104,7 +104,7 @@
         "answers": [
             "A tuple uses dots to concatenate items, while a list does not.",
             "Tuples cannot be changed while lists can.",
-            "Tuples are a kind of flower and have nothing to do with each other."
+            "Tuples are a kind of flower. You are being silly."
         ],
         "correct": 1
     },
