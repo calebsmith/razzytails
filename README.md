@@ -30,7 +30,7 @@ Installing pygame is *not* easy. Follow
 
 2. Next, download the code
 
-        git clone https://github.com/juliaelman/razzytails.git
+        git clone https://github.com/calebsmith/razzytails.git
 
 3. Run the game
 
