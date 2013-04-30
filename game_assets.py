@@ -30,9 +30,8 @@ class Config(LoadableAsset):
         'splash_image',
         'endscreen_image',
         'fonts',
-        'music',
         'score_font',
-        'raspberries_font', {
+        'music', {
             'popup_box': [
                 'x', 'y', 'char_width', 'char_height'
             ]
@@ -78,13 +77,11 @@ class Config(LoadableAsset):
 
 class Questions(LoadableAsset):
     path = CONFIG_DIR
-    schema = {
-        'questions': [
-            'question',
-            'answers',
-            'correct',
-        ]
-    }
+    schema = [
+        'question',
+        'answers',
+        'correct',
+    ]
 
     def __init__(self, *args, **kwargs):
         self.width = kwargs.pop('width', 20)
@@ -98,7 +95,7 @@ class Questions(LoadableAsset):
         self._question_display = None
 
     def handle(self, data):
-        super(Questions, self).handle(data)
+        self.questions = data
         self.question_displays = [
             word_wrap(question['question'], self.width)
             for question in self.questions

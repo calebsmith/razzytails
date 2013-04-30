@@ -1,5 +1,4 @@
-{
-    "questions": [
+[
     {
         "question": "Where does the name Raspberry Pi come from?",
         "answers": [
@@ -126,5 +125,4 @@
         ],
         "correct": 0
     }
-    ]
-}
+]
