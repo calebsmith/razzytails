@@ -2,7 +2,7 @@ from copy import copy
 import os
 import random
 
-from pygame import Surface, display, time
+from pygame import Surface, display
 
 from const import MAPS_DIR, CONFIG_DIR, MUSIC_DIR
 from asset_loaders import Asset, LoadableAsset, load_image, load_font
@@ -55,14 +55,25 @@ class Config(LoadableAsset):
 
     def handle(self, data):
         super(Config, self).handle(data)
-        self.images = dict(map(load_image, self.images))
-        self.fonts = dict(map(load_font, self.fonts))
-        self.music = os.path.join(MUSIC_DIR, self.music) if self.music else ''
         self.screen['map_display_mid_x'] = self.screen['map_display_width'] / 2
         self.screen['map_display_mid_y'] = self.screen['map_display_height'] / 2
         self.questions = Questions(
             self.questions, width=self.popup_box['char_width']
         )
+        self.data = data
+
+    def load_assets(self):
+        """
+        Load the asset files whose names are set in the config file.
+
+        N.B. This is done in a separate step than handle() because the screen
+        context must be set before images are loaded, but the screen context
+        uses config data for determining the width and height of the video mode
+        """
+        images, fonts, music = self.data['images'], self.data['fonts'], self.data['music']
+        self.images = dict(map(load_image, images))
+        self.fonts = dict(map(load_font, fonts))
+        self.music = os.path.join(MUSIC_DIR, music) if self.music else ''
 
 
 class Questions(LoadableAsset):

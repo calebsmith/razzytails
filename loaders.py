@@ -19,7 +19,7 @@ def initialize():
         pygame.joystick.Joystick(0).init()
     except:
         pass
-
+    # Load configuration file for various settings
     config = Config()
     # by default the key repeat is disabled, call set_repeat() to enable it
     delay = config.keypress_repeat['delay']
@@ -28,6 +28,8 @@ def initialize():
     # Create a screen to get a display context
     screen = Screen(config.screen)
     screen.set_background('white')
+    # Load the image, font, and sound assets of the config file
+    config.load_assets()
     # Create the player
     player = Player()
     # Play background music if possible

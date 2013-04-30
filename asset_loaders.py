@@ -10,7 +10,7 @@ from const import IMAGES_DIR, FONTS_DIR
 def load_image(filename):
     image_file = os.path.join(IMAGES_DIR, filename)
     try:
-        image = pygame.image.load(image_file)
+        image = pygame.image.load(image_file).convert_alpha()
     except (IOError, pygame.error):
         print 'Image file {0} not found'.format(image_file)
         image = None
