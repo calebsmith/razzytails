@@ -3,7 +3,7 @@
 from fsm import FSM
 from game_assets import Level
 
-# FSM transitions and callbacks
+# FSM transitions
 transitions = [
     {
         'name': 'answer',
@@ -73,6 +73,7 @@ transitions = [
 ]
 
 
+# FSM callbacks
 def add_item_to_inventory(player, item):
     player.items.append(item)
     player.current_item = item
@@ -96,7 +97,7 @@ def handle_item_collected(level, player):
         # no more items. you win!
         game_state.end()
 
-# No callbacks for now. Refer to fsm.py when implementating
+
 callbacks = {
     'on_before_popup_item': add_item_to_inventory,
     'on_answer': handle_answer,
