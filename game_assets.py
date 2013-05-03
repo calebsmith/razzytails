@@ -226,6 +226,49 @@ class Player(Asset):
     last_updated = None
     neutral = True
 
+    # Some directions constants for general use.
+    UP = 'up'
+    DOWN = 'down'
+    LEFT = 'left'
+    RIGHT = 'right'
+
+    # Maps a direction constant to a two-tuple, the first of which is the
+    # intended change of x and y in the form of (x, y). The second value is
+    # the predicate function that determines if the move is within bounds
+    _direction_mapping = {
+        UP: ((0, -1), lambda x, y, x_bounds, y_bounds: y > 0),
+        DOWN: ((0, 1), lambda x, y, x_bounds, y_bounds: y < y_bounds),
+        LEFT: ((-1, 0), lambda x, y, x_bounds, y_bounds: x > 0),
+        RIGHT: ((1, 0), lambda x, y, x_bounds, y_bounds: x < x_bounds),
+    }
+
+    def _move(self, level, direction):
+        dimensions = level.map.dimensions
+        map_width, map_height = dimensions['width'], dimensions['height']
+        (x_modifier, y_modifier), bounds_func = self._direction_mapping[direction]
+        inbounds = bounds_func(self.x, self.y, map_width - 1, map_height - 1)
+        if not inbounds:
+            return
+        tile_solids = level.map.tile_solids
+        goal_tile_index = level.map.get_index(
+            self.x + x_modifier, self.y + y_modifier
+        )
+        if not tile_solids[goal_tile_index]:
+            self.x += x_modifier
+            self.y += y_modifier
+
+    def move_up(self, level):
+        self._move(level, self.UP)
+
+    def move_down(self, level):
+        self._move(level, self.DOWN)
+
+    def move_left(self, level):
+        self._move(level, self.LEFT)
+
+    def move_right(self, level):
+        self._move(level, self.RIGHT)
+
 
 class Level(LoadableAsset):
 

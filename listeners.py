@@ -33,26 +33,19 @@ def quit_x_listener(event, game_state, *args, **kwargs):
 
 @register_listener(['main'], KEYDOWN)
 def move_player_listener(event, game_state, config, level, player):
-    dimensions = level.map.dimensions
-    map_width, map_height = dimensions['width'], dimensions['height']
-    tile_solids = level.map.tile_solids
-
     event_key = event.key
-    if event_key == K_UP and player.y > 0:
-        move_up(level, player, tile_solids)
-    if event_key == K_DOWN and player.y < map_height - 1:
-        move_down(level, player, tile_solids)
-    if event_key == K_LEFT and player.x > 0:
-        move_left(level, player, tile_solids)
-    if event_key == K_RIGHT and player.x < map_width - 1:
-        move_right(level, player, tile_solids)
+    if event_key == K_UP:
+        player.move_up(level)
+    if event_key == K_DOWN:
+        player.move_down(level)
+    if event_key == K_LEFT:
+        player.move_left(level)
+    if event_key == K_RIGHT:
+        player.move_right(level)
 
 
 @register_listener(['main'], JOYAXISMOTION)
 def move_player_joystick_listener(event, game_state, config, level, player):
-    dimensions = level.map.dimensions
-    map_width, map_height = dimensions['width'], dimensions['height']
-    tile_solids = level.map.tile_solids
     delay = config.joystick['delay']
     last_updated = player.last_updated
     value = event.value
@@ -76,15 +69,15 @@ def move_player_joystick_listener(event, game_state, config, level, player):
 
     if move:
         if event.axis == 0:
-            if value > 0 and player.x < map_width - 1:
-                move_right(level, player, tile_solids)
-            elif player.x > 0:
-                move_left(level, player, tile_solids)
+            if value > 0:
+                player.move_right(level)
+            else:
+                player.move_left(level)
         elif event.axis == 1:
-            if value > 0 and player.y > 0:
-                move_up(level, player, tile_solids)
-            elif player.y < map_height - 1:
-                move_down(level, player, tile_solids)
+            if value > 0:
+                player.move_up(level)
+            else:
+                player.move_down(level)
 
 
 @register_listener(['question'])
