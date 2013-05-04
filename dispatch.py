@@ -15,7 +15,7 @@ class Dispatch(object):
     def __init__(self):
         self.game_state = None
 
-    def register(self, state, listener, event_type=None):
+    def _register(self, state, listener, event_type=None):
         """
         Given a `state` name and a `listener` function, registers the listener
         for calling when the game is in that state.
@@ -45,19 +45,18 @@ class Dispatch(object):
         for listener in self.listeners.get((state, event.type), []):
             listener(event, *args, **kwargs)
 
+    def register_listener(self, states, event_type=None):
+
+        def decorator(f):
+
+            if not getattr(f, 'registered', False):
+                for state in states:
+                    self._register(state, f, event_type)
+                f.registered = True
+
+            def _(*args, **kwargs):
+                f(*args, **kwargs)
+            return _
+        return decorator
+
 dispatcher = Dispatch()
-
-
-def register_listener(states, event_type=None):
-
-    def decorator(f):
-
-        if not getattr(f, 'registered', False):
-            for state in states:
-                dispatcher.register(state, f, event_type)
-            f.registered = True
-
-        def _(*args, **kwargs):
-            f(*args, **kwargs)
-        return _
-    return decorator

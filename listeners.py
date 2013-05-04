@@ -2,36 +2,36 @@ from pygame.constants import (K_UP, K_DOWN, K_LEFT, K_RIGHT, K_RETURN, K_SPACE,
     KEYDOWN, K_ESCAPE, QUIT)
 from pygame import time, JOYAXISMOTION
 
-from dispatch import dispatcher, register_listener
+from dispatch import dispatcher
 from movement import move_left, move_right, move_up, move_down
 
 
-@register_listener(['splash'])
+@dispatcher.register_listener(['splash'])
 def splash_listener(event, game_state, *args, **kwargs):
     event_key = event.key
     if event_key == K_RETURN or event_key == K_SPACE:
         game_state.start()
 
 
-@register_listener(['endscreen'])
+@dispatcher.register_listener(['endscreen'])
 def endscreen_listener(event, game_state, *args, **kwargs):
     event_key = event.key
     if event_key == K_RETURN or event_key == K_SPACE:
         game_state.exit()
 
 
-@register_listener(['main', 'question', 'item', 'splash'])
+@dispatcher.register_listener(['main', 'question', 'item', 'splash'])
 def quit_esc_listener(event, game_state, *args, **kwargs):
     if event.key == K_ESCAPE:
         game_state.exit()
 
 
-@register_listener(['main', 'question', 'item'], QUIT)
+@dispatcher.register_listener(['main', 'question', 'item'], QUIT)
 def quit_x_listener(event, game_state, *args, **kwargs):
     game_state.exit()
 
 
-@register_listener(['main'], KEYDOWN)
+@dispatcher.register_listener(['main'], KEYDOWN)
 def move_player_listener(event, game_state, config, level, player):
     event_key = event.key
     if event_key == K_UP:
@@ -44,7 +44,7 @@ def move_player_listener(event, game_state, config, level, player):
         player.move_right(level)
 
 
-@register_listener(['main'], JOYAXISMOTION)
+@dispatcher.register_listener(['main'], JOYAXISMOTION)
 def move_player_joystick_listener(event, game_state, config, level, player):
     delay = config.joystick['delay']
     last_updated = player.last_updated
@@ -80,7 +80,7 @@ def move_player_joystick_listener(event, game_state, config, level, player):
                 player.move_down(level)
 
 
-@register_listener(['question'])
+@dispatcher.register_listener(['question'])
 def select_answer_listener(event, game_state, config, level, player):
     event_key = event.key
     questions = config.questions
@@ -94,7 +94,7 @@ def select_answer_listener(event, game_state, config, level, player):
         questions.choice += 1
 
 
-@register_listener(['item', 'info'])
+@dispatcher.register_listener(['item', 'info'])
 def item_collected_listener(event, game_state, config, level, player):
     event_key = event.key
     if event_key == K_RETURN or event_key == K_SPACE:
