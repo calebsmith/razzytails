@@ -1,6 +1,6 @@
 import pygame
 
-from utils import get_color, get_image, get_font, get_display_coordinates
+from utils import get_color, get_image, get_font
 
 
 def draw_image(surface, obj, image_name, coordinates):
@@ -24,39 +24,33 @@ def display_map(game_state, screen, config, level, player):
     tile_legend = level.map.legend
     for map_y in range(0, config.screen['map_display_height']):
         for map_x in range(0, config.screen['map_display_width']):
-            x_offset, y_offset = get_display_coordinates(
-                config, (player.x, player.y), (map_width, map_height)
-            )
+            x_offset, y_offset = screen.camera.get_tile_offset(player)
             current_index = level.map.get_index(
                 map_x + x_offset, map_y + y_offset
             )
             image_filename = tile_legend.get(unicode(tiles[current_index]), '')
             screen.context.blit(
                 level.map.images[image_filename], (
-                    map_x * config.screen['tile_width'],
-                    map_y * config.screen['tile_height']
+                    map_x * screen.tile_width,
+                    map_y * screen.tile_height
                 )
             )
 
 
 def display_player(game_state, screen, config, level, player):
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
-    x_offset, y_offset = get_display_coordinates(
-        config, (player.x, player.y), (map_width, map_height)
-    )
+    x_offset, y_offset = screen.camera.get_tile_offset(player)
     draw_image(
         screen.context, config, config.player_image, (
-            (player.x - x_offset) * config.screen['tile_width'],
-            (player.y - y_offset) * config.screen['tile_height']
+            (player.x - x_offset) * screen.tile_width,
+            (player.y - y_offset) * screen.tile_height,
         )
     )
 
 
 def display_monsters(game_state, screen, config, level, player):
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
-    x_offset, y_offset = get_display_coordinates(
-        config, (player.x, player.y), (map_width, map_height)
-    )
+    x_offset, y_offset = screen.camera.get_tile_offset(player)
     for monster in level.monsters:
         display_x = monster.x - x_offset
         display_y = monster.y - y_offset
@@ -64,17 +58,15 @@ def display_monsters(game_state, screen, config, level, player):
                 display_y >= 0 and display_y < config.screen['map_display_height']):
             draw_image(
                 screen.context, level, monster.image, (
-                    display_x * config.screen['tile_width'],
-                    display_y * config.screen['tile_height']
+                    display_x * screen.tile_width,
+                    display_y * screen.tile_height,
                 )
             )
 
 
 def display_items(game_state, screen, config, level, player):
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
-    x_offset, y_offset = get_display_coordinates(
-        config, (player.x, player.y), (map_width, map_height)
-    )
+    x_offset, y_offset = screen.camera.get_tile_offset(player)
     for item_coords in level.item_coordinates:
         display_x = item_coords['coordinates'][0] - x_offset
         display_y = item_coords['coordinates'][1] - y_offset
@@ -83,8 +75,8 @@ def display_items(game_state, screen, config, level, player):
             item = next((x for x in level.items if x.id == item_coords['id']), None)
             draw_image(
                 screen.context, level, item.image, (
-                    display_x * config.screen['tile_width'],
-                    display_y * config.screen['tile_height']
+                    display_x * screen.tile_width,
+                    display_y * screen.tile_height,
                 )
             )
 

@@ -7,7 +7,7 @@ from graphics import render
 def main():
     # Initialize display screen and load assets
     game_state, dispatcher, screen, config, player = initialize()
-    level = load_level(config, player)
+    level = load_level(screen, config, player)
     # Run game loop
     game_loop(game_state, dispatcher, screen, config, level, player)
 

@@ -59,32 +59,6 @@ get_font = partial(_get_asset, 'fonts')
 get_sounds = partial(_get_asset, 'sounds')
 
 
-def _get_display_value(dimension, config, value, max_value):
-    """
-    Determine the display offset of the player or map tile given the current
-    """
-    if dimension == 'x':
-        med_display_mid = config.screen['map_display_mid_x']
-        max_display_value = config.screen['map_display_width']
-    else:
-        med_display_mid = config.screen['map_display_mid_y']
-        max_display_value = config.screen['map_display_height']
-    if value < med_display_mid:
-        return 0
-    elif value < max_value - med_display_mid:
-        return value - med_display_mid
-    return max_value - max_display_value
-
-_get_display_x = partial(_get_display_value, 'x')
-_get_display_y = partial(_get_display_value, 'y')
-
-
-def get_display_coordinates(config, coordinates, max_coordinates):
-    x, y = coordinates
-    width, height = max_coordinates
-    return _get_display_x(config, x, width), _get_display_y(config, y, height)
-
-
 def word_wrap(sentance, limit):
     """
     A simple word wrap utility function.

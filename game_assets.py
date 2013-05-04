@@ -120,6 +120,7 @@ class Screen(Asset):
 
     def __init__(self, *args, **kwargs):
         super(Screen, self).__init__(*args, **kwargs)
+        self.camera = Camera(*args, **kwargs)
         self._create_context()
 
     def _create_context(self):
@@ -131,6 +132,48 @@ class Screen(Asset):
         background = Surface(self.context.get_size()).convert()
         background.fill(get_color(color))
         self.background = background
+
+    def attach_level(self, level):
+        self.camera.attach_level(level)
+
+
+class Camera(Asset):
+
+    X = 'x'
+    Y = 'y'
+
+    def attach_level(self, level):
+        self.level = level
+
+    def _get_offset_value(self, dimension, value, max_value):
+        """
+        Determine the display offset of the player or map tile based on the
+        current level and player cooridnates
+        """
+        if dimension == 'x':
+            med_display_mid = self.map_display_mid_x
+            max_display_value = self.map_display_width
+        else:
+            med_display_mid = self.map_display_mid_y
+            max_display_value = self.map_display_height
+        if value < med_display_mid:
+            return 0
+        elif value < max_value - med_display_mid:
+            return value - med_display_mid
+        return max_value - max_display_value
+
+    def _get_x_offset_value(self, value, max_value):
+        return self._get_offset_value(self.X, value, max_value)
+
+    def _get_y_offset_value(self, value, max_value):
+        return self._get_offset_value(self.Y, value, max_value)
+
+    def get_tile_offset(self, player):
+        dimensions = self.level.map.dimensions
+        return (
+            self._get_x_offset_value(player.x, dimensions['width']),
+            self._get_y_offset_value(player.y, dimensions['height'])
+        )
 
 
 class Map(Asset):
