@@ -3,7 +3,6 @@ from pygame.constants import (K_UP, K_DOWN, K_LEFT, K_RIGHT, K_RETURN, K_SPACE,
 from pygame import time, JOYAXISMOTION
 
 from dispatch import dispatcher
-from movement import move_left, move_right, move_up, move_down
 
 
 @dispatcher.register_listener(['splash'])
