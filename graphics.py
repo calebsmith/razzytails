@@ -14,7 +14,6 @@ def draw_text(surface, obj, font_name, label, coordinates, color=None):
 
 def display_map(game_state, screen, config, level, player):
     tiles = level.map.tiles
-    map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
     tile_legend = level.map.legend
     for map_y in range(0, config.screen['map_display_height']):
         for map_x in range(0, config.screen['map_display_width']):
@@ -39,8 +38,6 @@ def display_monsters(game_state, screen, config, level, player):
 
 
 def display_items(game_state, screen, config, level, player):
-    map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
-    x_offset, y_offset = screen.camera.get_tile_offset(player)
     for item_coords in level.item_coordinates:
         item = next((x for x in level.items if x.id == item_coords['id']), None)
         image = level.images.get(item.image)
