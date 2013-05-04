@@ -1,6 +1,11 @@
 from functools import partial
 
 
+class RequiresStateMachine(Exception):
+    """An Exception class for classes that require a state machine"""
+    pass
+
+
 class FSM(object):
     """
     A simple finite state machine that defines a set of states and the
