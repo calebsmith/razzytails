@@ -70,10 +70,10 @@ def _get_display_value(dimension, config, value, max_value):
         med_display_mid = config.screen['map_display_mid_y']
         max_display_value = config.screen['map_display_height']
     if value < med_display_mid:
-        return value
+        return 0
     elif value < max_value - med_display_mid:
-        return med_display_mid
-    return value - (max_value - max_display_value)
+        return value - med_display_mid
+    return max_value - max_display_value
 
 _get_display_x = partial(_get_display_value, 'x')
 _get_display_y = partial(_get_display_value, 'y')
