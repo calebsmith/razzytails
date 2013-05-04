@@ -28,35 +28,23 @@ def display_map(game_state, screen, config, level, player):
 
 
 def display_player(game_state, screen, config, level, player):
-    map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
-    x_offset, y_offset = screen.camera.get_tile_offset(player)
     image = config.images.get(config.player_image, None)
-    screen.draw_tile(image, (player.x + x_offset, player.y + y_offset))
+    screen.draw_tile_relative(image, player, (player.x, player.y))
 
 
 def display_monsters(game_state, screen, config, level, player):
-    map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
-    x_offset, y_offset = screen.camera.get_tile_offset(player)
     for monster in level.monsters:
-        display_x = monster.x + x_offset
-        display_y = monster.y + y_offset
-        if (display_x >= 0 and display_x < config.screen['map_display_width'] and
-                display_y >= 0 and display_y < config.screen['map_display_height']):
-            image = level.images.get(monster.image)
-            screen.draw_tile(image, (display_x, display_y))
+        image = level.images.get(monster.image)
+        screen.draw_tile_relative(image, player, (monster.x, monster.y))
 
 
 def display_items(game_state, screen, config, level, player):
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
     x_offset, y_offset = screen.camera.get_tile_offset(player)
     for item_coords in level.item_coordinates:
-        display_x = item_coords['coordinates'][0] + x_offset
-        display_y = item_coords['coordinates'][1] + y_offset
-        if (display_x >= 0 and display_x < config.screen['map_display_width'] and
-                display_y >= 0 and display_y < config.screen['map_display_height']):
-            item = next((x for x in level.items if x.id == item_coords['id']), None)
-            image = level.images.get(item.image)
-            screen.draw_tile(image, (display_x, display_y))
+        item = next((x for x in level.items if x.id == item_coords['id']), None)
+        image = level.images.get(item.image)
+        screen.draw_tile_relative(image, player, item_coords['coordinates'])
 
 
 def display_player_items(game_state, screen, config, level, player):

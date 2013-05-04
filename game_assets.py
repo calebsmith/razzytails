@@ -136,6 +136,14 @@ class Screen(Asset):
     def attach_level(self, level):
         self.camera.attach_level(level)
 
+    def draw_tile_relative(self, image, player, coordinates):
+        x, y = coordinates
+        x_offset, y_offset = self.camera.get_tile_offset(player)
+        rel_x, rel_y = x + x_offset, y + y_offset
+        if (rel_x >= 0 and rel_x < self.map_display_width and
+                rel_y >= 0 and rel_y < self.map_display_height):
+            self.draw_tile(image, (x + x_offset, y + y_offset))
+
     def draw_tile(self, image, coordinates):
         x, y = coordinates
         rel_x, rel_y = x * self.tile_width, y * self.tile_height
