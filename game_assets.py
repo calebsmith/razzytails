@@ -136,6 +136,15 @@ class Screen(Asset):
     def attach_level(self, level):
         self.camera.attach_level(level)
 
+    def draw_tile(self, image, coordinates):
+        x, y = coordinates
+        rel_x, rel_y = x * self.tile_width, y * self.tile_height
+        self.draw(image, (rel_x, rel_y))
+
+    def draw(self, image, coordinates):
+        if image:
+            self.context.blit(image, coordinates)
+
 
 class Camera(Asset):
 
@@ -159,8 +168,8 @@ class Camera(Asset):
         if value < med_display_mid:
             return 0
         elif value < max_value - med_display_mid:
-            return value - med_display_mid
-        return max_value - max_display_value
+            return med_display_mid - value
+        return max_display_value - max_value
 
     def _get_x_offset_value(self, value, max_value):
         return self._get_offset_value(self.X, value, max_value)

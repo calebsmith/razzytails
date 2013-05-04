@@ -1,12 +1,6 @@
 import pygame
 
-from utils import get_color, get_image, get_font
-
-
-def draw_image(surface, obj, image_name, coordinates):
-    image = get_image(obj, image_name)
-    if image and surface:
-        surface.blit(image, coordinates)
+from utils import get_color, get_font
 
 
 def draw_text(surface, obj, font_name, label, coordinates, color=None):
@@ -26,59 +20,43 @@ def display_map(game_state, screen, config, level, player):
         for map_x in range(0, config.screen['map_display_width']):
             x_offset, y_offset = screen.camera.get_tile_offset(player)
             current_index = level.map.get_index(
-                map_x + x_offset, map_y + y_offset
+                map_x - x_offset, map_y - y_offset
             )
             image_filename = tile_legend.get(unicode(tiles[current_index]), '')
-            screen.context.blit(
-                level.map.images[image_filename], (
-                    map_x * screen.tile_width,
-                    map_y * screen.tile_height
-                )
-            )
+            image = level.map.images[image_filename]
+            screen.draw_tile(image, (map_x, map_y))
 
 
 def display_player(game_state, screen, config, level, player):
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
     x_offset, y_offset = screen.camera.get_tile_offset(player)
-    draw_image(
-        screen.context, config, config.player_image, (
-            (player.x - x_offset) * screen.tile_width,
-            (player.y - y_offset) * screen.tile_height,
-        )
-    )
+    image = config.images.get(config.player_image, None)
+    screen.draw_tile(image, (player.x + x_offset, player.y + y_offset))
 
 
 def display_monsters(game_state, screen, config, level, player):
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
     x_offset, y_offset = screen.camera.get_tile_offset(player)
     for monster in level.monsters:
-        display_x = monster.x - x_offset
-        display_y = monster.y - y_offset
+        display_x = monster.x + x_offset
+        display_y = monster.y + y_offset
         if (display_x >= 0 and display_x < config.screen['map_display_width'] and
                 display_y >= 0 and display_y < config.screen['map_display_height']):
-            draw_image(
-                screen.context, level, monster.image, (
-                    display_x * screen.tile_width,
-                    display_y * screen.tile_height,
-                )
-            )
+            image = level.images.get(monster.image)
+            screen.draw_tile(image, (display_x, display_y))
 
 
 def display_items(game_state, screen, config, level, player):
     map_width, map_height = level.map.dimensions['width'], level.map.dimensions['height']
     x_offset, y_offset = screen.camera.get_tile_offset(player)
     for item_coords in level.item_coordinates:
-        display_x = item_coords['coordinates'][0] - x_offset
-        display_y = item_coords['coordinates'][1] - y_offset
+        display_x = item_coords['coordinates'][0] + x_offset
+        display_y = item_coords['coordinates'][1] + y_offset
         if (display_x >= 0 and display_x < config.screen['map_display_width'] and
                 display_y >= 0 and display_y < config.screen['map_display_height']):
             item = next((x for x in level.items if x.id == item_coords['id']), None)
-            draw_image(
-                screen.context, level, item.image, (
-                    display_x * screen.tile_width,
-                    display_y * screen.tile_height,
-                )
-            )
+            image = level.images.get(item.image)
+            screen.draw_tile(image, (display_x, display_y))
 
 
 def display_player_items(game_state, screen, config, level, player):
@@ -87,7 +65,12 @@ def display_player_items(game_state, screen, config, level, player):
         color=get_color('black')
     )
     for index, item in enumerate(player.items):
-        draw_image(screen.context, level, item.image, (index * 32, 440))
+        image = level.images.get(item.image, None)
+        # Position each item from left to right with respect to ordering and
+        # on the bottom tile, adjusted by 8 for some padding
+        x = index * screen.tile_width
+        y = screen.height - screen.tile_height - 8
+        screen.draw(image, (x, y))
 
 
 def draw_popup(game_state, screen, config, level, player, strings):
@@ -104,25 +87,17 @@ def draw_popup(game_state, screen, config, level, player, strings):
             message_surface, config, config.score_font, string,
             (x_margin, y_margin + index * 20)
         )
-        screen.context.blit(message_surface, (box_x, box_y))
+        screen.draw(message_surface, (box_x, box_y))
 
 
-def draw_splash(game_state, screen, config):
+def draw_splash(game_state, screen, config, image):
     width = config.screen['width']
     height = config.screen['height']
     message_surface = pygame.Surface((width, height))
     origin = (0, 0)
-    draw_image(message_surface, config, config.splash_image, origin)
-    screen.context.blit(message_surface, origin)
-
-
-def draw_endscreen(game_state, screen, config):
-    width = config.screen['width']
-    height = config.screen['height']
-    message_surface = pygame.Surface((width, height))
-    origin = (0, 0)
-    draw_image(message_surface, config, config.endscreen_image, origin)
-    screen.context.blit(message_surface, origin)
+    if image:
+        message_surface.blit(image, origin)
+    screen.draw(message_surface, origin)
 
 
 def render(game_state, screen, config, level, player):
@@ -138,9 +113,11 @@ def render(game_state, screen, config, level, player):
             config.questions.get_question_display()
         )
     if game_state.is_state('splash'):
-        draw_splash(game_state, screen, config)
+        image = config.images.get(config.splash_image, None)
+        draw_splash(game_state, screen, config, image)
     if game_state.is_state('endscreen'):
-        draw_endscreen(game_state, screen, config)
+        image = config.images.get(config.endscreen_image, None)
+        draw_splash(game_state, screen, config, image)
     if game_state.is_state('item'):
         draw_popup(
             game_state, screen, config, level, player,
