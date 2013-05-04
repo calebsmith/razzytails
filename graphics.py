@@ -1,4 +1,4 @@
-def display_map(game_state, screen, config, level, player):
+def display_map(screen, config, level, player):
     tiles = level.map.tiles
     tile_legend = level.map.legend
     for map_y in range(0, config.screen['map_display_height']):
@@ -12,25 +12,25 @@ def display_map(game_state, screen, config, level, player):
             screen.draw_tile(image, (map_x, map_y))
 
 
-def display_player(game_state, screen, config, level, player):
+def display_player(screen, config, level, player):
     image = config.images.get(config.player_image, None)
     screen.draw_tile_relative(image, player, (player.x, player.y))
 
 
-def display_monsters(game_state, screen, config, level, player):
+def display_monsters(screen, config, level, player):
     for monster in level.monsters:
         image = level.images.get(monster.image)
         screen.draw_tile_relative(image, player, (monster.x, monster.y))
 
 
-def display_items(game_state, screen, config, level, player):
+def display_items(screen, config, level, player):
     for item_coords in level.item_coordinates:
         item = next((x for x in level.items if x.id == item_coords['id']), None)
         image = level.images.get(item.image)
         screen.draw_tile_relative(image, player, item_coords['coordinates'])
 
 
-def display_player_items(game_state, screen, config, level, player):
+def display_player_items(screen, config, level, player):
     screen.draw_text(
         config.fonts.get(config.score_font), 'Inventory:', (0, 420), 'black'
     )
@@ -43,7 +43,7 @@ def display_player_items(game_state, screen, config, level, player):
         screen.draw(image, (x, y))
 
 
-def draw_popup(game_state, screen, config, level, player, strings):
+def draw_popup(screen, config, level, player, strings):
     # Create the black surface for the popup area to go onto
     char_width = config.popup_box['char_width']
     char_height = config.popup_box['char_height']
@@ -60,7 +60,7 @@ def draw_popup(game_state, screen, config, level, player, strings):
         screen.draw(message_surface, (box_x, box_y))
 
 
-def draw_splash(game_state, screen, config, image):
+def draw_splash(screen, config, image):
     width = config.screen['width']
     height = config.screen['height']
     message_surface = screen.get_surface(width, height)
@@ -72,29 +72,26 @@ def draw_splash(game_state, screen, config, image):
 
 def render(game_state, screen, config, level, player):
     screen.apply_background()
-    display_map(game_state, screen, config, level, player)
-    display_items(game_state, screen, config, level, player)
-    display_monsters(game_state, screen, config, level, player)
-    display_player(game_state, screen, config, level, player)
-    display_player_items(game_state, screen, config, level, player)
+    display_map(screen, config, level, player)
+    display_items(screen, config, level, player)
+    display_monsters(screen, config, level, player)
+    display_player(screen, config, level, player)
+    display_player_items(screen, config, level, player)
     if game_state.is_state('question'):
         draw_popup(
-            game_state, screen, config, level, player,
+            screen, config, level, player,
             config.questions.get_question_display()
         )
     if game_state.is_state('splash'):
         image = config.images.get(config.splash_image, None)
-        draw_splash(game_state, screen, config, image)
+        draw_splash(screen, config, image)
     if game_state.is_state('endscreen'):
         image = config.images.get(config.endscreen_image, None)
-        draw_splash(game_state, screen, config, image)
+        draw_splash(screen, config, image)
     if game_state.is_state('item'):
-        draw_popup(
-            game_state, screen, config, level, player,
-            player.current_item.message
-        )
+        draw_popup(screen, config, level, player, player.current_item.message)
     if game_state.is_state('info'):
-        draw_popup(game_state, screen, config, level, player, [
+        draw_popup(screen, config, level, player, [
             'Honey Badger got you! You lost all of your items', '',
             'Press <Enter> to return'
         ])
