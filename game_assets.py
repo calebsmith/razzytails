@@ -2,11 +2,12 @@ from copy import copy
 import os
 import random
 
+import pygame
 from pygame import Surface, display
 
 from const import MAPS_DIR, CONFIG_DIR, MUSIC_DIR
 from asset_loaders import Asset, LoadableAsset, load_image, load_font
-from utils import get_color, word_wrap
+from utils import word_wrap
 
 
 class Config(LoadableAsset):
@@ -130,28 +131,52 @@ class Screen(Asset):
     def set_background(self, color=''):
         color = color or 'black'
         background = Surface(self.context.get_size()).convert()
-        background.fill(get_color(color))
+        background.fill(self.get_color(color))
         self.background = background
+
+    def apply_background(self):
+        self.context.blit(self.background, (0, 0))
+
+    def flip(self):
+        pygame.display.flip()
+
+    def get_color(self, color):
+        return pygame.color.THECOLORS.get(color, None) \
+            or pygame.color.THECOLORS['black']
+
+    def get_surface(self, width, height):
+        return Surface((width, height))
 
     def attach_level(self, level):
         self.camera.attach_level(level)
 
-    def draw_tile_relative(self, image, player, coordinates):
+    def draw_tile_relative(self, image, player, coordinates, surface=None):
         x, y = coordinates
         x_offset, y_offset = self.camera.get_tile_offset(player)
         rel_x, rel_y = x + x_offset, y + y_offset
         if (rel_x >= 0 and rel_x < self.map_display_width and
                 rel_y >= 0 and rel_y < self.map_display_height):
-            self.draw_tile(image, (x + x_offset, y + y_offset))
+            self.draw_tile(
+                image, (x + x_offset, y + y_offset), surface=surface
+            )
 
-    def draw_tile(self, image, coordinates):
+    def draw_tile(self, image, coordinates, surface=None):
         x, y = coordinates
         rel_x, rel_y = x * self.tile_width, y * self.tile_height
-        self.draw(image, (rel_x, rel_y))
+        self.draw(image, (rel_x, rel_y), surface=surface)
 
-    def draw(self, image, coordinates):
+    def draw(self, image, coordinates, surface=None):
+        surface = surface or self.context
         if image:
-            self.context.blit(image, coordinates)
+            surface.blit(image, coordinates)
+
+    def draw_text(self, font, label, coordinates, color=None, surface=None):
+        surface = surface or self.context
+        if all((font, label)):
+            text = font.render(label, True, self.get_color(color or 'white'))
+            textpos = text.get_rect()
+            textpos.move_ip(*coordinates)
+            surface.blit(text, textpos)
 
 
 class Camera(Asset):

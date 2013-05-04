@@ -1,17 +1,3 @@
-import pygame
-
-from utils import get_color, get_font
-
-
-def draw_text(surface, obj, font_name, label, coordinates, color=None):
-    font = get_font(obj, font_name)
-    if all((surface, font, label)):
-        text = font.render(label, True, color or get_color('white'))
-        textpos = text.get_rect()
-        textpos.move_ip(*coordinates)
-        surface.blit(text, textpos)
-
-
 def display_map(game_state, screen, config, level, player):
     tiles = level.map.tiles
     tile_legend = level.map.legend
@@ -45,9 +31,8 @@ def display_items(game_state, screen, config, level, player):
 
 
 def display_player_items(game_state, screen, config, level, player):
-    draw_text(
-        screen.context, config, config.score_font, 'Inventory:', (0, 420),
-        color=get_color('black')
+    screen.draw_text(
+        config.fonts.get(config.score_font), 'Inventory:', (0, 420), 'black'
     )
     for index, item in enumerate(player.items):
         image = level.images.get(item.image, None)
@@ -63,14 +48,14 @@ def draw_popup(game_state, screen, config, level, player, strings):
     char_width = config.popup_box['char_width']
     char_height = config.popup_box['char_height']
     x_margin, y_margin = 10, 10
-    message_surface = pygame.Surface(
-        (10 * char_width + x_margin * 2, 25 * char_height + y_margin * 2)
-    )
+    surface_width = 10 * char_width + x_margin * 2
+    surface_height = 25 * char_height + y_margin * 2
+    message_surface = screen.get_surface(surface_width, surface_height)
     box_x, box_y = config.popup_box['x'], config.popup_box['y']
     for index, string in enumerate(strings):
-        draw_text(
-            message_surface, config, config.score_font, string,
-            (x_margin, y_margin + index * 20)
+        screen.draw_text(
+            config.fonts.get(config.score_font), string,
+            (x_margin, y_margin + index * 20), surface=message_surface
         )
         screen.draw(message_surface, (box_x, box_y))
 
@@ -78,15 +63,15 @@ def draw_popup(game_state, screen, config, level, player, strings):
 def draw_splash(game_state, screen, config, image):
     width = config.screen['width']
     height = config.screen['height']
-    message_surface = pygame.Surface((width, height))
+    message_surface = screen.get_surface(width, height)
     origin = (0, 0)
     if image:
-        message_surface.blit(image, origin)
+        screen.draw(image, origin, surface=message_surface)
     screen.draw(message_surface, origin)
 
 
 def render(game_state, screen, config, level, player):
-    screen.context.blit(screen.background, (0, 0))
+    screen.apply_background()
     display_map(game_state, screen, config, level, player)
     display_items(game_state, screen, config, level, player)
     display_monsters(game_state, screen, config, level, player)
@@ -113,4 +98,4 @@ def render(game_state, screen, config, level, player):
             'Honey Badger got you! You lost all of your items', '',
             'Press <Enter> to return'
         ])
-    pygame.display.flip()
+    screen.flip()

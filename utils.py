@@ -44,11 +44,6 @@ def validate_data_against_schema(data, schema):
     return True
 
 
-def get_color(color):
-    return pygame.color.THECOLORS.get(color, None) \
-        or pygame.color.THECOLORS['black']
-
-
 def _get_asset(type_name, assets, filename):
     attribute = getattr(assets, type_name, None)
     return attribute.get(filename, None) if attribute else None
