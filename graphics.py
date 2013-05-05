@@ -1,8 +1,8 @@
 def display_map(screen, config, level, player):
     tiles = level.map.tiles
     tile_legend = level.map.legend
-    for map_y in range(0, config.screen['map_display_height']):
-        for map_x in range(0, config.screen['map_display_width']):
+    for map_y in range(0, screen.map_display_height):
+        for map_x in range(0, screen.map_display_width):
             x_offset, y_offset = screen.camera.get_tile_offset(player)
             current_index = level.map.get_index(
                 map_x - x_offset, map_y - y_offset
@@ -61,8 +61,8 @@ def draw_popup(screen, config, level, player, strings):
 
 
 def draw_splash(screen, config, image):
-    width = config.screen['width']
-    height = config.screen['height']
+    width = screen.width
+    height = screen.height
     message_surface = screen.get_surface(width, height)
     origin = (0, 0)
     if image:

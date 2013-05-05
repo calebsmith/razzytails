@@ -4,7 +4,7 @@ import os
 PROJECT_DIR = os.path.dirname(__file__)
 ASSETS_DIR = os.path.join(PROJECT_DIR, 'assets')
 
-CONFIG_DIR = ASSETS_DIR
+CONFIG_DIR = os.path.join(ASSETS_DIR, 'config')
 IMAGES_DIR = os.path.join(ASSETS_DIR, 'images')
 FONTS_DIR = os.path.join(ASSETS_DIR, 'fonts')
 MUSIC_DIR = os.path.join(ASSETS_DIR, 'music')

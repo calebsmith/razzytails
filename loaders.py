@@ -26,7 +26,7 @@ def initialize():
     interval = config.keypress_repeat['interval']
     pygame.key.set_repeat(delay, interval)
     # Create a screen to get a display context
-    screen = Screen(config.screen)
+    screen = Screen()
     screen.set_background('white')
     # Load the image, font, and sound assets of the config file
     config.load_assets()

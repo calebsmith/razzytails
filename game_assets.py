@@ -16,16 +16,6 @@ class Config(LoadableAsset):
     path = CONFIG_DIR
     location = 'config.json'
     schema = [
-        {
-            'screen': [
-                'title',
-                'width',
-                'height',
-                'tile_width',
-                'tile_height',
-                'map_display_width',
-                'map_display_height',
-            ]},
         'start',
         'images',
         'player_image',
@@ -56,8 +46,6 @@ class Config(LoadableAsset):
 
     def handle(self, data):
         super(Config, self).handle(data)
-        self.screen['map_display_mid_x'] = self.screen['map_display_width'] / 2
-        self.screen['map_display_mid_y'] = self.screen['map_display_height'] / 2
         self.questions = Questions(
             self.questions, width=self.popup_box['char_width']
         )
@@ -118,18 +106,32 @@ class Questions(LoadableAsset):
         return self.choice == self.current_question['correct']
 
 
-class Screen(Asset):
+class Screen(LoadableAsset):
+    path = CONFIG_DIR
+    location = 'screen.json'
+    schema = [
+        'title',
+        'width',
+        'height',
+        'tile_width',
+        'tile_height',
+        'map_display_width',
+        'map_display_height',
+    ]
 
     background = None
 
     def __init__(self, *args, **kwargs):
         super(Screen, self).__init__(*args, **kwargs)
-        self.camera = Camera(*args, **kwargs)
         self._create_context()
 
     def _create_context(self):
         display.set_caption(self.title)
         self.context = display.set_mode((self.width, self.height))
+
+    def handle(self, data):
+        super(Screen, self).handle(data)
+        self.camera = Camera(data)
 
     def set_background(self, color='black'):
         background = Surface(self.context.get_size()).convert()
@@ -190,6 +192,11 @@ class Camera(Asset):
 
     X = 'x'
     Y = 'y'
+
+    def __init__(self, *args, **kwargs):
+        super(Camera, self).__init__(*args, **kwargs)
+        self.map_display_mid_x = self.map_display_width / 2
+        self.map_display_mid_y = self.map_display_height / 2
 
     def attach_level(self, level):
         self.level = level
