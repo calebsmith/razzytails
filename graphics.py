@@ -71,28 +71,27 @@ def draw_splash(screen, config, image):
 
 
 def render(game_state, screen, config, level, player):
-    screen.apply_background()
-    display_map(screen, config, level, player)
-    display_items(screen, config, level, player)
-    display_monsters(screen, config, level, player)
-    display_player(screen, config, level, player)
-    display_player_items(screen, config, level, player)
-    if game_state.is_state('question'):
-        draw_popup(
-            screen, config, level, player,
-            config.questions.get_question_display()
-        )
-    if game_state.is_state('splash'):
-        image = config.images.get(config.splash_image, None)
-        draw_splash(screen, config, image)
-    if game_state.is_state('endscreen'):
-        image = config.images.get(config.endscreen_image, None)
-        draw_splash(screen, config, image)
-    if game_state.is_state('item'):
-        draw_popup(screen, config, level, player, player.current_item.message)
-    if game_state.is_state('info'):
-        draw_popup(screen, config, level, player, [
-            'Honey Badger got you! You lost all of your items', '',
-            'Press <Enter> to return'
-        ])
-    screen.flip()
+    with screen.display_cycle():
+        display_map(screen, config, level, player)
+        display_items(screen, config, level, player)
+        display_monsters(screen, config, level, player)
+        display_player(screen, config, level, player)
+        display_player_items(screen, config, level, player)
+        if game_state.is_state('question'):
+            draw_popup(
+                screen, config, level, player,
+                config.questions.get_question_display()
+            )
+        if game_state.is_state('splash'):
+            image = config.images.get(config.splash_image, None)
+            draw_splash(screen, config, image)
+        if game_state.is_state('endscreen'):
+            image = config.images.get(config.endscreen_image, None)
+            draw_splash(screen, config, image)
+        if game_state.is_state('item'):
+            draw_popup(screen, config, level, player, player.current_item.message)
+        if game_state.is_state('info'):
+            draw_popup(screen, config, level, player, [
+                'Honey Badger got you! You lost all of your items', '',
+                'Press <Enter> to return'
+            ])

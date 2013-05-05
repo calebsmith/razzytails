@@ -1,6 +1,7 @@
 from copy import copy
 import os
 import random
+from contextlib import contextmanager
 
 import pygame
 from pygame import Surface, display
@@ -119,6 +120,8 @@ class Questions(LoadableAsset):
 
 class Screen(Asset):
 
+    background = None
+
     def __init__(self, *args, **kwargs):
         super(Screen, self).__init__(*args, **kwargs)
         self.camera = Camera(*args, **kwargs)
@@ -128,16 +131,23 @@ class Screen(Asset):
         display.set_caption(self.title)
         self.context = display.set_mode((self.width, self.height))
 
-    def set_background(self, color=''):
-        color = color or 'black'
+    def set_background(self, color='black'):
         background = Surface(self.context.get_size()).convert()
         background.fill(self.get_color(color))
         self.background = background
 
-    def apply_background(self):
-        self.context.blit(self.background, (0, 0))
+    def attach_level(self, level):
+        self.camera.attach_level(level)
 
-    def flip(self):
+    @contextmanager
+    def display_cycle(self):
+        """
+        A context manager that applies the background to the screen, calls the
+        display functions within the block and then flips the display.
+        """
+        if self.background:
+            self.context.blit(self.background, (0, 0))
+        yield
         pygame.display.flip()
 
     def get_color(self, color):
@@ -146,9 +156,6 @@ class Screen(Asset):
 
     def get_surface(self, width, height):
         return Surface((width, height))
-
-    def attach_level(self, level):
-        self.camera.attach_level(level)
 
     def draw_tile_relative(self, image, player, coordinates, surface=None):
         x, y = coordinates
