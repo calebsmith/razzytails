@@ -7,6 +7,12 @@ from asset_loaders import Asset, LoadableAsset
 
 
 class Screen(LoadableAsset):
+    """
+    Creates a display surface for rendering and provides methods for blitting
+    images and text onto that surface. Also contains a Camera that determines
+    the amount to offset display values based on the player's position.
+    """
+
     schema = [
         'title',
         'width',
@@ -58,10 +64,20 @@ class Screen(LoadableAsset):
     def get_surface(self, width, height):
         return Surface((width, height))
 
-    def draw_tile_relative(
-            self, image, dimensions, player, coordinates, surface=None):
+    def draw(self, image, coordinates, surface=None):
+        surface = surface or self.context
+        if image:
+            surface.blit(image, coordinates)
+
+    def draw_tile(self, image, coordinates, surface=None):
         x, y = coordinates
-        x_offset, y_offset = self.camera.get_tile_offset(dimensions, player)
+        rel_x, rel_y = x * self.tile_width, y * self.tile_height
+        self.draw(image, (rel_x, rel_y), surface=surface)
+
+    def draw_tile_relative(
+            self, image, coordinates, container, player, surface=None):
+        x, y = coordinates
+        x_offset, y_offset = self.camera.get_offset(container, player)
         rel_x, rel_y = x + x_offset, y + y_offset
         if (rel_x >= 0 and rel_x < self.map_display_width and
                 rel_y >= 0 and rel_y < self.map_display_height):
@@ -69,19 +85,9 @@ class Screen(LoadableAsset):
                 image, (x + x_offset, y + y_offset), surface=surface
             )
 
-    def draw_tile(self, image, coordinates, surface=None):
-        x, y = coordinates
-        rel_x, rel_y = x * self.tile_width, y * self.tile_height
-        self.draw(image, (rel_x, rel_y), surface=surface)
-
-    def draw(self, image, coordinates, surface=None):
-        surface = surface or self.context
-        if image:
-            surface.blit(image, coordinates)
-
     def draw_text(self, font, label, coordinates, color=None, surface=None):
         surface = surface or self.context
-        if all((font, label)):
+        if font is not None and label:
             text = font.render(label, True, self.get_color(color or 'white'))
             textpos = text.get_rect()
             textpos.move_ip(*coordinates)
@@ -89,11 +95,17 @@ class Screen(LoadableAsset):
 
 
 class PerTileCamera(Asset):
+    """
+    A Camera class that helps with the display of graphics relative to the
+    player's position. Takes and gives units in number of tiles.
+    """
 
     X = 'x'
     Y = 'y'
 
     def __init__(self, *args, **kwargs):
+        # Assign values to self that are passed in from the containing Screen
+        # instance
         super(PerTileCamera, self).__init__(*args, **kwargs)
         self.map_display_mid_x = self.map_display_width / 2
         self.map_display_mid_y = self.map_display_height / 2
@@ -121,9 +133,14 @@ class PerTileCamera(Asset):
     def _get_y_offset_value(self, value, max_value):
         return self._get_offset_value(self.Y, value, max_value)
 
-    def get_tile_offset(self, dimensions, player):
-        width, height = dimensions
+    def get_offset(self, container, player):
+        """
+        Determine the number of tiles to offset the display based on the
+        position of the player and a `container` that they are within (such
+        as a level). A container must define width and height attributes while
+        the player must define an x and y.
+        """
         return (
-            self._get_x_offset_value(player.x, width),
-            self._get_y_offset_value(player.y, height)
+            self._get_x_offset_value(player.x, container.width),
+            self._get_y_offset_value(player.y, container.height)
         )

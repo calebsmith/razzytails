@@ -319,9 +319,10 @@ class Level(LoadableAsset):
 
     def handle(self, data):
         self.map = Map(data['map'])
+        dimensions = self.map.dimensions
+        self.width, self.height = dimensions['width'], dimensions['height']
         self.monster_data = data['monsters']
         self.reset_monsters()
-
         self.item_coordinates = []
         self.items = []
         item_locations = self._generate_item_locations(self.map)
@@ -373,7 +374,3 @@ class Level(LoadableAsset):
             monster.place_on_map(self.map)
             self.monsters.append(monster)
             self.monster_coordinates[i] = (monster.x, monster.y)
-
-    def get_max_values(self):
-        dimensions = self.map.dimensions
-        return dimensions['width'], dimensions['height']
