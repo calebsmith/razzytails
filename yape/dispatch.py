@@ -21,25 +21,13 @@ class Dispatch(object):
         existing.append(listener)
         self.listeners[(state, event_type)] = existing
 
-    def attach_state_machine(self, state_machine):
-        self.state_machine = state_machine
-
-    def handle_events(self, *args, **kwargs):
-        if not self.state_machine:
-            raise RequiresStateMachine(
-                'Dispatcher has no state machine attached'
-            )
+    def handle_events(self, state_machine, *args, **kwargs):
         for event in pygame.event.get():
-            self.dispatch(event, *args, **kwargs)
+            self.dispatch(state_machine, event, *args, **kwargs)
 
-    def dispatch(self, event, *args, **kwargs):
-        if not self.state_machine:
-            raise RequiresStateMachine(
-                'Dispatcher has no state machine attached'
-            )
-        state = self.state_machine.state
-        for listener in self.listeners.get((state, event.type), []):
-            listener(event, self.state_machine, *args, **kwargs)
+    def dispatch(self, state_machine, event, *args, **kwargs):
+        for listener in self.listeners.get((state_machine.state, event.type), []):
+            listener(event, state_machine, *args, **kwargs)
 
     def register_listener(self, states, event_type=None):
         """

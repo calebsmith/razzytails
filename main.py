@@ -16,7 +16,7 @@ def main():
 
 def game_loop(game_state, dispatcher, screen, config, level, player):
     while not game_state.is_state('exit'):
-        dispatcher.handle_events(config, level, player)
+        dispatcher.handle_events(game_state, config, level, player)
         logic(game_state, config, level, player)
         render(game_state, screen, config, level, player)
 
