@@ -22,11 +22,23 @@ class Dispatch(object):
         self.listeners[(state, event_type)] = existing
 
     def handle_events(self, state_machine, *args, **kwargs):
+        """
+        Given the global state_machine and any args/kwargs, dispatch pygame
+        events to the registered listeners for the current state based on the
+        event type
+        """
         for event in pygame.event.get():
             self.dispatch(state_machine, event, *args, **kwargs)
 
     def dispatch(self, state_machine, event, *args, **kwargs):
-        for listener in self.listeners.get((state_machine.state, event.type), []):
+        """
+        Given the global state_machine, a pygame event, and any args/kwargs,
+        call any registers that are registered for the state_machine's current
+        state paired with the event type. Any args/kwargs are passed to the
+        listeners
+        """
+        listeners = self.listeners.get((state_machine.state, event.type), [])
+        for listener in listeners:
             listener(event, state_machine, *args, **kwargs)
 
     def register_listener(self, states, event_type=None):
@@ -38,15 +50,11 @@ class Dispatch(object):
         """
 
         def decorator(f):
-
             if not getattr(f, 'registered', False):
                 for state in states:
                     self.register(state, f, event_type)
                 f.registered = True
-
-            def _(*args, **kwargs):
-                f(*args, **kwargs)
-            return _
+            return f
         return decorator
 
 dispatcher = Dispatch()
