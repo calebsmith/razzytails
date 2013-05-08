@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-from functools import partial
 from collections import Iterable
-
-import pygame
 
 
 def is_non_string_iterable(item):
@@ -42,16 +38,6 @@ def validate_data_against_schema(data, schema):
         if not schema in data:
             return False
     return True
-
-
-def _get_asset(type_name, assets, filename):
-    attribute = getattr(assets, type_name, None)
-    return attribute.get(filename, None) if attribute else None
-
-
-get_image = partial(_get_asset, 'images')
-get_font = partial(_get_asset, 'fonts')
-get_sounds = partial(_get_asset, 'sounds')
 
 
 def word_wrap(sentance, limit):
