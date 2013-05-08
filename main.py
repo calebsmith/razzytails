@@ -2,11 +2,13 @@
 from loaders import initialize, load_level
 from logic import logic
 from graphics import render
+from assets import Player
 
 
 def main():
     # Initialize display screen and load assets
-    game_state, dispatcher, screen, config, player = initialize()
+    game_state, dispatcher, screen, config = initialize()
+    player = Player()
     level = load_level(screen, config, player)
     # Run game loop
     game_loop(game_state, dispatcher, screen, config, level, player)

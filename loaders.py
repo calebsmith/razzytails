@@ -3,8 +3,8 @@ import os
 import pygame
 
 from yape.screen import Screen
-from game_assets import Config, Level, Player
-from game_state import game_state
+from assets import Config, Level
+from state import game_state
 from listeners import dispatcher
 from const import CONFIG_DIR, IMAGES_DIR, FONTS_DIR
 
@@ -12,8 +12,8 @@ from const import CONFIG_DIR, IMAGES_DIR, FONTS_DIR
 def initialize():
     """
     Initializes pygame, loads the configuration file and creates a display
-    context. Returns a 5-item tuple in the form of:
-        (game_state, dispatcher, screen, config, player)
+    context. Returns a 4-item tuple in the form of:
+        (game_state, dispatcher, screen, config)
     """
     # Initialize pygame and pygame mixer
     pygame.init()
@@ -22,19 +22,14 @@ def initialize():
         pygame.joystick.Joystick(0).init()
     except:
         pass
-    # Load configuration file for various settings
-    config = Config()
-    # by default the key repeat is disabled, call set_repeat() to enable it
-    delay = config.keypress_repeat['delay']
-    interval = config.keypress_repeat['interval']
-    pygame.key.set_repeat(delay, interval)
     # Create a screen to get a display context
     screen = Screen(path=CONFIG_DIR, location='screen.json')
     screen.set_background('white')
-    # Load the image, font, and sound assets of the config file
-    config.load_assets()
-    # Create the player
-    player = Player()
+    # Load configuration file for various settings
+    config = Config()
+    delay = config.keypress_repeat['delay']
+    interval = config.keypress_repeat['interval']
+    pygame.key.set_repeat(delay, interval)
     # Play background music if possible
     if config.music:
         try:
@@ -43,7 +38,7 @@ def initialize():
         except pygame.error:
             pass
     dispatcher.attach_state_machine(game_state)
-    return game_state, dispatcher, screen, config, player
+    return game_state, dispatcher, screen, config
 
 
 def load_level(screen, config, player):

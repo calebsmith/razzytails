@@ -2,11 +2,35 @@ from copy import copy
 import os
 import random
 
+import pygame
+
 from yape.asset_loaders import Asset, LoadableAsset
 from yape.utils import word_wrap
 
-from const import MAPS_DIR, CONFIG_DIR, MUSIC_DIR
-from loaders import load_image, load_font
+from const import MAPS_DIR, CONFIG_DIR, MUSIC_DIR, IMAGES_DIR, FONTS_DIR
+
+# FIXME: These utility functions should be part of the yape engine. Leaving
+# here for now since they are tied to IMAGES_DIR and FONTS_DIR
+
+
+def load_image(filename):
+    image_file = os.path.join(IMAGES_DIR, filename)
+    try:
+        image = pygame.image.load(image_file).convert_alpha()
+    except (IOError, pygame.error):
+        print 'Image file {0} not found'.format(image_file)
+        image = None
+    return (filename, image)
+
+
+def load_font(filename, font_size=16):
+    font_file = os.path.join(FONTS_DIR, filename)
+    try:
+        font = pygame.font.Font(font_file, font_size)
+    except (IOError, pygame.error):
+        print 'Font file {0} not found'.format(font_file)
+        font = None
+    return (filename, font)
 
 
 class Config(LoadableAsset):
@@ -48,14 +72,12 @@ class Config(LoadableAsset):
             self.questions, width=self.popup_box['char_width']
         )
         self.data = data
+        self.load_assets()
 
     def load_assets(self):
         """
-        Load the asset files whose names are set in the config file.
-
-        N.B. This is done in a separate step than handle() because the screen
-        context must be set before images are loaded, but the screen context
-        uses config data for determining the width and height of the video mode
+        Load the asset files (images, fonts, sounds) whose names are set in the
+        config file.
         """
         images, fonts, music = self.data['images'], self.data['fonts'], self.data['music']
         self.images = dict(map(load_image, images))
