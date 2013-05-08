@@ -282,8 +282,7 @@ class Monster(Asset):
         tile_solids = level.map.tile_solids
         mc = level.monster_coordinates
         # Remove self from monster_coordinates
-        del mc[mc.index({'coordinates': (self.x, self.y)})]
-        monster_coordinates = [c['coordinates'] for c in level.monster_coordinates]
+        del mc[self.id]
 
         all_possible_moves = [(self.x + 1, self.y),
                               (self.x - 1, self.y),
@@ -297,7 +296,7 @@ class Monster(Asset):
                 # not on a solid?
                 if not tile_solids[level.map.get_index(x, y)]:
                     # not on another monster?
-                    if (x, y) not in monster_coordinates:
+                    if (x, y) not in mc.values():
                         free_moves.append((x, y))
 
         min_distance = len(tile_solids) + 1  # start with big number
@@ -308,7 +307,7 @@ class Monster(Asset):
                 min_distance = distance
                 best_move = move
         self.x, self.y = best_move
-        mc.append({'coordinates': best_move})
+        mc.update({self.id: best_move})
 
     def _distance_from_player(self, position, player):
         """Return a crude distance calculation between 2 positions.
@@ -473,9 +472,10 @@ class Level(LoadableAsset):
 
     def reset_monsters(self):
         self.monsters = []
-        self.monster_coordinates = []
+        self.monster_coordinates = {}
         for i in range(self.monster_data['number']):
+            self.monster_data.update({'id': i})
             monster = Monster(self.monster_data)
             monster.place_on_map(self.map)
             self.monsters.append(monster)
-            self.monster_coordinates.append({'coordinates': (monster.x, monster.y)})
+            self.monster_coordinates[i] = (monster.x, monster.y)

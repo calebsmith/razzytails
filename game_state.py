@@ -86,6 +86,7 @@ def handle_answer(is_correct, level, player):
         for monster in level.monsters:
             if (monster.x, monster.y) == (player.x, player.y):
                 level.monsters.remove(monster)
+                level.monster_coordinates.pop(monster.id)
     else:
         level.reset_items(player)
         level.reset_monsters()
