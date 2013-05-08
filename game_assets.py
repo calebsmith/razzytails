@@ -2,9 +2,11 @@ from copy import copy
 import os
 import random
 
-from const import MAPS_DIR, CONFIG_DIR, MUSIC_DIR
-from asset_loaders import Asset, LoadableAsset, load_image, load_font
+from yape.asset_loaders import Asset, LoadableAsset
 from yape.utils import word_wrap
+
+from const import MAPS_DIR, CONFIG_DIR, MUSIC_DIR
+from loaders import load_image, load_font
 
 
 class Config(LoadableAsset):
@@ -349,3 +351,7 @@ class Level(LoadableAsset):
             monster.place_on_map(self.map)
             self.monsters.append(monster)
             self.monster_coordinates[i] = (monster.x, monster.y)
+
+    def get_max_values(self):
+        dimensions = self.map.dimensions
+        return dimensions['width'], dimensions['height']

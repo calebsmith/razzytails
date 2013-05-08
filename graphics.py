@@ -3,7 +3,9 @@ def display_map(screen, config, level, player):
     tile_legend = level.map.legend
     for map_y in range(0, screen.map_display_height):
         for map_x in range(0, screen.map_display_width):
-            x_offset, y_offset = screen.camera.get_tile_offset(player)
+            x_offset, y_offset = screen.camera.get_tile_offset(
+                level.get_max_values(), player
+            )
             current_index = level.map.get_index(
                 map_x - x_offset, map_y - y_offset
             )
@@ -14,20 +16,26 @@ def display_map(screen, config, level, player):
 
 def display_player(screen, config, level, player):
     image = config.images.get(config.player_image, None)
-    screen.draw_tile_relative(image, player, (player.x, player.y))
+    screen.draw_tile_relative(
+        image, level.get_max_values(), player, (player.x, player.y)
+    )
 
 
 def display_monsters(screen, config, level, player):
     for monster in level.monsters:
         image = level.images.get(monster.image)
-        screen.draw_tile_relative(image, player, (monster.x, monster.y))
+        screen.draw_tile_relative(
+            image, level.get_max_values(), player, (monster.x, monster.y)
+        )
 
 
 def display_items(screen, config, level, player):
     for item_coords in level.item_coordinates:
         item = next((x for x in level.items if x.id == item_coords['id']), None)
         image = level.images.get(item.image)
-        screen.draw_tile_relative(image, player, item_coords['coordinates'])
+        screen.draw_tile_relative(
+            image, level.get_max_values(), player, item_coords['coordinates']
+        )
 
 
 def display_player_items(screen, config, level, player):

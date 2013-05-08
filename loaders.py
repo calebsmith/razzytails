@@ -1,10 +1,12 @@
-#!usr/bin/env python
+import os
+
 import pygame
 
 from yape.screen import Screen
 from game_assets import Config, Level, Player
 from game_state import game_state
 from listeners import dispatcher
+from const import CONFIG_DIR, IMAGES_DIR, FONTS_DIR
 
 
 def initialize():
@@ -27,7 +29,7 @@ def initialize():
     interval = config.keypress_repeat['interval']
     pygame.key.set_repeat(delay, interval)
     # Create a screen to get a display context
-    screen = Screen()
+    screen = Screen(path=CONFIG_DIR, location='screen.json')
     screen.set_background('white')
     # Load the image, font, and sound assets of the config file
     config.load_assets()
@@ -53,5 +55,27 @@ def load_level(screen, config, player):
     # Place player at the start location
     player.x = level.map.player_start['x']
     player.y = level.map.player_start['y']
-    screen.attach_level(level)
     return level
+
+# FIXME: These utility functions should be part of the yape engine. Leaving
+# here for now since they are tied to IMAGES_DIR and FONTS_DIR
+
+
+def load_image(filename):
+    image_file = os.path.join(IMAGES_DIR, filename)
+    try:
+        image = pygame.image.load(image_file).convert_alpha()
+    except (IOError, pygame.error):
+        print 'Image file {0} not found'.format(image_file)
+        image = None
+    return (filename, image)
+
+
+def load_font(filename, font_size=16):
+    font_file = os.path.join(FONTS_DIR, filename)
+    try:
+        font = pygame.font.Font(font_file, font_size)
+    except (IOError, pygame.error):
+        print 'Font file {0} not found'.format(font_file)
+        font = None
+    return (filename, font)
