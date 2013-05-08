@@ -1,7 +1,8 @@
 #!usr/bin/env python
 import pygame
 
-from game_assets import Config, Level, Screen, Player
+from yape.screen import Screen
+from game_assets import Config, Level, Player
 from game_state import game_state
 from listeners import dispatcher
 

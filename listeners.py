@@ -2,7 +2,7 @@ from pygame.constants import (K_UP, K_DOWN, K_LEFT, K_RIGHT, K_RETURN, K_SPACE,
     KEYDOWN, K_ESCAPE, QUIT)
 from pygame import time, JOYAXISMOTION
 
-from dispatch import dispatcher
+from yape.dispatch import dispatcher
 
 
 @dispatcher.register_listener(['splash'])
