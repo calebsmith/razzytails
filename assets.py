@@ -234,32 +234,31 @@ class Player(Asset):
         RIGHT: ((1, 0), lambda x, y, x_bounds, y_bounds: x < x_bounds),
     }
 
-    def _move(self, level, direction):
-        dimensions = level.map.dimensions
-        map_width, map_height = dimensions['width'], dimensions['height']
+    def _move(self, container, direction):
+        width, height = container.width, container.height
         (x_modifier, y_modifier), bounds_func = self._direction_mapping[direction]
-        inbounds = bounds_func(self.x, self.y, map_width - 1, map_height - 1)
+        inbounds = bounds_func(self.x, self.y, width - 1, height - 1)
         if not inbounds:
             return
-        tile_solids = level.map.tile_solids
-        goal_tile_index = level.map.get_index(
+        tile_solids = container.map.tile_solids
+        goal_tile_index = container.map.get_index(
             self.x + x_modifier, self.y + y_modifier
         )
         if not tile_solids[goal_tile_index]:
             self.x += x_modifier
             self.y += y_modifier
 
-    def move_up(self, level):
-        self._move(level, self.UP)
+    def move_up(self, container):
+        self._move(container, self.UP)
 
-    def move_down(self, level):
-        self._move(level, self.DOWN)
+    def move_down(self, container):
+        self._move(container, self.DOWN)
 
-    def move_left(self, level):
-        self._move(level, self.LEFT)
+    def move_left(self, container):
+        self._move(container, self.LEFT)
 
-    def move_right(self, level):
-        self._move(level, self.RIGHT)
+    def move_right(self, container):
+        self._move(container, self.RIGHT)
 
 
 class Level(LoadableAsset):
