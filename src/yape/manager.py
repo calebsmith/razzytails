@@ -16,9 +16,10 @@ class GenericAssetManager(object):
             asset = self.load(*args)
         except (IOError, pygame.error):
             asset = None
-            print "Error loading {0}".format(name)
+            print "Error loading {0}".format(args)
         else:
-            self.cache[args] = asset
+            if asset is not None:
+                self.cache[args] = asset
         return asset
 
     def get(self, *args):
@@ -43,21 +44,38 @@ class FontManager(GenericAssetManager):
         return pygame.font.Font(filename, font_size)
 
 
+class JSONDict(dict):
+    """A dictionary for storing JSON data that can be weak referenced"""
+
+    def __init__(self, json_data):
+        self.update(json_data)
+
+
+class JSONList(list):
+
+    def __init__(self, json_data):
+        self.extend(json_data)
+
+
 class JSONManager(GenericAssetManager):
 
     def load(self, sub_path, name):
-        if not name.endswith('.json'):
-            name += '.json'
         filename = os.path.join(self.path, sub_path, name)
         f = open(filename)
-        return json.loads(f.read())
+        try:
+            json_data = json.loads(f.read())
+        except ValueError as e:
+            print 'Invalid JSON in file {0}. {1}'.format(filename, e)
+            return None
+        kls = JSONDict if isinstance(json_data, dict) else JSONList
+        return kls(json_data)
 
 
 class Manager(object):
 
-    def __init__(self, asset_path):
-        images_dir = os.path.join(asset_path, 'images')
-        fonts_dir = os.path.join(asset_path, 'fonts')
+    def __init__(self, assets_dir):
+        images_dir = os.path.join(assets_dir, 'images')
+        fonts_dir = os.path.join(assets_dir, 'fonts')
         self.json_manager = JSONManager(assets_dir)
         self.image_manager = ImageManager(images_dir)
         self.font_manager = FontManager(fonts_dir)
@@ -73,3 +91,4 @@ class Manager(object):
 
     def get_font(self, filename, font_size):
         return self._get_asset(self.font_manager, filename, font_size)
+
