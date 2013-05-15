@@ -52,6 +52,7 @@ class JSONDict(dict):
 
 
 class JSONList(list):
+    """A list for storing JSON data that can be weak referenced"""
 
     def __init__(self, json_data):
         self.extend(json_data)
@@ -72,6 +73,11 @@ class JSONManager(GenericAssetManager):
 
 
 class Manager(object):
+    """
+    Client class for obtaining and cacheing unique references to assets from
+    the filesystem. Uses weak references to hold a unique object in memory
+    while used and free it once it is no longer in use.
+    """
 
     def __init__(self, assets_dir):
         images_dir = os.path.join(assets_dir, 'images')
