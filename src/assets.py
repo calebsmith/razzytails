@@ -35,7 +35,7 @@ def load_font(filename, font_size=16):
 
 class Config(LoadableAsset):
 
-    path = CONFIG_DIR
+    path = 'config'
     location = 'config.json'
     schema = [
         'start',
@@ -69,7 +69,7 @@ class Config(LoadableAsset):
     def handle(self, data):
         super(Config, self).handle(data)
         self.questions = Questions(
-            self.questions, width=self.popup_box['char_width']
+            self.manager, self.questions, width=self.popup_box['char_width']
         )
         self.data = data
         self.load_assets()
@@ -86,7 +86,7 @@ class Config(LoadableAsset):
 
 
 class Questions(LoadableAsset):
-    path = CONFIG_DIR
+    path = 'config'
     schema = [
         'question',
         'answers',
@@ -263,7 +263,7 @@ class Player(Asset):
 
 class Level(LoadableAsset):
 
-    path = MAPS_DIR
+    path = 'maps'
     schema = {
         'map': [
             'solids',
@@ -292,9 +292,9 @@ class Level(LoadableAsset):
         ]
     }
 
-    def __init__(self, config):
+    def __init__(self, manager, config):
         self.config = config
-        super(Level, self).__init__(config.start)
+        super(Level, self).__init__(manager, config.start)
 
     def clean_map(self, map_data):
         player_start = map_data['player_start']

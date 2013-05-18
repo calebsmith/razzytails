@@ -13,6 +13,8 @@ class Screen(LoadableAsset):
     the amount to offset display values based on the player's position.
     """
 
+    path = 'config'
+    location = 'screen.json'
     schema = [
         'title',
         'width',
@@ -25,10 +27,9 @@ class Screen(LoadableAsset):
 
     background = None
 
-    def __init__(self, path, location, *args, **kwargs):
-        self.path = path
+    def __init__(self, *args, **kwargs):
         self.camera_class = kwargs.pop('camera', PerTileCamera)
-        super(Screen, self).__init__(location, *args, **kwargs)
+        super(Screen, self).__init__(*args, **kwargs)
         self._create_context()
         self.set_background()
 
@@ -144,3 +145,4 @@ class PerTileCamera(Asset):
             self._get_x_offset_value(player.x, container.width),
             self._get_y_offset_value(player.y, container.height)
         )
+

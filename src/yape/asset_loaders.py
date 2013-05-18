@@ -4,68 +4,6 @@ import json
 from yape.utils import validate_data_against_schema
 
 
-class Loader(object):
-    """
-    A simple base class that defines an interface for any classes that load
-    content from the filesystem or a web-API. Defines only the load() method,
-    which calls on load_contents and coerce_contents to load the external
-    resource
-
-    Subclasses must implement:
-        load_contents - for loading raw content from a given location
-        coerce_contents - for coercing the raw content into a python data
-            structure, such as dictionaries and lists
-    """
-
-    def load(self, location):
-        self.location = location
-        return self.coerce_contents(self.load_contents(location))
-
-    def load_contents(self, location):
-        """
-        Given a filename, or url, load data from the location and return its
-        contents without modification
-        """
-        raise NotImplemented('Must be implemented in a subclass')
-
-    def coerce_contents(self, contents):
-        """
-        Using data from `load_contents`, coerce the data into an internal
-        structure of dictionaries and/or lists. (e.g. The simplest
-        implementation is to use json.loads on JSON content)
-        """
-        raise NotImplemented('Must be implemented in a subclass')
-
-
-class JSONFileLoader(Loader):
-    """
-    Retrieves data from a JSON file on the local filesystem. This is used as
-    the default loader for LoadableAssets.
-    """
-
-    def load_contents(self, location):
-        """
-        Given a path/filename string as `location`, load data from that file in
-        the local file system
-        """
-        if not location.endswith('.json'):
-            location += '.json'
-        try:
-            f = open(location)
-            return f.read()
-        except IOError:
-            print "File not found: {0}".format(location)
-            return "{}"
-
-    def coerce_contents(self, contents):
-        """Parse the file as JSON"""
-        try:
-            return json.loads(contents)
-        except ValueError:
-            print "File {0} is not valid JSON".format(self.location)
-            return {}
-
-
 class BaseAsset(object):
     """
     A base class that defines methods common to the Asset and LoadableAsset
@@ -101,15 +39,14 @@ class LoadableAsset(BaseAsset):
     and loads data from that location to fill itself with asset objects.
     """
 
-    def __init__(self, location=None, Loader=JSONFileLoader):
+    def __init__(self, manager, location=None):
+        self.manager = manager
         # Determine what methods to call when validating individual fields
         self.field_validators = [
             getattr(self, attr)
             for attr in dir(self)
             if attr.startswith('clean_')
         ]
-        # Set the loader type. If given, load data from the given location.
-        self.loader = Loader()
         location = location or getattr(self, 'location', None)
         if location:
             self.load(location)
@@ -120,10 +57,8 @@ class LoadableAsset(BaseAsset):
         Attempt to load data from the given location. If the data validates,
         call self.handle with that data for processing.
         """
-
-        if hasattr(self, 'path'):
-            location = os.path.join(self.path, location)
-        raw_data = self.loader.load(location)
+        path = getattr(self, 'path', '')
+        raw_data = self.manager.get_json(path, location)
         if self.is_valid(raw_data):
             self.handle(raw_data)
         else:
@@ -163,3 +98,4 @@ class LoadableAsset(BaseAsset):
                     self.error = '{0} did not validate'.format(raw_data)
                 return False
         return True
+
