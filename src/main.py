@@ -9,7 +9,7 @@ from const import ASSETS_DIR
 def main():
     # Initialize display screen and load assets
     game_state, dispatcher, manager, screen, config = initialize(ASSETS_DIR)
-    player = Player()
+    player = Player(manager)
     level = load_level(manager, config, player)
     # Run game loop
     game_loop(game_state, dispatcher, screen, config, level, player)

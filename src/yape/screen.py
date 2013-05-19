@@ -40,7 +40,7 @@ class Screen(LoadableAsset):
     def handle(self, data):
         super(Screen, self).handle(data)
         Camera = self.camera_class
-        self.camera = Camera(data)
+        self.camera = Camera(self.manager, data)
 
     def set_background(self, color='black'):
         background = Surface(self.context.get_size()).convert()

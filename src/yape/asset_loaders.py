@@ -10,6 +10,9 @@ class BaseAsset(object):
     classes.
     """
 
+    def __init__(self, manager):
+        self.manager = manager
+
     def handle(self, data):
         """
         Handle data once it has been validated. By default, assigns values from
@@ -28,7 +31,8 @@ class Asset(BaseAsset):
     A game asset that is instantiated with data and does not load it directly.
     """
 
-    def __init__(self, data=None):
+    def __init__(self, manager, data=None):
+        super(Asset, self).__init__(manager)
         if data is not None:
             self.handle(data)
 
@@ -40,7 +44,7 @@ class LoadableAsset(BaseAsset):
     """
 
     def __init__(self, manager, location=None):
-        self.manager = manager
+        super(LoadableAsset, self).__init__(manager)
         # Determine what methods to call when validating individual fields
         self.field_validators = [
             getattr(self, attr)

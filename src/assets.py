@@ -317,7 +317,7 @@ class Level(LoadableAsset):
         return True
 
     def handle(self, data):
-        self.map = Map(data['map'])
+        self.map = Map(self.manager, data['map'])
         dimensions = self.map.dimensions
         self.width, self.height = dimensions['width'], dimensions['height']
         self.monster_data = data['monsters']
@@ -327,7 +327,7 @@ class Level(LoadableAsset):
         item_locations = self._generate_item_locations(self.map)
         for index, item_data in enumerate(data['items']):
             location = item_locations[index]
-            item = Item(item_data, width=self.config.popup_box['char_width'])
+            item = Item(self.manager, item_data, width=self.config.popup_box['char_width'])
             self.items.append(item)
             self.item_coordinates.append({
                 'id': item.id, 'coordinates': location
@@ -369,7 +369,8 @@ class Level(LoadableAsset):
         self.monster_coordinates = {}
         for i in range(self.monster_data['number']):
             self.monster_data.update({'id': i})
-            monster = Monster(self.monster_data)
+            monster = Monster(self.manager, self.monster_data)
             monster.place_on_map(self.map)
             self.monsters.append(monster)
             self.monster_coordinates[i] = (monster.x, monster.y)
+
