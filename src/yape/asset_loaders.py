@@ -10,6 +10,12 @@ class BaseAsset(object):
     classes.
     """
 
+    field_method_mapping = [
+        ('image_fields', 'get_image'),
+        ('font_fields', 'get_font'),
+        ('json_fields', 'get_json'),
+    ]
+
     def __init__(self, manager):
         self.manager = manager
 
@@ -19,11 +25,31 @@ class BaseAsset(object):
         data to attributes on self.
         """
         self._assign_to_self(data)
+        self.load_fields()
 
     def _assign_to_self(self, data):
         """Sets values from the data dictionary to the object itself"""
         for key, value in data.items():
             setattr(self, key, value)
+
+    def load_fields(self):
+        """
+        Replaces image, font, sound, and json fields with references to those
+        objects, using the asset's manager.
+        """
+        for field_listing, manager_method in self.field_method_mapping:
+            asset_field_names = getattr(self, field_listing, [])
+            for asset_field_name in asset_field_names:
+                asset_args = getattr(self, asset_field_name, None)
+                if asset_args is not None:
+                    load_func = getattr(self.manager, manager_method)
+                    asset = load_func(*asset_args)
+                    if asset is None:
+                        err_msg = 'Failed to load {0} for {1} attribute in {2}'
+                        print err_msg.format(
+                            asset_args, asset_field_name, self.__class__.__name__
+                        )
+                    setattr(self, asset_field_name, asset)
 
 
 class Asset(BaseAsset):

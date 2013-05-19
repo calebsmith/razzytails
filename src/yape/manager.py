@@ -92,9 +92,13 @@ class Manager(object):
     def get_json(self, sub_path, filename):
         return self._get_asset(self.json_manager, sub_path, filename)
 
-    def get_image(self, filename):
+    def get_image(self, filename, x_offset, y_offset):
+        """
+        N.B. image fields are defined by a filename, x_offset, and y_offset,
+        but for image loading, only the filename is needed
+        """
         return self._get_asset(self.image_manager, filename)
 
-    def get_font(self, filename, font_size):
+    def get_font(self, filename, font_size=16):
         return self._get_asset(self.font_manager, filename, font_size)
 

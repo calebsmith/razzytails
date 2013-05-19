@@ -1,3 +1,5 @@
+import os
+
 import pygame
 
 from yape.screen import Screen
@@ -32,7 +34,9 @@ def initialize(assets_path):
     # Play background music if possible
     if config.music:
         try:
-            pygame.mixer.music.load(config.music)
+            filename = config.music
+            music_path_filename = os.path.join(assets_path, 'music', filename)
+            pygame.mixer.music.load(music_path_filename)
             pygame.mixer.music.play(-1)
         except pygame.error:
             pass

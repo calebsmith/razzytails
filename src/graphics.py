@@ -13,8 +13,9 @@ def display_map(screen, config, level, player):
 
 
 def display_player(screen, config, level, player):
-    image = config.images.get(config.player_image, None)
-    screen.draw_tile_relative(image, (player.x, player.y), level, player)
+    screen.draw_tile_relative(
+        config.player_image, (player.x, player.y), level, player
+    )
 
 
 def display_monsters(screen, config, level, player):
@@ -34,7 +35,7 @@ def display_items(screen, config, level, player):
 
 def display_player_items(screen, config, level, player):
     screen.draw_text(
-        config.fonts.get(config.score_font), 'Inventory:', (0, 420), 'black'
+        config.score_font, 'Inventory:', (0, 420), 'black'
     )
     for index, item in enumerate(player.items):
         image = level.images.get(item.image, None)
@@ -56,7 +57,7 @@ def draw_popup(screen, config, level, player, strings):
     box_x, box_y = config.popup_box['x'], config.popup_box['y']
     for index, string in enumerate(strings):
         screen.draw_text(
-            config.fonts.get(config.score_font), string,
+            config.score_font, string,
             (x_margin, y_margin + index * 20), surface=message_surface
         )
         screen.draw(message_surface, (box_x, box_y))
@@ -85,11 +86,9 @@ def render(game_state, screen, config, level, player):
                 config.questions.get_question_display()
             )
         if game_state.is_state('splash'):
-            image = config.images.get(config.splash_image, None)
-            draw_splash(screen, config, image)
+            draw_splash(screen, config, config.splash_image)
         if game_state.is_state('endscreen'):
-            image = config.images.get(config.endscreen_image, None)
-            draw_splash(screen, config, image)
+            draw_splash(screen, config, config.endscreen_image)
         if game_state.is_state('item'):
             draw_popup(screen, config, level, player, player.current_item.message)
         if game_state.is_state('info'):

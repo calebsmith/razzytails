@@ -39,11 +39,9 @@ class Config(LoadableAsset):
     location = 'config.json'
     schema = [
         'start',
-        'images',
         'player_image',
         'splash_image',
         'endscreen_image',
-        'fonts',
         'score_font',
         'music', {
             'popup_box': [
@@ -66,23 +64,22 @@ class Config(LoadableAsset):
         }
     ]
 
+    image_fields = [
+        'player_image',
+        'splash_image',
+        'endscreen_image',
+    ]
+
+    font_fields = [
+        'score_font',
+    ]
+
     def handle(self, data):
         super(Config, self).handle(data)
         self.questions = Questions(
             self.manager, self.questions, width=self.popup_box['char_width']
         )
         self.data = data
-        self.load_assets()
-
-    def load_assets(self):
-        """
-        Load the asset files (images, fonts, sounds) whose names are set in the
-        config file.
-        """
-        images, fonts, music = self.data['images'], self.data['fonts'], self.data['music']
-        self.images = dict(map(load_image, images))
-        self.fonts = dict(map(load_font, fonts))
-        self.music = os.path.join(MUSIC_DIR, music) if self.music else ''
 
 
 class Questions(LoadableAsset):
