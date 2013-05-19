@@ -30,6 +30,13 @@ class GenericAssetManager(object):
         return asset
 
 
+class FontManager(GenericAssetManager):
+
+    def load(self, name, font_size):
+        filename = os.path.join(self.path, name)
+        return pygame.font.Font(filename, font_size)
+
+
 class ImageManager(GenericAssetManager):
 
     def load(self, name):
@@ -37,11 +44,29 @@ class ImageManager(GenericAssetManager):
         return pygame.image.load(filename).convert_alpha()
 
 
-class FontManager(GenericAssetManager):
+class SpriteManager(GenericAssetManager):
 
-    def load(self, name, font_size):
-        filename = os.path.join(self.path, name)
-        return pygame.font.Font(filename, font_size)
+    def __init__(self, path):
+        super(SpriteManager, self).__init__(path)
+        self.image_manager = ImageManager(path)
+
+    def _get_raw_image(self, name):
+        return self.image_manager.get(name)
+
+    def load(self, name, x_offset, y_offset, width, height):
+        image = self._get_raw_image(name)
+        rect = image.get_rect()
+        try:
+            rect.x, rect.y = x_offset, y_offset
+            rect.width, rect.height = width, height
+        except ValueError:
+            err_msg = 'Spritesheet with filename {name} cannot load a sprite at {x},{y} with dimensions {width}x{height}'
+            print err_msg.format(
+                name=name, x=x_offset, y=y_offset, width=width, height=height
+            )
+        else:
+            image.subsurface(rect)
+        return image
 
 
 class JSONDict(dict):
@@ -84,6 +109,7 @@ class Manager(object):
         fonts_dir = os.path.join(assets_dir, 'fonts')
         self.json_manager = JSONManager(assets_dir)
         self.image_manager = ImageManager(images_dir)
+        self.sprite_manager = SpriteManager(images_dir)
         self.font_manager = FontManager(fonts_dir)
 
     def _get_asset(self, manager, *args):
@@ -92,12 +118,11 @@ class Manager(object):
     def get_json(self, sub_path, filename):
         return self._get_asset(self.json_manager, sub_path, filename)
 
-    def get_image(self, filename, x_offset, y_offset):
-        """
-        N.B. image fields are defined by a filename, x_offset, and y_offset,
-        but for image loading, only the filename is needed
-        """
+    def get_image(self, filename):
         return self._get_asset(self.image_manager, filename)
+
+    def get_sprite(self, filename, *args):
+        return self._get_asset(self.sprite_manager, filename, *args)
 
     def get_font(self, filename, font_size=16):
         return self._get_asset(self.font_manager, filename, font_size)

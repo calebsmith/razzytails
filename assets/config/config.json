@@ -1,9 +1,9 @@
 {
     "start": "map1.json",
     "score_font": ["VeraMono.ttf", 16],
-    "player_image": ["razzy.png", 0, 0],
-    "splash_image": ["intro-screen.png", 0, 0],
-    "endscreen_image": ["win-screen.png", 0, 0],
+    "player_image": "razzy.png",
+    "splash_image": "intro-screen.png",
+    "endscreen_image": "win-screen.png",
     "music": "choro_bavario_loop.ogg",
     "popup_box": {
         "x": 50,

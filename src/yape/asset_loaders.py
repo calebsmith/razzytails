@@ -12,6 +12,7 @@ class BaseAsset(object):
 
     field_method_mapping = [
         ('image_fields', 'get_image'),
+        ('sprite_fields', 'get_sprite'),
         ('font_fields', 'get_font'),
         ('json_fields', 'get_json'),
     ]
@@ -42,6 +43,11 @@ class BaseAsset(object):
             for asset_field_name in asset_field_names:
                 asset_args = getattr(self, asset_field_name, None)
                 if asset_args is not None:
+                    # image field values are filenames only, while other asset
+                    # arguments are iterable. Wrap filename inside a list so it
+                    # dereferences properly when load_func is called
+                    if field_listing == 'image_fields':
+                        asset_args = [asset_args]
                     load_func = getattr(self.manager, manager_method)
                     asset = load_func(*asset_args)
                     if asset is None:

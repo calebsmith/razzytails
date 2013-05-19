@@ -100,7 +100,7 @@ class Map(Asset):
         super(Map, self).handle(data)
         self.tile_solids = [tile in self.solids for tile in self.tiles]
         for key, value in self.legend.items():
-            self.legend[key] = self.manager.get_image(*value)
+            self.legend[key] = self.manager.get_image(value)
 
     def get_index(self, x, y):
         return y * self.dimensions['width'] + x
