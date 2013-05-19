@@ -33,37 +33,46 @@ class BaseAsset(object):
         for key, value in data.items():
             setattr(self, key, value)
 
+    def _get_asset_ref(self, field_type, manager_method, asset_field_name, asset_args):
+        # image field values are filenames only, while other asset
+        # arguments are iterable. Wrap filename inside a list so it
+        # dereferences properly when load_func is called
+        if field_type == 'image_fields':
+            asset_args = [asset_args]
+        # sprite field values specify an x and y offset, but not a
+        # width height. These are defined on the asset class itself
+        if field_type == 'sprite_fields':
+            width, height = self.sprite_fields[asset_field_name]
+            asset_args = list(asset_args)
+            asset_args.extend([width, height])
+        # Determine what method to call on the manager for the
+        # current field type
+        load_func = getattr(self.manager, manager_method)
+        asset = load_func(*asset_args)
+        if asset is None:
+            err_msg = 'Failed to load {0} for {1} attribute in {2}'
+            print err_msg.format(
+                asset_args, asset_field_name, self.__class__.__name__
+            )
+        return asset
+
     def load_fields(self):
         """
         Replaces image, font, sound, and json fields with references to those
         objects, using the asset's manager.
         """
-        for field_listing, manager_method in self.field_method_mapping:
-            asset_field_names = getattr(self, field_listing, [])
+        for field_type, manager_method in self.field_method_mapping:
+            asset_field_names = getattr(self, field_type, [])
             for asset_field_name in asset_field_names:
                 asset_args = getattr(self, asset_field_name, None)
                 if asset_args is not None:
-                    # image field values are filenames only, while other asset
-                    # arguments are iterable. Wrap filename inside a list so it
-                    # dereferences properly when load_func is called
-                    if field_listing == 'image_fields':
-                        asset_args = [asset_args]
-                    # sprite field values specify an x and y offset, but not a
-                    # width height. These are defined on the asset class itself
-                    if field_listing == 'sprite_fields':
-                        width, height = self.sprite_fields[asset_field_name]
-                        asset_args = list(asset_args)
-                        asset_args.extend([width, height])
-                    # Determine what method to call on the manager for the
-                    # current field type
-                    load_func = getattr(self.manager, manager_method)
-                    asset = load_func(*asset_args)
-                    if asset is None:
-                        err_msg = 'Failed to load {0} for {1} attribute in {2}'
-                        print err_msg.format(
-                            asset_args, asset_field_name, self.__class__.__name__
-                        )
-                    setattr(self, asset_field_name, asset)
+                    if isinstance(asset_args, dict):
+                        for key, value in asset_args.items():
+                            asset_ref = self._get_asset_ref(field_type, manager_method, asset_field_name, value)
+                            asset_args[key] = asset_ref
+                    else:
+                        asset_ref = self._get_asset_ref(field_type, manager_method, asset_field_name, asset_args)
+                        setattr(self, asset_field_name, asset_ref)
 
 
 class Asset(BaseAsset):
