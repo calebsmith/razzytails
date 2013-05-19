@@ -48,6 +48,14 @@ class BaseAsset(object):
                     # dereferences properly when load_func is called
                     if field_listing == 'image_fields':
                         asset_args = [asset_args]
+                    # sprite field values specify an x and y offset, but not a
+                    # width height. These are defined on the asset class itself
+                    if field_listing == 'sprite_fields':
+                        width, height = self.sprite_fields[asset_field_name]
+                        asset_args = list(asset_args)
+                        asset_args.extend([width, height])
+                    # Determine what method to call on the manager for the
+                    # current field type
                     load_func = getattr(self.manager, manager_method)
                     asset = load_func(*asset_args)
                     if asset is None:

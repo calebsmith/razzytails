@@ -65,7 +65,7 @@ class SpriteManager(GenericAssetManager):
                 name=name, x=x_offset, y=y_offset, width=width, height=height
             )
         else:
-            image.subsurface(rect)
+            image = image.subsurface(rect)
         return image
 
 
