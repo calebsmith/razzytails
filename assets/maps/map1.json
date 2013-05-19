@@ -32,19 +32,19 @@
             0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0
         ],
         "legend": {
-            "0": "grass.png",
-            "1": "rock.png"
+            "0": ["grass.png", 0, 0],
+            "1": ["rock.png", 0, 0]
         }
     },
     "monsters": {
-        "image": "honeybadger.png",
+        "image": ["honeybadger.png", 0, 0],
         "number": 7
     },
     "items": [
-        {"id": 1, "title": "Power Cord", "image": "powercord.png", "message": "Power Cord. You can now power your Raspberry Pi."},
-        {"id": 2, "title": "SD Card", "image": "sdcard.png", "message": "SD Card. It contains, among other things, the Operating System that your Raspberry Pi utilizes."},
-        {"id": 3, "title": "Raspberry Pi", "image": "raspberrypi.png", "message": "Congratulations! You have acquired a Raspberry Pi, a small, but powerful, micro-computer."},
-        {"id": 4, "title": "Monitor", "image": "monitor.png", "message": "Monitor. Now you will be able to see the video output of your Raspberry Pi programs!"},
-        {"id": 5, "title": "Keyboard & Mouse", "image": "keyboard_mouse.png", "message": "USB Keyboard + Mouse. You now have the controllers to operate your Raspberry Pi with!"}
+        {"id": 1, "title": "Power Cord", "image": ["powercord.png", 0, 0], "message": "Power Cord. You can now power your Raspberry Pi."},
+        {"id": 2, "title": "SD Card", "image": ["sdcard.png", 0, 0], "message": "SD Card. It contains, among other things, the Operating System that your Raspberry Pi utilizes."},
+        {"id": 3, "title": "Raspberry Pi", "image": ["raspberrypi.png", 0, 0], "message": "Congratulations! You have acquired a Raspberry Pi, a small, but powerful, micro-computer."},
+        {"id": 4, "title": "Monitor", "image": ["monitor.png", 0, 0], "message": "Monitor. Now you will be able to see the video output of your Raspberry Pi programs!"},
+        {"id": 5, "title": "Keyboard & Mouse", "image": ["keyboard_mouse.png", 0, 0], "message": "USB Keyboard + Mouse. You now have the controllers to operate your Raspberry Pi with!"}
         ]
 }

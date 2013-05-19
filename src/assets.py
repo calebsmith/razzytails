@@ -1,36 +1,8 @@
 from copy import copy
-import os
 import random
-
-import pygame
 
 from yape.asset_loaders import Asset, LoadableAsset
 from yape.utils import word_wrap
-
-from const import MAPS_DIR, CONFIG_DIR, MUSIC_DIR, IMAGES_DIR, FONTS_DIR
-
-# FIXME: These utility functions should be part of the yape engine. Leaving
-# here for now since they are tied to IMAGES_DIR and FONTS_DIR
-
-
-def load_image(filename):
-    image_file = os.path.join(IMAGES_DIR, filename)
-    try:
-        image = pygame.image.load(image_file).convert_alpha()
-    except (IOError, pygame.error):
-        print 'Image file {0} not found'.format(image_file)
-        image = None
-    return (filename, image)
-
-
-def load_font(filename, font_size=16):
-    font_file = os.path.join(FONTS_DIR, filename)
-    try:
-        font = pygame.font.Font(font_file, font_size)
-    except (IOError, pygame.error):
-        print 'Font file {0} not found'.format(font_file)
-        font = None
-    return (filename, font)
 
 
 class Config(LoadableAsset):
@@ -79,7 +51,6 @@ class Config(LoadableAsset):
         self.questions = Questions(
             self.manager, self.questions, width=self.popup_box['char_width']
         )
-        self.data = data
 
 
 class Questions(LoadableAsset):
@@ -128,13 +99,16 @@ class Map(Asset):
     def handle(self, data):
         super(Map, self).handle(data)
         self.tile_solids = [tile in self.solids for tile in self.tiles]
-        self.images = dict(map(load_image, self.legend.values()))
+        for key, value in self.legend.items():
+            self.legend[key] = self.manager.get_image(*value)
 
     def get_index(self, x, y):
         return y * self.dimensions['width'] + x
 
 
 class Item(Asset):
+
+    image_fields = ['image']
 
     def __init__(self, *args, **kwargs):
         self.width = kwargs.pop('width', 20)
@@ -149,6 +123,8 @@ class Monster(Asset):
     x = 0
     y = 0
     last_moved_at = 0
+
+    image_fields = ['image']
 
     def place_on_map(self, map_data):
         found_spot = False
@@ -329,17 +305,6 @@ class Level(LoadableAsset):
             self.item_coordinates.append({
                 'id': item.id, 'coordinates': location
             })
-        # Load and store image files for monster and item objects
-        monster_images = dict([
-            load_image(monster.image)
-            for monster in self.monsters
-        ])
-        item_images = dict([
-            load_image(item.image)
-            for item in self.items
-        ])
-        self.images = monster_images
-        self.images.update(item_images)
 
     def reset_items(self, player):
         self.item_coordinates = []

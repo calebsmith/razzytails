@@ -7,8 +7,7 @@ def display_map(screen, config, level, player):
             current_index = level.map.get_index(
                 map_x - x_offset, map_y - y_offset
             )
-            image_filename = tile_legend.get(unicode(tiles[current_index]), '')
-            image = level.map.images[image_filename]
+            image = tile_legend.get(unicode(tiles[current_index]), '')
             screen.draw_tile(image, (map_x, map_y))
 
 
@@ -20,16 +19,14 @@ def display_player(screen, config, level, player):
 
 def display_monsters(screen, config, level, player):
     for monster in level.monsters:
-        image = level.images.get(monster.image)
-        screen.draw_tile_relative(image, (monster.x, monster.y), level, player)
+        screen.draw_tile_relative(monster.image, (monster.x, monster.y), level, player)
 
 
 def display_items(screen, config, level, player):
     for item_coords in level.item_coordinates:
         item = next((x for x in level.items if x.id == item_coords['id']), None)
-        image = level.images.get(item.image)
         screen.draw_tile_relative(
-            image, item_coords['coordinates'], level, player
+            item.image, item_coords['coordinates'], level, player
         )
 
 
@@ -38,12 +35,11 @@ def display_player_items(screen, config, level, player):
         config.score_font, 'Inventory:', (0, 420), 'black'
     )
     for index, item in enumerate(player.items):
-        image = level.images.get(item.image, None)
         # Position each item from left to right with respect to ordering and
         # on the bottom tile, adjusted by 8 for some padding
         x = index * screen.tile_width
         y = screen.height - screen.tile_height - 8
-        screen.draw(image, (x, y))
+        screen.draw(item.image, (x, y))
 
 
 def draw_popup(screen, config, level, player, strings):
