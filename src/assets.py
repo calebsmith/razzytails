@@ -94,11 +94,90 @@ class Questions(LoadableAsset):
         return self.choice == self.current_question['correct']
 
 
+class Player(Asset):
+    x = 0
+    y = 0
+    items = []
+    last_updated = None
+    neutral = True
+
+    # Some directions constants for general use.
+    UP = 'up'
+    DOWN = 'down'
+    LEFT = 'left'
+    RIGHT = 'right'
+
+    # Maps a direction constant to a two-tuple, the first of which is the
+    # intended change of x and y in the form of (x, y). The second value is
+    # the predicate function that determines if the move is within bounds
+    _direction_mapping = {
+        UP: ((0, -1), lambda x, y, x_bounds, y_bounds: y > 0),
+        DOWN: ((0, 1), lambda x, y, x_bounds, y_bounds: y < y_bounds),
+        LEFT: ((-1, 0), lambda x, y, x_bounds, y_bounds: x > 0),
+        RIGHT: ((1, 0), lambda x, y, x_bounds, y_bounds: x < x_bounds),
+    }
+
+    def _move(self, container, direction):
+        width, height = container.width, container.height
+        (x_modifier, y_modifier), bounds_func = self._direction_mapping[direction]
+        inbounds = bounds_func(self.x, self.y, width - 1, height - 1)
+        if not inbounds:
+            return
+        tile_solids = container.map.tile_solids
+        goal_tile_index = container.map.get_index(
+            self.x + x_modifier, self.y + y_modifier
+        )
+        if not tile_solids[goal_tile_index]:
+            self.x += x_modifier
+            self.y += y_modifier
+
+    def move_up(self, container):
+        self._move(container, self.UP)
+
+    def move_down(self, container):
+        self._move(container, self.DOWN)
+
+    def move_left(self, container):
+        self._move(container, self.LEFT)
+
+    def move_right(self, container):
+        self._move(container, self.RIGHT)
+
+
 class Map(Asset):
+
+    schema = [
+        'solids',
+        'legend',
+        'tiles',
+        {
+            'dimensions': [
+                'width', 'height'
+            ],
+        },
+        {
+            'player_start': [
+                'x', 'y'
+            ],
+        }
+    ]
 
     image_fields = [
         'legend'
     ]
+
+    def clean(self, map_data):
+        player_start = map_data['player_start']
+        x, y = player_start['x'], player_start['y']
+        dimensions = map_data['dimensions']
+        num_tiles = dimensions['width'] * dimensions['height']
+        if len(map_data['tiles']) != num_tiles:
+            self.error = u'Number of tiles must equal width * height'
+            return False
+        if x < 0 or y < 0 or x >= dimensions['width'] or y >= dimensions['height']:
+            self.error = u'The player_start x or y is out of bounds'
+            return False
+        return True
 
     def handle(self, data):
         super(Map, self).handle(data)
@@ -109,6 +188,13 @@ class Map(Asset):
 
 
 class Item(Asset):
+
+    schema = [
+        'id',
+        'title',
+        'image',
+        'message',
+    ]
 
     image_fields = ['image']
 
@@ -122,6 +208,12 @@ class Item(Asset):
 
 
 class Monster(Asset):
+
+    schema = [
+        'image',
+        'number'
+    ]
+
     x = 0
     y = 0
     last_moved_at = 0
@@ -188,103 +280,18 @@ class Monster(Asset):
         return abs(move_x - player.x) + abs(move_y - player.y)
 
 
-class Player(Asset):
-    x = 0
-    y = 0
-    items = []
-    last_updated = None
-    neutral = True
-
-    # Some directions constants for general use.
-    UP = 'up'
-    DOWN = 'down'
-    LEFT = 'left'
-    RIGHT = 'right'
-
-    # Maps a direction constant to a two-tuple, the first of which is the
-    # intended change of x and y in the form of (x, y). The second value is
-    # the predicate function that determines if the move is within bounds
-    _direction_mapping = {
-        UP: ((0, -1), lambda x, y, x_bounds, y_bounds: y > 0),
-        DOWN: ((0, 1), lambda x, y, x_bounds, y_bounds: y < y_bounds),
-        LEFT: ((-1, 0), lambda x, y, x_bounds, y_bounds: x > 0),
-        RIGHT: ((1, 0), lambda x, y, x_bounds, y_bounds: x < x_bounds),
-    }
-
-    def _move(self, container, direction):
-        width, height = container.width, container.height
-        (x_modifier, y_modifier), bounds_func = self._direction_mapping[direction]
-        inbounds = bounds_func(self.x, self.y, width - 1, height - 1)
-        if not inbounds:
-            return
-        tile_solids = container.map.tile_solids
-        goal_tile_index = container.map.get_index(
-            self.x + x_modifier, self.y + y_modifier
-        )
-        if not tile_solids[goal_tile_index]:
-            self.x += x_modifier
-            self.y += y_modifier
-
-    def move_up(self, container):
-        self._move(container, self.UP)
-
-    def move_down(self, container):
-        self._move(container, self.DOWN)
-
-    def move_left(self, container):
-        self._move(container, self.LEFT)
-
-    def move_right(self, container):
-        self._move(container, self.RIGHT)
-
-
 class Level(LoadableAsset):
 
     path = 'maps'
-    schema = {
-        'map': [
-            'solids',
-            'legend',
-            'tiles',
-            {
-                'dimensions': [
-                    'width', 'height'
-                ],
-            },
-            {
-                'player_start': [
-                    'x', 'y'
-                ],
-            }
-        ],
-        'monsters': [
-            'image',
-            'number'
-        ],
-        'items': [
-            'id',
-            'title',
-            'image',
-            'message'
-        ]
-    }
+    schema = [
+        'map',
+        'monsters',
+        'items'
+    ]
 
     def __init__(self, manager, config):
         self.config = config
         super(Level, self).__init__(manager, config.start)
-
-    def clean_map(self, map_data):
-        player_start = map_data['player_start']
-        x, y = player_start['x'], player_start['y']
-        dimensions = map_data['dimensions']
-        num_tiles = dimensions['width'] * dimensions['height']
-        if len(map_data['tiles']) != num_tiles:
-            self.error = u'Number of tiles must equal width * height'
-            return False
-        if x < 0 or y < 0 or x >= dimensions['width'] or y >= dimensions['height']:
-            self.error = u'The player_start x or y is out of bounds'
-            return False
-        return True
 
     def clean_monsters(self, monster_data):
         num_monsters = monster_data['number']

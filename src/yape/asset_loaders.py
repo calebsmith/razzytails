@@ -19,6 +19,12 @@ class BaseAsset(object):
 
     def __init__(self, manager):
         self.manager = manager
+        # Determine what methods to call when validating individual fields
+        self.field_validators = [
+            getattr(self, attr)
+            for attr in dir(self)
+            if attr.startswith('clean_')
+        ]
 
     def handle(self, data):
         """
@@ -74,49 +80,6 @@ class BaseAsset(object):
                         asset_ref = self._get_asset_ref(field_type, manager_method, asset_field_name, asset_args)
                         setattr(self, asset_field_name, asset_ref)
 
-
-class Asset(BaseAsset):
-    """
-    A game asset that is instantiated with data and does not load it directly.
-    """
-
-    def __init__(self, manager, data=None):
-        super(Asset, self).__init__(manager)
-        if data is not None:
-            self.handle(data)
-
-
-class LoadableAsset(BaseAsset):
-    """
-    A game asset or container of assets that is instatiated with a location,
-    and loads data from that location to fill itself with asset objects.
-    """
-
-    def __init__(self, manager, location=None):
-        super(LoadableAsset, self).__init__(manager)
-        # Determine what methods to call when validating individual fields
-        self.field_validators = [
-            getattr(self, attr)
-            for attr in dir(self)
-            if attr.startswith('clean_')
-        ]
-        location = location or getattr(self, 'location', None)
-        if location:
-            self.load(location)
-        self.error = ''
-
-    def load(self, location):
-        """
-        Attempt to load data from the given location. If the data validates,
-        call self.handle with that data for processing.
-        """
-        path = getattr(self, 'path', '')
-        raw_data = self.manager.get_json(path, location)
-        if self.is_valid(raw_data):
-            self.handle(raw_data)
-        else:
-            print self.error
-
     def is_valid(self, raw_data):
         """
         Determines if the given data is valid and returns True or False
@@ -151,4 +114,44 @@ class LoadableAsset(BaseAsset):
                     self.error = '{0} did not validate'.format(raw_data)
                 return False
         return True
+
+
+class Asset(BaseAsset):
+    """
+    A game asset that is instantiated with data and does not load it directly.
+    """
+
+    def __init__(self, manager, data=None):
+        super(Asset, self).__init__(manager)
+        if data is not None:
+            if self.is_valid(data):
+                self.handle(data)
+            else:
+                print self.error
+
+
+class LoadableAsset(BaseAsset):
+    """
+    A game asset or container of assets that is instatiated with a location,
+    and loads data from that location to fill itself with asset objects.
+    """
+
+    def __init__(self, manager, location=None):
+        super(LoadableAsset, self).__init__(manager)
+        location = location or getattr(self, 'location', None)
+        if location:
+            self.load(location)
+        self.error = ''
+
+    def load(self, location):
+        """
+        Attempt to load data from the given location. If the data validates,
+        call self.handle with that data for processing.
+        """
+        path = getattr(self, 'path', '')
+        raw_data = self.manager.get_json(path, location)
+        if self.is_valid(raw_data):
+            self.handle(raw_data)
+        else:
+            print self.error
 
