@@ -218,9 +218,7 @@ class Monster(Asset):
     y = 0
     last_moved_at = 0
 
-    sprite_fields = {
-        'image': [32, 32],
-    }
+    image_fields = ['image']
 
     def place_on_map(self, map_data):
         found_spot = False
