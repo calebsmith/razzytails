@@ -1,9 +1,15 @@
 #!/usr/bin/env python
+import os
+
 from loaders import initialize, load_level
 from logic import logic
 from graphics import render
 from assets import Player
-from const import ASSETS_DIR
+
+
+# Path directories
+PROJECT_DIR = os.path.join(os.path.dirname(__file__), '..')
+ASSETS_DIR = os.path.join(PROJECT_DIR, 'assets')
 
 
 def main():
