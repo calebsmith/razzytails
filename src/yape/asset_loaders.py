@@ -17,7 +17,7 @@ class BaseAsset(object):
         ('json_fields', 'get_json'),
     ]
 
-    def __init__(self, manager):
+    def __init__(self, manager, *args):
         self.manager = manager
         # Determine what methods to call when validating individual fields
         self.field_validators = [
@@ -25,21 +25,53 @@ class BaseAsset(object):
             for attr in dir(self)
             if attr.startswith('clean_')
         ]
+        self.error = ''
 
-    def handle(self, data):
+    def load(self, data):
+        if self.is_valid(data):
+            self.process_data(data)
+            self.process_auto_fields()
+            if hasattr(self, 'post_process'):
+                self.post_process()
+        else:
+            print self.error
+
+    def process_data(self, data):
         """
         Handle data once it has been validated. By default, assigns values from
-        data to attributes on self.
+        data to attributes on self if data is a dictionary.
         """
-        self._assign_to_self(data)
-        self.load_fields()
+        if hasattr(data, 'items'):
+            for key, value in data.items():
+                setattr(self, key, value)
 
-    def _assign_to_self(self, data):
-        """Sets values from the data dictionary to the object itself"""
-        for key, value in data.items():
-            setattr(self, key, value)
+    def process_auto_fields(self):
+        """
+        Replaces image, font, sound, and json fields with references to those
+        objects, using the asset's manager. Uses the asset's *_fields methods
+        to determine what fields should be associated with a given type of
+        asset (such as image, or font).
+        """
+        for field_type, manager_method in self.field_method_mapping:
+            asset_field_names = getattr(self, field_type, [])
+            for asset_field_name in asset_field_names:
+                asset_args = getattr(self, asset_field_name, None)
+                if asset_args is not None:
+                    # If the field is a dictionary, load assets for its values and
+                    # assign them to the keys of the dictionary
+                    if isinstance(asset_args, dict):
+                        for key, value in asset_args.items():
+                            asset_ref = self._get_asset_ref(field_type, manager_method, asset_field_name, value)
+                            asset_args[key] = asset_ref
+                    else:
+                        asset_ref = self._get_asset_ref(field_type, manager_method, asset_field_name, asset_args)
+                        setattr(self, asset_field_name, asset_ref)
 
     def _get_asset_ref(self, field_type, manager_method, asset_field_name, asset_args):
+        """
+        Uses manager methods to load assets on behalf of a field in a *_fields
+        declaration.
+        """
         # image field values are filenames only, while other asset
         # arguments are iterable. Wrap filename inside a list so it
         # dereferences properly when load_func is called
@@ -61,24 +93,6 @@ class BaseAsset(object):
                 asset_args, asset_field_name, self.__class__.__name__
             )
         return asset
-
-    def load_fields(self):
-        """
-        Replaces image, font, sound, and json fields with references to those
-        objects, using the asset's manager.
-        """
-        for field_type, manager_method in self.field_method_mapping:
-            asset_field_names = getattr(self, field_type, [])
-            for asset_field_name in asset_field_names:
-                asset_args = getattr(self, asset_field_name, None)
-                if asset_args is not None:
-                    if isinstance(asset_args, dict):
-                        for key, value in asset_args.items():
-                            asset_ref = self._get_asset_ref(field_type, manager_method, asset_field_name, value)
-                            asset_args[key] = asset_ref
-                    else:
-                        asset_ref = self._get_asset_ref(field_type, manager_method, asset_field_name, asset_args)
-                        setattr(self, asset_field_name, asset_ref)
 
     def is_valid(self, raw_data):
         """
@@ -124,10 +138,8 @@ class Asset(BaseAsset):
     def __init__(self, manager, data=None):
         super(Asset, self).__init__(manager)
         if data is not None:
-            if self.is_valid(data):
-                self.handle(data)
-            else:
-                print self.error
+            self.raw_data = data
+            self.load(data)
 
 
 class LoadableAsset(BaseAsset):
@@ -140,18 +152,14 @@ class LoadableAsset(BaseAsset):
         super(LoadableAsset, self).__init__(manager)
         location = location or getattr(self, 'location', None)
         if location:
-            self.load(location)
-        self.error = ''
+            self.load_location(location)
+            self.load(self.raw_data)
 
-    def load(self, location):
+    def load_location(self, location):
         """
         Attempt to load data from the given location. If the data validates,
         call self.handle with that data for processing.
         """
         path = getattr(self, 'path', '')
-        raw_data = self.manager.get_json(path, location)
-        if self.is_valid(raw_data):
-            self.handle(raw_data)
-        else:
-            print self.error
+        self.raw_data = self.manager.get_json(path, location)
 

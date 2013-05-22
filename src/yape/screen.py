@@ -37,10 +37,9 @@ class Screen(LoadableAsset):
         display.set_caption(self.title)
         self.context = display.set_mode((self.width, self.height))
 
-    def handle(self, data):
-        super(Screen, self).handle(data)
+    def post_process(self):
         Camera = self.camera_class
-        self.camera = Camera(self.manager, data)
+        self.camera = Camera(self.manager, self.raw_data)
 
     def set_background(self, color='black'):
         background = Surface(self.context.get_size()).convert()

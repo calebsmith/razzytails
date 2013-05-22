@@ -46,8 +46,7 @@ class Config(LoadableAsset):
         'score_font',
     ]
 
-    def handle(self, data):
-        super(Config, self).handle(data)
+    def post_process(self):
         self.questions = Questions(
             self.manager, self.questions, width=self.popup_box['char_width']
         )
@@ -72,8 +71,8 @@ class Questions(LoadableAsset):
         self.choice = 0
         self._question_display = None
 
-    def handle(self, data):
-        self.questions = data
+    def post_process(self):
+        self.questions = self.raw_data
         self.question_displays = [
             word_wrap(question['question'], self.width)
             for question in self.questions
@@ -179,8 +178,7 @@ class Map(Asset):
             return False
         return True
 
-    def handle(self, data):
-        super(Map, self).handle(data)
+    def post_process(self):
         self.tile_solids = [tile in self.solids for tile in self.tiles]
 
     def get_index(self, x, y):
@@ -202,8 +200,7 @@ class Item(Asset):
         self.width = kwargs.pop('width', 20)
         super(Item, self).__init__(*args, **kwargs)
 
-    def handle(self, data):
-        super(Item, self).handle(data)
+    def post_process(self):
         self.message = word_wrap(self.message, self.width) + ['', 'Press "Enter" to continue']
 
 
@@ -298,16 +295,17 @@ class Level(LoadableAsset):
             return False
         return True
 
-    def handle(self, data):
-        self.map = Map(self.manager, data['map'])
+    def post_process(self):
+        self.map = Map(self.manager, self.map)
         dimensions = self.map.dimensions
         self.width, self.height = dimensions['width'], dimensions['height']
-        self.monster_data = data['monsters']
+        self.monster_data = self.monsters
         self.reset_monsters()
         self.item_coordinates = []
+        items_data = self.items
         self.items = []
         item_locations = self._generate_item_locations(self.map)
-        for index, item_data in enumerate(data['items']):
+        for index, item_data in enumerate(items_data):
             location = item_locations[index]
             item = Item(self.manager, item_data, width=self.config.popup_box['char_width'])
             self.items.append(item)
