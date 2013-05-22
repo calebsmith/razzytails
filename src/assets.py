@@ -1,5 +1,8 @@
 from copy import copy
+import os
 import random
+
+import pygame
 
 from yape.asset_loaders import Asset, LoadableAsset
 from yape.utils import word_wrap
@@ -50,6 +53,19 @@ class Config(LoadableAsset):
         self.questions = Questions(
             self.manager, self.questions, width=self.popup_box['char_width']
         )
+
+        delay = self.keypress_repeat['delay']
+        interval = self.keypress_repeat['interval']
+        pygame.key.set_repeat(delay, interval)
+        # Play background music if possible
+        if self.music:
+            try:
+                filename = self.music
+                music_path_filename = os.path.join(self.path, '../', 'music', filename)
+                pygame.mixer.music.load(music_path_filename)
+                pygame.mixer.music.play(-1)
+            except pygame.error:
+                pass
 
 
 class Questions(LoadableAsset):

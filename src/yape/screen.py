@@ -23,6 +23,7 @@ class Screen(LoadableAsset):
         'tile_height',
         'map_display_width',
         'map_display_height',
+        'background_color',
     ]
 
     background = None
@@ -31,7 +32,7 @@ class Screen(LoadableAsset):
         self.camera_class = kwargs.pop('camera', PerTileCamera)
         super(Screen, self).__init__(*args, **kwargs)
         self._create_context()
-        self.set_background()
+        self.set_background(self.background_color)
 
     def _create_context(self):
         display.set_caption(self.title)

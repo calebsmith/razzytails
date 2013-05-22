@@ -3,13 +3,12 @@ import os
 import pygame
 
 from yape.screen import Screen
-from assets import Config, Level
-from state import game_state
-from listeners import dispatcher
 from yape.manager import Manager
 
+from assets import Level
 
-def initialize(assets_path):
+
+def initialize(game_state, ConfigClass, dispatcher, assets_path):
     """
     Initializes pygame, loads the configuration file and creates a display
     context. Returns a 4-item tuple in the form of:
@@ -18,6 +17,7 @@ def initialize(assets_path):
     # Initialize pygame and pygame mixer
     pygame.init()
     pygame.mixer.init()
+    # TODO: Joystick support is very experimental
     try:
         pygame.joystick.Joystick(0).init()
     except:
@@ -25,22 +25,9 @@ def initialize(assets_path):
     manager = Manager(assets_path)
     # Create a screen to get a display context
     screen = Screen(manager)
-    screen.set_background('white')
     # Load configuration file for various settings
-    config = Config(manager)
-    delay = config.keypress_repeat['delay']
-    interval = config.keypress_repeat['interval']
-    pygame.key.set_repeat(delay, interval)
-    # Play background music if possible
-    if config.music:
-        try:
-            filename = config.music
-            music_path_filename = os.path.join(assets_path, 'music', filename)
-            pygame.mixer.music.load(music_path_filename)
-            pygame.mixer.music.play(-1)
-        except pygame.error:
-            pass
-    return game_state, dispatcher, manager, screen, config
+    config = ConfigClass(manager)
+    return game_state, config, dispatcher, manager, screen
 
 
 def load_level(manager, config, player):
