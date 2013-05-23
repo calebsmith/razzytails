@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 import os
 
-from loaders import initialize, load_level
+from yape.initialize import initialize
+from loaders import load_level
 from logic import logic
 from graphics import render
-from assets import Player, Config
+from assets import Config, Player, Level
 from state import game_state
 from listeners import dispatcher
 
@@ -22,7 +23,10 @@ def main():
         pygame.joystick.Joystick(0).init()
     except:
         pass
-    level = load_level(game_data.manager, game_data.config, player)
+    level = Level(manager, config)
+    # Place player at the start location
+    player.x = level.map.player_start['x']
+    player.y = level.map.player_start['y']
     # Run game loop
     game_loop('exit', game_data, level, player)
 

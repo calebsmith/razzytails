@@ -1,5 +1,4 @@
 import pygame
-from fsm import RequiresStateMachine
 
 
 class Dispatch(object):
