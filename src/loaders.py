@@ -1,4 +1,4 @@
-import os
+from collections import namedtuple
 
 import pygame
 
@@ -8,26 +8,26 @@ from yape.manager import Manager
 from assets import Level
 
 
-def initialize(game_state, ConfigClass, dispatcher, assets_path):
+GameData = namedtuple('GameData',
+    ['state', 'dispatcher', 'screen', 'config', 'manager']
+)
+
+
+def initialize(game_state, dispatcher, ConfigClass, assets_path):
     """
     Initializes pygame, loads the configuration file and creates a display
-    context. Returns a 4-item tuple in the form of:
-        (game_state, dispatcher, manager, screen, config)
+    context. Returns a GameData namedtuple with the following members:
+        (game_state, dispatcher, screen, config manager)
     """
     # Initialize pygame and pygame mixer
     pygame.init()
     pygame.mixer.init()
-    # TODO: Joystick support is very experimental
-    try:
-        pygame.joystick.Joystick(0).init()
-    except:
-        pass
     manager = Manager(assets_path)
     # Create a screen to get a display context
     screen = Screen(manager)
     # Load configuration file for various settings
     config = ConfigClass(manager)
-    return game_state, config, dispatcher, manager, screen
+    return GameData(game_state, dispatcher, screen, config, manager)
 
 
 def load_level(manager, config, player):

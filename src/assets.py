@@ -61,7 +61,7 @@ class Config(LoadableAsset):
         if self.music:
             try:
                 filename = self.music
-                music_path_filename = os.path.join(self.path, '../', 'music', filename)
+                music_path_filename = os.path.join(self.manager.path, 'music', filename)
                 pygame.mixer.music.load(music_path_filename)
                 pygame.mixer.music.play(-1)
             except pygame.error:

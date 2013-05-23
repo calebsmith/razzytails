@@ -69,7 +69,8 @@ def draw_splash(screen, config, image):
     screen.draw(message_surface, origin)
 
 
-def render(game_state, screen, config, level, player):
+def render(game_data, level, player):
+    game_state, screen, config = game_data.state, game_data.screen, game_data.config
     with screen.display_cycle():
         display_map(screen, config, level, player)
         display_items(screen, config, level, player)

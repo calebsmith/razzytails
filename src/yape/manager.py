@@ -105,6 +105,7 @@ class Manager(object):
     """
 
     def __init__(self, assets_dir):
+        self.path = assets_dir
         images_dir = os.path.join(assets_dir, 'images')
         fonts_dir = os.path.join(assets_dir, 'fonts')
         self.json_manager = JSONManager(assets_dir)

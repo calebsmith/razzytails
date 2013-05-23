@@ -6,32 +6,32 @@ from yape.dispatch import dispatcher
 
 
 @dispatcher.register_listener(['splash'])
-def splash_listener(event, game_state, *args, **kwargs):
+def splash_listener(event, game_data, *args, **kwargs):
     event_key = event.key
     if event_key == K_RETURN or event_key == K_SPACE:
-        game_state.start()
+        game_data.state.start()
 
 
 @dispatcher.register_listener(['endscreen'])
-def endscreen_listener(event, game_state, *args, **kwargs):
+def endscreen_listener(event, game_data, *args, **kwargs):
     event_key = event.key
     if event_key == K_RETURN or event_key == K_SPACE:
-        game_state.exit()
+        game_data.state.exit()
 
 
 @dispatcher.register_listener(['main', 'question', 'item', 'splash'])
-def quit_esc_listener(event, game_state, *args, **kwargs):
+def quit_esc_listener(event, game_data, *args, **kwargs):
     if event.key == K_ESCAPE:
-        game_state.exit()
+        game_data.state.exit()
 
 
 @dispatcher.register_listener(['main', 'question', 'item'], QUIT)
-def quit_x_listener(event, game_state, *args, **kwargs):
-    game_state.exit()
+def quit_x_listener(event, game_data, *args, **kwargs):
+    game_data.state.exit()
 
 
 @dispatcher.register_listener(['main'], KEYDOWN)
-def move_player_listener(event, game_state, config, level, player):
+def move_player_listener(event, game_data, level, player):
     event_key = event.key
     if event_key == K_UP:
         player.move_up(level)
@@ -44,7 +44,8 @@ def move_player_listener(event, game_state, config, level, player):
 
 
 @dispatcher.register_listener(['main'], JOYAXISMOTION)
-def move_player_joystick_listener(event, game_state, config, level, player):
+def move_player_joystick_listener(event, game_data, level, player):
+    config = game_data.config
     delay = config.joystick['delay']
     last_updated = player.last_updated
     value = event.value
@@ -80,11 +81,12 @@ def move_player_joystick_listener(event, game_state, config, level, player):
 
 
 @dispatcher.register_listener(['question'])
-def select_answer_listener(event, game_state, config, level, player):
+def select_answer_listener(event, game_data, level, player):
+    config = game_data.config
     event_key = event.key
     questions = config.questions
     if event_key == K_RETURN or event_key == K_SPACE:
-        game_state.answer(questions.is_correct(), level, player)
+        game_data.state.answer(questions.is_correct(), level, player)
         questions.next()
     num_choices = questions.get_choices_length()
     if event_key == K_UP and questions.choice > 0:
@@ -94,10 +96,11 @@ def select_answer_listener(event, game_state, config, level, player):
 
 
 @dispatcher.register_listener(['item', 'info'])
-def item_collected_listener(event, game_state, config, level, player):
+def item_collected_listener(event, game_data, level, player):
     event_key = event.key
     if event_key == K_RETURN or event_key == K_SPACE:
-        if game_state.can('item_collected'):
-            game_state.item_collected(level, player)
+        if game_data.state.can('item_collected'):
+            game_data.state.item_collected(level, player)
         else:
-            game_state.info_closed()
+            game_data.state.info_closed()
+
