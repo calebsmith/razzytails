@@ -1,12 +1,11 @@
 from copy import copy
-import os
 import random
 
-from yape.asset_loaders import Asset, LoadableAsset
+from yape.components import Component, LoadableComponent
 from yape.utils import word_wrap
 
 
-class Questions(LoadableAsset):
+class Questions(LoadableComponent):
     path = 'config'
     schema = [
         'question',
@@ -47,7 +46,7 @@ class Questions(LoadableAsset):
         return self.choice == self.current_question['correct']
 
 
-class Player(Asset):
+class Player(Component):
     x = 0
     y = 0
     items = []
@@ -106,7 +105,7 @@ class Player(Asset):
             pass
 
 
-class Map(Asset):
+class Map(Component):
 
     schema = [
         'solids',
@@ -148,7 +147,7 @@ class Map(Asset):
         return y * self.dimensions['width'] + x
 
 
-class Item(Asset):
+class Item(Component):
 
     schema = [
         'id',
@@ -167,7 +166,7 @@ class Item(Asset):
         self.message = word_wrap(self.message, self.width) + ['', 'Press "Enter" to continue']
 
 
-class Monster(Asset):
+class Monster(Component):
 
     schema = [
         'image',
@@ -238,7 +237,7 @@ class Monster(Asset):
         return abs(move_x - player.x) + abs(move_y - player.y)
 
 
-class Level(LoadableAsset):
+class Level(LoadableComponent):
 
     path = 'maps'
     schema = [

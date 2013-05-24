@@ -2,14 +2,14 @@ import os
  
 import pygame
 
-from yape.asset_loaders import LoadableAsset
+from yape.components import LoadableComponent
 
 # Path directories
 PROJECT_DIR = os.path.join(os.path.dirname(__file__), '..')
 ASSETS_DIR = os.path.join(PROJECT_DIR, 'assets')
 
 
-class Config(LoadableAsset):
+class Config(LoadableComponent):
 
     path = 'config'
     location = 'config.json'

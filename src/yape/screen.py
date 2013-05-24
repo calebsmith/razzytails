@@ -3,10 +3,10 @@ from contextlib import contextmanager
 import pygame
 from pygame import Surface, display
 
-from asset_loaders import Asset, LoadableAsset
+from components import Component, LoadableComponent
 
 
-class Screen(LoadableAsset):
+class Screen(LoadableComponent):
     """
     Creates a display surface for rendering and provides methods for blitting
     images and text onto that surface. Also contains a Camera that determines
@@ -95,7 +95,7 @@ class Screen(LoadableAsset):
             surface.blit(text, textpos)
 
 
-class PerTileCamera(Asset):
+class PerTileCamera(Component):
     """
     A Camera class that helps with the display of graphics relative to the
     player's position. Takes and gives units in number of tiles.
