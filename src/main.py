@@ -1,16 +1,13 @@
 #!/usr/bin/env python
-import os
 
 from yape.initialize import initialize
-from logic import logic
-from graphics import render
-from assets import Config, Player, Level, Questions
+
 from state import game_state
 from listeners import dispatcher
-
-# Path directories
-PROJECT_DIR = os.path.join(os.path.dirname(__file__), '..')
-ASSETS_DIR = os.path.join(PROJECT_DIR, 'assets')
+from config import ASSETS_DIR, Config
+from assets import Player, Level, Questions
+from logic import logic
+from graphics import render
 
 
 def main():
