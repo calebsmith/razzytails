@@ -155,6 +155,14 @@ class Player(Asset):
     def move_right(self, container):
         self._move(container, self.RIGHT)
 
+    def post_process(self):
+        # TODO: Joystick support is very experimental. This should run
+        # every few seconds or so, rather than on initialization
+        try:
+            pygame.joystick.Joystick(0).init()
+        except:
+            pass
+
 
 class Map(Asset):
 

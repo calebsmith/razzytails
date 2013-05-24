@@ -16,12 +16,8 @@ ASSETS_DIR = os.path.join(PROJECT_DIR, 'assets')
 def main():
     # Initialize display screen and load assets
     game_data = initialize(game_state, dispatcher, Config, ASSETS_DIR)
+    # Load the player, questions, and level before the game begins
     player = Player(game_data.manager)
-    # TODO: Joystick support is very experimental
-    try:
-        pygame.joystick.Joystick(0).init()
-    except:
-        pass
     questions = Questions(game_data.manager, game_data.config)
     level = Level(game_data.manager, game_data.config)
     # Place player at the start location
