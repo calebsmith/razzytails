@@ -1,13 +1,13 @@
 import pygame
 
 
-def logic(game_data, level, player):
+def logic(game_data, questions, level, player):
     if game_data.state.is_state('main'):
-        player_on_item(game_data, level, player)
-        player_on_monster(game_data, level, player)
+        player_on_item(game_data, questions, level, player)
+        player_on_monster(game_data, questions, level, player)
 
 
-def player_on_item(game_data, level, player):
+def player_on_item(game_data, questions, level, player):
     player_coordinate = player.x, player.y
     for item in level.item_coordinates:
         if player_coordinate == item['coordinates']:
@@ -16,7 +16,7 @@ def player_on_item(game_data, level, player):
             game_data.state.popup_item(player, item_obj)
 
 
-def player_on_monster(game_data, level, player):
+def player_on_monster(game_data, questions, level, player):
     config = game_data.config
     ticks = pygame.time.get_ticks()
     for monster in level.monsters:

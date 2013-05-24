@@ -31,7 +31,7 @@ def quit_x_listener(event, game_data, *args, **kwargs):
 
 
 @dispatcher.register_listener(['main'], KEYDOWN)
-def move_player_listener(event, game_data, level, player):
+def move_player_listener(event, game_data, questions, level, player):
     event_key = event.key
     if event_key == K_UP:
         player.move_up(level)
@@ -44,7 +44,7 @@ def move_player_listener(event, game_data, level, player):
 
 
 @dispatcher.register_listener(['main'], JOYAXISMOTION)
-def move_player_joystick_listener(event, game_data, level, player):
+def move_player_joystick_listener(event, game_data, questions, level, player):
     config = game_data.config
     delay = config.joystick['delay']
     last_updated = player.last_updated
@@ -81,10 +81,9 @@ def move_player_joystick_listener(event, game_data, level, player):
 
 
 @dispatcher.register_listener(['question'])
-def select_answer_listener(event, game_data, level, player):
+def select_answer_listener(event, game_data, questions, level, player):
     config = game_data.config
     event_key = event.key
-    questions = config.questions
     if event_key == K_RETURN or event_key == K_SPACE:
         game_data.state.answer(questions.is_correct(), level, player)
         questions.next()
@@ -96,7 +95,7 @@ def select_answer_listener(event, game_data, level, player):
 
 
 @dispatcher.register_listener(['item', 'info'])
-def item_collected_listener(event, game_data, level, player):
+def item_collected_listener(event, game_data, questions, level, player):
     event_key = event.key
     if event_key == K_RETURN or event_key == K_SPACE:
         if game_data.state.can('item_collected'):

@@ -18,7 +18,8 @@ class Config(LoadableAsset):
         'splash_image',
         'endscreen_image',
         'score_font',
-        'music', {
+        'music',
+        {
             'popup_box': [
                 'x', 'y', 'char_width', 'char_height'
             ]
@@ -50,10 +51,6 @@ class Config(LoadableAsset):
     ]
 
     def post_process(self):
-        self.questions = Questions(
-            self.manager, self.questions, width=self.popup_box['char_width']
-        )
-
         delay = self.keypress_repeat['delay']
         interval = self.keypress_repeat['interval']
         pygame.key.set_repeat(delay, interval)
@@ -76,9 +73,9 @@ class Questions(LoadableAsset):
         'correct',
     ]
 
-    def __init__(self, *args, **kwargs):
-        self.width = kwargs.pop('width', 20)
-        super(Questions, self).__init__(*args, **kwargs)
+    def __init__(self, manager, config):
+        self.width = config.popup_box['char_width']
+        super(Questions, self).__init__(manager, config.questions)
         self.next()
 
     def next(self):

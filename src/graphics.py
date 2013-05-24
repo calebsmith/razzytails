@@ -69,7 +69,7 @@ def draw_splash(screen, config, image):
     screen.draw(message_surface, origin)
 
 
-def render(game_data, level, player):
+def render(game_data, questions, level, player):
     game_state, screen, config = game_data.state, game_data.screen, game_data.config
     with screen.display_cycle():
         display_map(screen, config, level, player)
@@ -80,7 +80,7 @@ def render(game_data, level, player):
         if game_state.is_state('question'):
             draw_popup(
                 screen, config, level, player,
-                config.questions.get_question_display()
+                questions.get_question_display()
             )
         if game_state.is_state('splash'):
             draw_splash(screen, config, config.splash_image)
