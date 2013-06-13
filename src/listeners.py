@@ -5,21 +5,21 @@ from pygame import time, JOYAXISMOTION
 from yape.dispatch import dispatcher
 
 
-@dispatcher.register_listener(['splash'])
+@dispatcher.register_listener(['splash'], KEYDOWN)
 def splash_listener(event, game_data, *args, **kwargs):
     event_key = event.key
     if event_key == K_RETURN or event_key == K_SPACE:
         game_data.state.start()
 
 
-@dispatcher.register_listener(['endscreen'])
+@dispatcher.register_listener(['endscreen'], KEYDOWN)
 def endscreen_listener(event, game_data, *args, **kwargs):
     event_key = event.key
     if event_key == K_RETURN or event_key == K_SPACE:
         game_data.state.exit()
 
 
-@dispatcher.register_listener(['main', 'question', 'item', 'splash'])
+@dispatcher.register_listener(['main', 'question', 'item', 'splash'], KEYDOWN)
 def quit_esc_listener(event, game_data, *args, **kwargs):
     if event.key == K_ESCAPE:
         game_data.state.exit()
@@ -80,7 +80,7 @@ def move_player_joystick_listener(event, game_data, questions, level, player):
                 player.move_down(level)
 
 
-@dispatcher.register_listener(['question'])
+@dispatcher.register_listener(['question'], KEYDOWN)
 def select_answer_listener(event, game_data, questions, level, player):
     config = game_data.config
     event_key = event.key
@@ -94,7 +94,7 @@ def select_answer_listener(event, game_data, questions, level, player):
         questions.choice += 1
 
 
-@dispatcher.register_listener(['item', 'info'])
+@dispatcher.register_listener(['item', 'info'], KEYDOWN)
 def item_collected_listener(event, game_data, questions, level, player):
     event_key = event.key
     if event_key == K_RETURN or event_key == K_SPACE:
