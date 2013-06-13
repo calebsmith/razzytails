@@ -1,7 +1,6 @@
 """Defines transitions and callbacks for the game's fsm"""
 
-from fsm import FSM
-from game_assets import Level
+from yape.fsm import FSM
 
 # FSM transitions
 transitions = [

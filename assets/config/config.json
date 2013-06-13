@@ -1,14 +1,6 @@
 {
     "start": "map1.json",
-    "fonts": [
-        "VeraMono.ttf"
-    ],
-    "score_font": "VeraMono.ttf",
-    "images": [
-        "razzy.png",
-        "intro-screen.png",
-        "win-screen.png"
-    ],
+    "score_font": ["VeraMono.ttf", 16],
     "player_image": "razzy.png",
     "splash_image": "intro-screen.png",
     "endscreen_image": "win-screen.png",
