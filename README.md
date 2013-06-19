@@ -9,6 +9,7 @@ them at all costs! If a Honey Badger catches you, then you still have
 one more chance. Just answer a question about Python Programming and
 you can shake the Honey Badger off your trail and continue your quest.
 
+![Game Screenshot](http://i.imgur.com/WDXbxdq.png)
 
 # Details
 ----------
