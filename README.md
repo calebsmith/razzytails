@@ -27,7 +27,9 @@ Installing pygame is *not* easy. Follow
 
 1. First, install pygame using your OS's tools (apt-get, yum, etc.).
 
-        sudo apt-get install pygame
+        sudo apt-get install python-pygame
+
+    N.B. Pygame comes with the raspbian distribution so you likely already have it for Raspberry Pi
 
 2. Next, download the code
 
