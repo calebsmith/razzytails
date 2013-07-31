@@ -3,6 +3,9 @@ import os
 import pygame
 
 from yape.components import LoadableComponent
+from json_janitor.schema import Schema
+from json_janitor.defs import AnyInteger, AnyString
+
 
 # Path directories
 PROJECT_DIR = os.path.join(os.path.dirname(__file__), '..')
@@ -13,33 +16,30 @@ class Config(LoadableComponent):
 
     path = 'config'
     location = 'config.json'
-    schema = [
-        'start',
-        'player_image',
-        'splash_image',
-        'endscreen_image',
-        'score_font',
-        'music',
-        {
-            'popup_box': [
-                'x', 'y', 'char_width', 'char_height'
-            ]
+    schema = Schema({
+        u'start': AnyString,
+        u'player_image': AnyString,
+        u'splash_image': AnyString,
+        u'endscreen_image': AnyString,
+        u'score_font': [AnyString, AnyInteger],
+        u'music': AnyString,
+        u'popup_box': {
+            u'x': AnyInteger,
+            u'y': AnyInteger,
+            u'char_width': AnyInteger,
+            u'char_height': AnyInteger,
         },
-        {
-            'keypress_repeat': [
-                'delay',
-                'interval'
-            ]
+        u'keypress_repeat': {
+            u'delay': AnyInteger,
+            u'interval': AnyInteger,
         },
-        'questions',
-        'monster_delay',
-        {
-            'joystick': [
-                'delay',
-                'pressed'
-            ]
+        u'questions': AnyString,
+        u'monster_delay': AnyInteger,
+        u'joystick': {
+            u'delay': AnyInteger,
+            u'pressed': AnyInteger,
         }
-    ]
+    })
 
     image_fields = [
         'player_image',

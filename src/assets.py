@@ -3,15 +3,17 @@ import random
 
 from yape.components import Component, LoadableComponent
 from yape.utils import word_wrap
+from json_janitor.schema import Schema
+from json_janitor.defs import AnyString, AnyInteger, Mapping, OneOrMore
 
 
 class Questions(LoadableComponent):
     path = 'config'
-    schema = [
-        'question',
-        'answers',
-        'correct',
-    ]
+    schema = Schema(OneOrMore({
+        u'question': AnyString,
+        u'answers': OneOrMore(AnyString),
+        u'correct': AnyInteger
+    }))
 
     def __init__(self, manager, config):
         self.width = config.popup_box['char_width']
@@ -107,21 +109,19 @@ class Player(Component):
 
 class Map(Component):
 
-    schema = [
-        'solids',
-        'legend',
-        'tiles',
-        {
-            'dimensions': [
-                'width', 'height'
-            ],
+    schema = Schema({
+        'solids': OneOrMore(AnyInteger),
+        'tiles': OneOrMore(AnyInteger),
+        'legend': Mapping(AnyString),
+        'dimensions': {
+            'width': AnyInteger,
+            'height': AnyInteger,
         },
-        {
-            'player_start': [
-                'x', 'y'
-            ],
-        }
-    ]
+        'player_start': {
+            'x': AnyInteger,
+            'y': AnyInteger,
+        },
+    })
 
     image_fields = [
         'legend'
@@ -149,12 +149,12 @@ class Map(Component):
 
 class Item(Component):
 
-    schema = [
-        'id',
-        'title',
-        'image',
-        'message',
-    ]
+    schema = Schema({
+        u'id': AnyInteger,
+        u'title': AnyString,
+        u'image': AnyString,
+        u'message': AnyString,
+    })
 
     image_fields = ['image']
 
@@ -168,10 +168,11 @@ class Item(Component):
 
 class Monster(Component):
 
-    schema = [
-        'image',
-        'number'
-    ]
+    schema = Schema({
+        u'id': AnyInteger,
+        u'image': AnyString,
+        u'number': AnyInteger,
+    })
 
     x = 0
     y = 0
@@ -240,11 +241,6 @@ class Monster(Component):
 class Level(LoadableComponent):
 
     path = 'maps'
-    schema = [
-        'map',
-        'monsters',
-        'items'
-    ]
 
     def __init__(self, manager, config):
         self.config = config

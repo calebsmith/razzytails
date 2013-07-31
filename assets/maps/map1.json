@@ -46,5 +46,5 @@
         {"id": 3, "title": "Raspberry Pi", "image": "raspberrypi.png", "message": "Congratulations! You have acquired a Raspberry Pi, a small, but powerful, micro-computer."},
         {"id": 4, "title": "Monitor", "image": "monitor.png", "message": "Monitor. Now you will be able to see the video output of your Raspberry Pi programs!"},
         {"id": 5, "title": "Keyboard & Mouse", "image": "keyboard_mouse.png", "message": "USB Keyboard + Mouse. You now have the controllers to operate your Raspberry Pi with!"}
-        ]
+    ]
 }
