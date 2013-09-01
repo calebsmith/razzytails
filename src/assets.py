@@ -133,10 +133,10 @@ class Map(Component):
         dimensions = map_data['dimensions']
         num_tiles = dimensions['width'] * dimensions['height']
         if len(map_data['tiles']) != num_tiles:
-            self.error = u'Number of tiles must equal width * height'
+            self.errors.append(u'Number of tiles must equal width * height')
             return False
         if x < 0 or y < 0 or x >= dimensions['width'] or y >= dimensions['height']:
-            self.error = u'The player_start x or y is out of bounds'
+            self.errors.append(u'The player_start x or y is out of bounds')
             return False
         return True
 
@@ -249,7 +249,7 @@ class Level(LoadableComponent):
     def clean_monsters(self, monster_data):
         num_monsters = monster_data['number']
         if num_monsters < 1:
-            self.error = u'You need at least 1 monster'
+            self.errors.append(u'You need at least 1 monster')
             return False
         return True
 
